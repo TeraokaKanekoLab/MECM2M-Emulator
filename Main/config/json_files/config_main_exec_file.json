@@ -5,10 +5,10 @@
         },
         "mec-server": [
             {
-                "Server": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/Server/main",
-                "VPoint": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VPoint/main",
-                "VSNode": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VSNode/main",
-                "vmnode": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VMNode/main"
+                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
+                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
+                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
             }
         ]
     },
@@ -18,11 +18,11 @@
         },
         "pmnode": [
             {
-                "MServer": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/MServer/main",
-                "VPoint": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/VPoint/main",
-                "VSNode": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/VSNode/main",
-                "PSNode": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/PSNode/main",
-                "MServer-config-file": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/MServer/config.json"
+                "MServer": "/home/rand/MECM2M-Simulator/PMNode/MServer/main",
+                "VPoint": "/home/rand/MECM2M-Simulator/PMNode/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Simulator/PMNode/VSNode/main",
+                "PSNode": "/home/rand/MECM2M-Simulator/PMNode/PSNode/main",
+                "MServer-config-file": "/home/rand/MECM2M-Simulator/PMNode/MServer/config.json"
             }
         ]
     },
@@ -32,8 +32,8 @@
         },
         "psnode": [
             {
-                "PSNode": "/Users/sawadarenpei/mecm2m-Simulator/PSNode/main",
-                "config-file": "/Users/sawadarenpei/mecm2m-Simulator/PSNode/config.json"
+                "PSNode": "/home/rand/MECM2M-Simulator/PSNode/main",
+                "config-file": "/home/rand/MECM2M-Simulator/PSNode/config.json"
             }
         ]
     }

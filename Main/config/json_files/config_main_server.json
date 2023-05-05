@@ -1,17 +1,17 @@
 {
     "servers": {
         "ipv6": [
-            "338c:5c45:8ab0:c5da:845:7ffd:1695:681",
-            "27b:c70:dca2:f4e0:b4cf:8de2:6fa4:e460",
-            "2ab3:1b97:1294:9a9d:8369:739b:d83b:ccdf",
-            "7c1f:e777:b1ae:21e3:8c6e:a272:76ff:1d42"
+            "5828:69fb:fbfe:6601:2853:2709:34e9:c54d",
+            "5ba1:5df1:aaa3:b783:4d9a:2e69:ec14:6c6b",
+            "aedd:58df:8757:56b:fb22:50fe:c745:22b5",
+            "10de:9cc6:4509:8a97:568:1170:f536:ad44"
         ],
         "server": [
             {
                 "property-label": "Server",
                 "data-property": {
                     "Label": "S0",
-                    "IPv6Address": "338c:5c45:8ab0:c5da:845:7ffd:1695:681",
+                    "IPv6Address": "5828:69fb:fbfe:6601:2853:2709:34e9:c54d",
                     "ServedIPv6Pref": "0",
                     "Description": "ServerS0"
                 },
@@ -21,7 +21,7 @@
                 "property-label": "Server",
                 "data-property": {
                     "Label": "S1",
-                    "IPv6Address": "27b:c70:dca2:f4e0:b4cf:8de2:6fa4:e460",
+                    "IPv6Address": "5ba1:5df1:aaa3:b783:4d9a:2e69:ec14:6c6b",
                     "ServedIPv6Pref": "1",
                     "Description": "ServerS1"
                 },
@@ -58,7 +58,7 @@
                 "property-label": "Server",
                 "data-property": {
                     "Label": "S2",
-                    "IPv6Address": "2ab3:1b97:1294:9a9d:8369:739b:d83b:ccdf",
+                    "IPv6Address": "aedd:58df:8757:56b:fb22:50fe:c745:22b5",
                     "ServedIPv6Pref": "2",
                     "Description": "ServerS2"
                 },
@@ -95,7 +95,7 @@
                 "property-label": "Server",
                 "data-property": {
                     "Label": "S3",
-                    "IPv6Address": "7c1f:e777:b1ae:21e3:8c6e:a272:76ff:1d42",
+                    "IPv6Address": "10de:9cc6:4509:8a97:568:1170:f536:ad44",
                     "ServedIPv6Pref": "3",
                     "Description": "ServerS3"
                 },

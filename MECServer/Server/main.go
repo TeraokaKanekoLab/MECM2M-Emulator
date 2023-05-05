@@ -91,7 +91,7 @@ func main() {
 	)
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGALRM)
 	go func() {
 		<-quit
@@ -452,7 +452,7 @@ func m2mApi(conn net.Conn) {
 	}
 }
 
-//M2M Appと型同期をするための関数
+// M2M Appと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -495,7 +495,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//内部コンポーネント（DB，仮想モジュール）と型同期をするための関数
+// 内部コンポーネント（DB，仮想モジュール）と型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	m := &Format{}
 	switch command {
@@ -529,7 +529,7 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 	}
 }
 
-//PNode Manager Server
+// PNode Manager Server
 func pnodeMgr(conn net.Conn) {
 	defer conn.Close()
 
@@ -744,7 +744,7 @@ func pnodeMgr(conn net.Conn) {
 	}
 }
 
-//AAA Server
+// AAA Server
 func aaa(conn net.Conn) {
 	defer conn.Close()
 
@@ -812,7 +812,7 @@ func aaa(conn net.Conn) {
 	}
 }
 
-//GraphDB Server
+// GraphDB Server
 func graphDB(conn net.Conn) {
 	defer conn.Close()
 
@@ -845,7 +845,7 @@ func graphDB(conn net.Conn) {
 			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedWith]->(vp:VPoint) WHERE ps.Lat > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Lon > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Lat < ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Lon < ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return ps.PSinkID, vp.Address;"}]}`
 			//今後はクラウドサーバ用の分岐が必要
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
 			pss := []m2mapi.ResolvePoint{}
@@ -892,7 +892,7 @@ func graphDB(conn net.Conn) {
 			payload := `{"statements": [{"statement": "MATCH (ps:PSink {PSinkID: ` + vpointid_n + `})-[:requestsViaDevApi]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return pn.Capability, pn.PNodeID;"}]}`
 			//今後はクラウドサーバ用の分岐が必要
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
 			nds := []m2mapi.ResolveNode{}
@@ -926,7 +926,7 @@ func graphDB(conn net.Conn) {
 	}
 }
 
-//SensingDB Server
+// SensingDB Server
 func sensingDB(conn net.Conn) {
 	defer conn.Close()
 
@@ -957,7 +957,9 @@ func sensingDB(conn net.Conn) {
 			end = format.Period.End
 
 			//SensingDBを開く
-			DBConnection, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+			//"root:password@tcp(127.0.0.1:3306)/testdb"
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > PastNode > sql.Open")
 			}
@@ -969,7 +971,7 @@ func sensingDB(conn net.Conn) {
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM sensordata WHERE PNodeID = \"" + vnodeid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
+			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PNodeID = \"" + vnodeid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
@@ -1014,7 +1016,8 @@ func sensingDB(conn net.Conn) {
 			end = format.Period.End
 
 			//SensingDBを開く
-			DBConnection, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > PastNode > sql.Open")
 			}
@@ -1026,7 +1029,7 @@ func sensingDB(conn net.Conn) {
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM sensordata WHERE PSinkID = \"" + vpointid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
+			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PSinkID = \"" + vpointid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
@@ -1108,7 +1111,8 @@ func sensingDB(conn net.Conn) {
 			VPointID = format.VPointID
 
 			//SensingDBを開く
-			DBConnection, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > sql.Open")
 			}
@@ -1121,7 +1125,7 @@ func sensingDB(conn net.Conn) {
 
 			//PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
 			var cmd string
-			cmd = "INSERT INTO sensordata(PNodeID,Capability,Timestamp,Value,PSinkID,ServerID,Lat,Lon,VNodeID,VPointID) VALUES(?,?,?,?,?,?,?,?,?,?);"
+			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,ServerID,Lat,Lon,VNodeID,VPointID) VALUES(?,?,?,?,?,?,?,?,?,?);"
 
 			in, err := DBConnection.Prepare(cmd)
 			if err != nil {
@@ -1129,6 +1133,8 @@ func sensingDB(conn net.Conn) {
 			}
 			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID); errExec == nil {
 				message.MyMessage("Complete Data Registration!")
+			} else {
+				fmt.Println("Faild to register data", errExec)
 			}
 			in.Close()
 		}

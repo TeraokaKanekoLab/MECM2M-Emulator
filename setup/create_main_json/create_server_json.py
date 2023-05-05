@@ -83,21 +83,21 @@ with open(server_json, 'w') as f:
     json.dump(data, f, indent=4)
 
 #ソケットファイル群ファイルもここで作る
-socket_files_dir_path = os.getenv("PROJECT_PATH") + "MECServer/Server/socket_files"
+socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/Server/socket_files"
 if not os.path.exists(socket_files_dir_path):
     os.makedirs(socket_files_dir_path)
 
-for i in EDGE_SERVER_NUM:
+for i in range(EDGE_SERVER_NUM):
     socket_data = {
-        "m2mApi": "/tmp/mecm2m/svr_" + str(i) + "_m2mapi.sock",
-        "localMgr": "/tmp/mecm2m/svr_" + str(i) + "_localmgr.sock",
-        "pnodeMgr": "/tmp/mecm2m/svr_" + str(i) + "_pnodemgr.sock",
-        "aaa": "/tmp/mecm2m/svr_" + str(i) + "_aaa.sock",
-        "localRepo": "/tmp/mecm2m/svr_" + str(i) + "_localrepo.sock",
-        "graphDB": "/tmp/mecm2m/svr_" + str(i) + "_graphdb.sock",
-        "sensingDB": "/tmp/mecm2m/svr_" + str(i) + "_sensingdb.sock"
+        "m2mApi": "/tmp/mecm2m/svr_" + str(i+1) + "_m2mapi.sock",
+        "localMgr": "/tmp/mecm2m/svr_" + str(i+1) + "_localmgr.sock",
+        "pnodeMgr": "/tmp/mecm2m/svr_" + str(i+1) + "_pnodemgr.sock",
+        "aaa": "/tmp/mecm2m/svr_" + str(i+1) + "_aaa.sock",
+        "localRepo": "/tmp/mecm2m/svr_" + str(i+1) + "_localrepo.sock",
+        "graphDB": "/tmp/mecm2m/svr_" + str(i+1) + "_graphdb.sock",
+        "sensingDB": "/tmp/mecm2m/svr_" + str(i+1) + "_sensingdb.sock"
     }
-    socket_json = os.getenv("PROJECT_PATH") + "MECServer/Server/socket_files/server_" + str(i) + ".json"
+    socket_json = os.getenv("PROJECT_PATH") + "/MECServer/Server/socket_files/server_" + str(i+1) + ".json"
     with open(socket_json, 'w') as f:
         json.dump(socket_data, f, indent=4)
 

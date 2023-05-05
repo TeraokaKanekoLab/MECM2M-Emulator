@@ -13,8 +13,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_0",
                         "Position": [
-                            35.5304,
-                            139.5308
+                            35.5309,
+                            139.5302
                         ],
                         "Description": "PSinkPS1:0"
                     },
@@ -127,8 +127,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_1",
                         "Position": [
-                            35.5303,
-                            139.5315
+                            35.5306,
+                            139.5318
                         ],
                         "Description": "PSinkPS1:1"
                     },
@@ -241,8 +241,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_2",
                         "Position": [
-                            35.5303,
-                            139.5328
+                            35.5309,
+                            139.5321
                         ],
                         "Description": "PSinkPS1:2"
                     },
@@ -356,7 +356,7 @@
                         "PSinkID": "PS1_3",
                         "Position": [
                             35.5301,
-                            139.5331
+                            139.5332
                         ],
                         "Description": "PSinkPS1:3"
                     },
@@ -469,8 +469,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_4",
                         "Position": [
-                            35.5302,
-                            139.5347
+                            35.5306,
+                            139.535
                         ],
                         "Description": "PSinkPS1:4"
                     },
@@ -583,8 +583,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_5",
                         "Position": [
-                            35.5301,
-                            139.5355
+                            35.53,
+                            139.5356
                         ],
                         "Description": "PSinkPS1:5"
                     },
@@ -697,8 +697,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_6",
                         "Position": [
-                            35.5306,
-                            139.537
+                            35.5309,
+                            139.5361
                         ],
                         "Description": "PSinkPS1:6"
                     },
@@ -811,8 +811,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_7",
                         "Position": [
-                            35.5306,
-                            139.5371
+                            35.5308,
+                            139.5378
                         ],
                         "Description": "PSinkPS1:7"
                     },
@@ -925,7 +925,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_8",
                         "Position": [
-                            35.5308,
+                            35.5306,
                             139.5388
                         ],
                         "Description": "PSinkPS1:8"
@@ -1039,8 +1039,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_9",
                         "Position": [
-                            35.5309,
-                            139.5399
+                            35.5301,
+                            139.5393
                         ],
                         "Description": "PSinkPS1:9"
                     },
@@ -1153,8 +1153,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_10",
                         "Position": [
-                            35.5317,
-                            139.5307
+                            35.5313,
+                            139.531
                         ],
                         "Description": "PSinkPS1:10"
                     },
@@ -1267,8 +1267,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_11",
                         "Position": [
-                            35.5318,
-                            139.5313
+                            35.532,
+                            139.5315
                         ],
                         "Description": "PSinkPS1:11"
                     },
@@ -1381,8 +1381,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_12",
                         "Position": [
-                            35.532,
-                            139.5323
+                            35.5317,
+                            139.5322
                         ],
                         "Description": "PSinkPS1:12"
                     },
@@ -1495,8 +1495,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_13",
                         "Position": [
-                            35.532,
-                            139.5331
+                            35.5316,
+                            139.5337
                         ],
                         "Description": "PSinkPS1:13"
                     },
@@ -1609,8 +1609,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_14",
                         "Position": [
-                            35.5318,
-                            139.5341
+                            35.5311,
+                            139.5347
                         ],
                         "Description": "PSinkPS1:14"
                     },
@@ -1723,8 +1723,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_15",
                         "Position": [
-                            35.5312,
-                            139.536
+                            35.5314,
+                            139.5354
                         ],
                         "Description": "PSinkPS1:15"
                     },
@@ -1838,7 +1838,7 @@
                         "PSinkID": "PS1_16",
                         "Position": [
                             35.5313,
-                            139.5365
+                            139.5367
                         ],
                         "Description": "PSinkPS1:16"
                     },
@@ -1952,7 +1952,7 @@
                         "PSinkID": "PS1_17",
                         "Position": [
                             35.532,
-                            139.5372
+                            139.5371
                         ],
                         "Description": "PSinkPS1:17"
                     },
@@ -2066,7 +2066,7 @@
                         "PSinkID": "PS1_18",
                         "Position": [
                             35.5315,
-                            139.5387
+                            139.539
                         ],
                         "Description": "PSinkPS1:18"
                     },
@@ -2179,8 +2179,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_19",
                         "Position": [
-                            35.5311,
-                            139.539
+                            35.5318,
+                            139.54
                         ],
                         "Description": "PSinkPS1:19"
                     },
@@ -2293,8 +2293,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_20",
                         "Position": [
-                            35.5329,
-                            139.5306
+                            35.5326,
+                            139.5303
                         ],
                         "Description": "PSinkPS1:20"
                     },
@@ -2407,8 +2407,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_21",
                         "Position": [
-                            35.5321,
-                            139.5311
+                            35.5329,
+                            139.5318
                         ],
                         "Description": "PSinkPS1:21"
                     },
@@ -2521,8 +2521,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_22",
                         "Position": [
-                            35.5326,
-                            139.5321
+                            35.5324,
+                            139.5327
                         ],
                         "Description": "PSinkPS1:22"
                     },
@@ -2635,7 +2635,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_23",
                         "Position": [
-                            35.533,
+                            35.532,
                             139.5331
                         ],
                         "Description": "PSinkPS1:23"
@@ -2750,7 +2750,7 @@
                         "PSinkID": "PS1_24",
                         "Position": [
                             35.533,
-                            139.5342
+                            139.5346
                         ],
                         "Description": "PSinkPS1:24"
                     },
@@ -2863,8 +2863,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_25",
                         "Position": [
-                            35.5326,
-                            139.5356
+                            35.5325,
+                            139.5352
                         ],
                         "Description": "PSinkPS1:25"
                     },
@@ -2977,8 +2977,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_26",
                         "Position": [
-                            35.5326,
-                            139.536
+                            35.5321,
+                            139.5362
                         ],
                         "Description": "PSinkPS1:26"
                     },
@@ -3091,8 +3091,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_27",
                         "Position": [
-                            35.5326,
-                            139.5377
+                            35.5329,
+                            139.5372
                         ],
                         "Description": "PSinkPS1:27"
                     },
@@ -3205,8 +3205,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_28",
                         "Position": [
-                            35.5327,
-                            139.5381
+                            35.5329,
+                            139.5388
                         ],
                         "Description": "PSinkPS1:28"
                     },
@@ -3319,8 +3319,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_29",
                         "Position": [
-                            35.5327,
-                            139.5396
+                            35.5323,
+                            139.539
                         ],
                         "Description": "PSinkPS1:29"
                     },
@@ -3433,7 +3433,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_30",
                         "Position": [
-                            35.5339,
+                            35.5335,
                             139.5305
                         ],
                         "Description": "PSinkPS1:30"
@@ -3548,7 +3548,7 @@
                         "PSinkID": "PS1_31",
                         "Position": [
                             35.534,
-                            139.531
+                            139.5316
                         ],
                         "Description": "PSinkPS1:31"
                     },
@@ -3661,8 +3661,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS1_32",
                         "Position": [
-                            35.5331,
-                            139.5322
+                            35.534,
+                            139.5326
                         ],
                         "Description": "PSinkPS1:32"
                     },
@@ -3775,8 +3775,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_0",
                         "Position": [
-                            35.5333,
-                            139.5336
+                            35.5337,
+                            139.5333
                         ],
                         "Description": "PSinkPS2:0"
                     },
@@ -3889,8 +3889,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_1",
                         "Position": [
-                            35.5338,
-                            139.5349
+                            35.5335,
+                            139.5343
                         ],
                         "Description": "PSinkPS2:1"
                     },
@@ -4117,8 +4117,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_3",
                         "Position": [
-                            35.5334,
-                            139.536
+                            35.534,
+                            139.5363
                         ],
                         "Description": "PSinkPS2:3"
                     },
@@ -4231,8 +4231,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_4",
                         "Position": [
-                            35.5333,
-                            139.5376
+                            35.5338,
+                            139.5372
                         ],
                         "Description": "PSinkPS2:4"
                     },
@@ -4345,8 +4345,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_5",
                         "Position": [
-                            35.5339,
-                            139.5389
+                            35.5338,
+                            139.5387
                         ],
                         "Description": "PSinkPS2:5"
                     },
@@ -4459,7 +4459,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_6",
                         "Position": [
-                            35.5333,
+                            35.5338,
                             139.5391
                         ],
                         "Description": "PSinkPS2:6"
@@ -4573,8 +4573,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_7",
                         "Position": [
-                            35.535,
-                            139.5301
+                            35.5346,
+                            139.5306
                         ],
                         "Description": "PSinkPS2:7"
                     },
@@ -4687,8 +4687,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_8",
                         "Position": [
-                            35.5345,
-                            139.5314
+                            35.5346,
+                            139.5313
                         ],
                         "Description": "PSinkPS2:8"
                     },
@@ -4801,8 +4801,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_9",
                         "Position": [
-                            35.5345,
-                            139.5321
+                            35.5346,
+                            139.5327
                         ],
                         "Description": "PSinkPS2:9"
                     },
@@ -4915,8 +4915,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_10",
                         "Position": [
-                            35.5348,
-                            139.5334
+                            35.5349,
+                            139.5332
                         ],
                         "Description": "PSinkPS2:10"
                     },
@@ -5029,8 +5029,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_11",
                         "Position": [
-                            35.5347,
-                            139.5342
+                            35.5345,
+                            139.5348
                         ],
                         "Description": "PSinkPS2:11"
                     },
@@ -5143,8 +5143,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_12",
                         "Position": [
-                            35.5348,
-                            139.5358
+                            35.5347,
+                            139.5353
                         ],
                         "Description": "PSinkPS2:12"
                     },
@@ -5257,7 +5257,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_13",
                         "Position": [
-                            35.5341,
+                            35.5343,
                             139.5361
                         ],
                         "Description": "PSinkPS2:13"
@@ -5371,8 +5371,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_14",
                         "Position": [
-                            35.5342,
-                            139.5373
+                            35.5346,
+                            139.5371
                         ],
                         "Description": "PSinkPS2:14"
                     },
@@ -5486,7 +5486,7 @@
                         "PSinkID": "PS2_15",
                         "Position": [
                             35.5349,
-                            139.5386
+                            139.5388
                         ],
                         "Description": "PSinkPS2:15"
                     },
@@ -5599,8 +5599,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_16",
                         "Position": [
-                            35.5346,
-                            139.5398
+                            35.5343,
+                            139.5392
                         ],
                         "Description": "PSinkPS2:16"
                     },
@@ -5713,8 +5713,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_17",
                         "Position": [
-                            35.5352,
-                            139.5302
+                            35.5353,
+                            139.5301
                         ],
                         "Description": "PSinkPS2:17"
                     },
@@ -5827,8 +5827,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_18",
                         "Position": [
-                            35.5357,
-                            139.5311
+                            35.535,
+                            139.5315
                         ],
                         "Description": "PSinkPS2:18"
                     },
@@ -5941,7 +5941,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_19",
                         "Position": [
-                            35.5353,
+                            35.5357,
                             139.5321
                         ],
                         "Description": "PSinkPS2:19"
@@ -6055,8 +6055,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_20",
                         "Position": [
-                            35.5354,
-                            139.5336
+                            35.5358,
+                            139.5338
                         ],
                         "Description": "PSinkPS2:20"
                     },
@@ -6169,8 +6169,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_21",
                         "Position": [
-                            35.5355,
-                            139.5348
+                            35.5358,
+                            139.5349
                         ],
                         "Description": "PSinkPS2:21"
                     },
@@ -6284,7 +6284,7 @@
                         "PSinkID": "PS2_22",
                         "Position": [
                             35.5352,
-                            139.5352
+                            139.5358
                         ],
                         "Description": "PSinkPS2:22"
                     },
@@ -6397,8 +6397,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_23",
                         "Position": [
-                            35.535,
-                            139.5368
+                            35.5356,
+                            139.5363
                         ],
                         "Description": "PSinkPS2:23"
                     },
@@ -6511,8 +6511,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_24",
                         "Position": [
-                            35.5353,
-                            139.5379
+                            35.5359,
+                            139.5372
                         ],
                         "Description": "PSinkPS2:24"
                     },
@@ -6625,8 +6625,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_25",
                         "Position": [
-                            35.5355,
-                            139.5382
+                            35.5357,
+                            139.5386
                         ],
                         "Description": "PSinkPS2:25"
                     },
@@ -6739,8 +6739,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_26",
                         "Position": [
-                            35.536,
-                            139.5397
+                            35.5355,
+                            139.539
                         ],
                         "Description": "PSinkPS2:26"
                     },
@@ -6853,8 +6853,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_27",
                         "Position": [
-                            35.5366,
-                            139.5305
+                            35.537,
+                            139.5309
                         ],
                         "Description": "PSinkPS2:27"
                     },
@@ -6967,8 +6967,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_28",
                         "Position": [
-                            35.5361,
-                            139.5317
+                            35.537,
+                            139.5312
                         ],
                         "Description": "PSinkPS2:28"
                     },
@@ -7081,8 +7081,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_29",
                         "Position": [
-                            35.5363,
-                            139.5326
+                            35.5364,
+                            139.5323
                         ],
                         "Description": "PSinkPS2:29"
                     },
@@ -7195,8 +7195,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_30",
                         "Position": [
-                            35.5361,
-                            139.5335
+                            35.5366,
+                            139.5337
                         ],
                         "Description": "PSinkPS2:30"
                     },
@@ -7309,8 +7309,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS2_31",
                         "Position": [
-                            35.5367,
-                            139.5347
+                            35.5368,
+                            139.5348
                         ],
                         "Description": "PSinkPS2:31"
                     },
@@ -7424,7 +7424,7 @@
                         "PSinkID": "PS2_32",
                         "Position": [
                             35.5369,
-                            139.5354
+                            139.5358
                         ],
                         "Description": "PSinkPS2:32"
                     },
@@ -7537,8 +7537,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_0",
                         "Position": [
-                            35.5365,
-                            139.5364
+                            35.5369,
+                            139.5362
                         ],
                         "Description": "PSinkPS3:0"
                     },
@@ -7652,7 +7652,7 @@
                         "PSinkID": "PS3_1",
                         "Position": [
                             35.5367,
-                            139.5378
+                            139.5379
                         ],
                         "Description": "PSinkPS3:1"
                     },
@@ -7765,8 +7765,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_2",
                         "Position": [
-                            35.5368,
-                            139.5386
+                            35.5367,
+                            139.5387
                         ],
                         "Description": "PSinkPS3:2"
                     },
@@ -7879,8 +7879,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_3",
                         "Position": [
-                            35.537,
-                            139.5395
+                            35.5362,
+                            139.5393
                         ],
                         "Description": "PSinkPS3:3"
                     },
@@ -7993,8 +7993,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_4",
                         "Position": [
-                            35.5378,
-                            139.5307
+                            35.5372,
+                            139.5304
                         ],
                         "Description": "PSinkPS3:4"
                     },
@@ -8107,8 +8107,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_5",
                         "Position": [
-                            35.5373,
-                            139.5318
+                            35.538,
+                            139.5314
                         ],
                         "Description": "PSinkPS3:5"
                     },
@@ -8221,8 +8221,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_6",
                         "Position": [
-                            35.5377,
-                            139.5328
+                            35.5372,
+                            139.533
                         ],
                         "Description": "PSinkPS3:6"
                     },
@@ -8335,8 +8335,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_7",
                         "Position": [
-                            35.5374,
-                            139.534
+                            35.5377,
+                            139.5337
                         ],
                         "Description": "PSinkPS3:7"
                     },
@@ -8449,8 +8449,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_8",
                         "Position": [
-                            35.5372,
-                            139.5346
+                            35.5373,
+                            139.5341
                         ],
                         "Description": "PSinkPS3:8"
                     },
@@ -8563,8 +8563,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_9",
                         "Position": [
-                            35.538,
-                            139.536
+                            35.5376,
+                            139.5356
                         ],
                         "Description": "PSinkPS3:9"
                     },
@@ -8678,7 +8678,7 @@
                         "PSinkID": "PS3_10",
                         "Position": [
                             35.5378,
-                            139.5362
+                            139.5369
                         ],
                         "Description": "PSinkPS3:10"
                     },
@@ -8792,7 +8792,7 @@
                         "PSinkID": "PS3_11",
                         "Position": [
                             35.537,
-                            139.5371
+                            139.5375
                         ],
                         "Description": "PSinkPS3:11"
                     },
@@ -8905,8 +8905,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_12",
                         "Position": [
-                            35.5378,
-                            139.539
+                            35.5371,
+                            139.5387
                         ],
                         "Description": "PSinkPS3:12"
                     },
@@ -9019,8 +9019,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_13",
                         "Position": [
-                            35.5377,
-                            139.539
+                            35.5371,
+                            139.5393
                         ],
                         "Description": "PSinkPS3:13"
                     },
@@ -9133,8 +9133,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_14",
                         "Position": [
-                            35.5383,
-                            139.5303
+                            35.5387,
+                            139.5305
                         ],
                         "Description": "PSinkPS3:14"
                     },
@@ -9247,8 +9247,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_15",
                         "Position": [
-                            35.5385,
-                            139.5314
+                            35.5389,
+                            139.531
                         ],
                         "Description": "PSinkPS3:15"
                     },
@@ -9361,8 +9361,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_16",
                         "Position": [
-                            35.5389,
-                            139.5329
+                            35.5387,
+                            139.533
                         ],
                         "Description": "PSinkPS3:16"
                     },
@@ -9475,8 +9475,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_17",
                         "Position": [
-                            35.5386,
-                            139.5337
+                            35.5387,
+                            139.5338
                         ],
                         "Description": "PSinkPS3:17"
                     },
@@ -9589,8 +9589,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_18",
                         "Position": [
-                            35.5389,
-                            139.5348
+                            35.5382,
+                            139.534
                         ],
                         "Description": "PSinkPS3:18"
                     },
@@ -9703,8 +9703,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_19",
                         "Position": [
-                            35.538,
-                            139.5354
+                            35.5384,
+                            139.536
                         ],
                         "Description": "PSinkPS3:19"
                     },
@@ -9817,8 +9817,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_20",
                         "Position": [
-                            35.5389,
-                            139.5368
+                            35.538,
+                            139.5366
                         ],
                         "Description": "PSinkPS3:20"
                     },
@@ -9931,8 +9931,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_21",
                         "Position": [
-                            35.5389,
-                            139.5376
+                            35.5381,
+                            139.5371
                         ],
                         "Description": "PSinkPS3:21"
                     },
@@ -10045,8 +10045,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_22",
                         "Position": [
-                            35.5384,
-                            139.5388
+                            35.5382,
+                            139.5381
                         ],
                         "Description": "PSinkPS3:22"
                     },
@@ -10159,8 +10159,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_23",
                         "Position": [
-                            35.5382,
-                            139.5393
+                            35.5388,
+                            139.5392
                         ],
                         "Description": "PSinkPS3:23"
                     },
@@ -10274,7 +10274,7 @@
                         "PSinkID": "PS3_24",
                         "Position": [
                             35.5395,
-                            139.5303
+                            139.5301
                         ],
                         "Description": "PSinkPS3:24"
                     },
@@ -10387,8 +10387,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_25",
                         "Position": [
-                            35.5399,
-                            139.5319
+                            35.5398,
+                            139.5318
                         ],
                         "Description": "PSinkPS3:25"
                     },
@@ -10501,7 +10501,7 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_26",
                         "Position": [
-                            35.5399,
+                            35.5391,
                             139.5323
                         ],
                         "Description": "PSinkPS3:26"
@@ -10615,8 +10615,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_27",
                         "Position": [
-                            35.5395,
-                            139.534
+                            35.5399,
+                            139.5333
                         ],
                         "Description": "PSinkPS3:27"
                     },
@@ -10729,8 +10729,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_28",
                         "Position": [
-                            35.54,
-                            139.5348
+                            35.5395,
+                            139.535
                         ],
                         "Description": "PSinkPS3:28"
                     },
@@ -10843,8 +10843,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_29",
                         "Position": [
-                            35.5392,
-                            139.536
+                            35.5399,
+                            139.5357
                         ],
                         "Description": "PSinkPS3:29"
                     },
@@ -10957,8 +10957,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_30",
                         "Position": [
-                            35.5396,
-                            139.5365
+                            35.5394,
+                            139.5363
                         ],
                         "Description": "PSinkPS3:30"
                     },
@@ -11071,8 +11071,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_31",
                         "Position": [
-                            35.5397,
-                            139.5376
+                            35.5396,
+                            139.5372
                         ],
                         "Description": "PSinkPS3:31"
                     },
@@ -11185,8 +11185,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_32",
                         "Position": [
-                            35.5393,
-                            139.5384
+                            35.539,
+                            139.5388
                         ],
                         "Description": "PSinkPS3:32"
                     },
@@ -11299,8 +11299,8 @@
                         "ServingIPv6Address": "",
                         "PSinkID": "PS3_33",
                         "Position": [
-                            35.5398,
-                            139.5399
+                            35.5396,
+                            139.5393
                         ],
                         "Description": "PSinkPS3:33"
                     },

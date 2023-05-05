@@ -64,7 +64,7 @@ func MyExit(command string, processIds []int) {
 
 		// 2. GraphDB, SensingDBのレコード削除
 		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/clear_DB/clear_GraphDB.py"
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/GraphDB/clear_GraphDB.py"
 		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
 		errCmdGraphDB := cmdGraphDB.Run()
 		if errCmdGraphDB != nil {

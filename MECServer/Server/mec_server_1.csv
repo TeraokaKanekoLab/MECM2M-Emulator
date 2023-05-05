@@ -1,0 +1,7 @@
+m2mApi,/tmp/mecm2m/svr_1_m2mapi.sock
+localMgr,/tmp/mecm2m/svr_1_localmgr.sock
+pnodeMgr,/tmp/mecm2m/svr_1_pnodemgr.sock
+aaa,/tmp/mecm2m/svr_1_aaa.sock
+localRepo,/tmp/mecm2m/svr_1_localrepo.sock
+graphDB,/tmp/mecm2m/svr_1_graphdb.sock
+sensingDB,/tmp/mecm2m/svr_1_sensingdb.sock

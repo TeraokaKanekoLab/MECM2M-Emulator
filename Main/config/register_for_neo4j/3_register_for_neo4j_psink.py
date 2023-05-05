@@ -11,7 +11,7 @@ graph = Graph(url, auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"
 tx = graph.begin()
 
 args = sys.argv
-json_file = os.getenv("PROJECT_PATH") + "/Main/config/json_files/config_main_psink.json"
+json_file = os.getenv("HOME") + os.getenv("PROJECT_PATH") + "/Main/config/json_files/config_main_psink.json"
 with open(json_file) as f:
     data = json.load(f)
 

@@ -17,6 +17,8 @@ import (
 
 	"mecm2m-Simulator/pkg/m2mapi"
 	"mecm2m-Simulator/pkg/message"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -74,6 +76,10 @@ type Config struct {
 }
 
 func main() {
+	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
+		fmt.Println("There is no ~/.env file")
+	}
+
 	// 1. 各インスタンスの登録・socketファイルの準備
 	//config/register_for_neo4jの実行
 	/*
@@ -99,18 +105,19 @@ func main() {
 			panic(err)
 		}
 	*/
+
 	// 2. 各プロセスファイルの実行
 	// 実行系ファイルをまとめたconfigファイルを読み込む
 	config_exec_file := "./config/json_files/config_main_exec_file.json"
 	file, err := ioutil.ReadFile(config_exec_file)
 	if err != nil {
-		panic(err)
+		log.Fatal("readfile ", err)
 	}
 
 	var config Config
 
 	if err := json.Unmarshal(file, &config); err != nil {
-		panic(err)
+		log.Fatal("unmarshal ", err)
 	}
 
 	//各プロセスのプロセス番号を配列に格納しておくことで，Mainプロセスを抜けるときに，まとめておいたプロセス番号のプロセスを一斉削除できる
@@ -126,7 +133,8 @@ func main() {
 		//vmnode_exec_file := mec_server.VMNode
 		fmt.Println("----------")
 
-		cmdServer := exec.Command(server_exec_file) //2023-05-05 ソケットファイルの指定が必須 (フルパス)
+		cmdServer := exec.Command(server_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/Server/socket_files/server_1.json") //2023-05-05 ソケットファイルの指定が必須 (フルパス)
+		//cmdServer := exec.Command("pwd")
 		errCmdServer := cmdServer.Start()
 		if errCmdServer != nil {
 			log.Fatal(err)
@@ -232,7 +240,6 @@ func main() {
 
 		processIds = append(processIds, cmdPSNode.Process.Pid)
 	}
-
 	fmt.Println("Process IDs: ", processIds)
 
 	//main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
@@ -307,7 +314,7 @@ func ticker() {
 	}
 }
 
-//入力したコマンドに対応するAPIの入力内容を取得
+// 入力したコマンドに対応するAPIの入力内容を取得
 func loadInput(command string) []string {
 	var file string
 	var options []string
