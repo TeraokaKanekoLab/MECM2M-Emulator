@@ -1,0 +1,40 @@
+{
+    "mec-servers": {
+        "environment": {
+            "num": 1
+        },
+        "mec-server": [
+            {
+                "Server": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/Server/main",
+                "VPoint": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VPoint/main",
+                "VSNode": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VSNode/main",
+                "vmnode": "/Users/sawadarenpei/mecm2m-Simulator/MECServer/VMNode/main"
+            }
+        ]
+    },
+    "pmnodes": {
+        "environment": {
+            "num": 1
+        },
+        "pmnode": [
+            {
+                "MServer": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/MServer/main",
+                "VPoint": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/VPoint/main",
+                "VSNode": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/VSNode/main",
+                "PSNode": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/PSNode/main",
+                "MServer-config-file": "/Users/sawadarenpei/mecm2m-Simulator/PMNode/MServer/config.json"
+            }
+        ]
+    },
+    "psnodes": {
+        "environment": {
+            "num": 1
+        },
+        "psnode": [
+            {
+                "PSNode": "/Users/sawadarenpei/mecm2m-Simulator/PSNode/main",
+                "config-file": "/Users/sawadarenpei/mecm2m-Simulator/PSNode/config.json"
+            }
+        ]
+    }
+}
