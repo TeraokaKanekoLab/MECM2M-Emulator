@@ -1,6 +1,6 @@
 # !/bin/bash
 
-#MYSQLをインストールしてから，インストールを始める前に，SensingDBにデータベースとテーブルとインデックスを付与する
+# MYSQLをインストールしてから，インストールを始める前に，SensingDBにデータベースとテーブルとインデックスを付与する
 printf "\e[1;31m \n *** CREATE DATABASE, TABLE AND INDEX IN MYSQL *** \e[0m"
 
 # ホーム下に用意した.envファイルを読み込む

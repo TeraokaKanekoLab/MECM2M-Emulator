@@ -3,16 +3,20 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mecm2m-Simulator/pkg/m2mapi"
 	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Simulator/pkg/vpoint"
 	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"strconv"
 	"sync"
+	"syscall"
 )
 
 const (
@@ -35,13 +39,44 @@ func cleanup(socketFiles ...string) {
 }
 
 func main() {
+	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
+	if len(os.Args) != 2 {
+		fmt.Println("There is no socket files")
+		os.Exit(1)
+	}
+
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
+
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
+
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
+	socket_file_name := os.Args[1]
+	data, err := ioutil.ReadFile(socket_file_name)
+	if err != nil {
+		message.MyError(err, "Failed to read socket file")
+	}
+
+	var socket_files vpoint.VPointSocketFiles
+
+	if err := json.Unmarshal(data, &socket_files); err != nil {
+		message.MyError(err, "Failed to unmarshal json")
+	}
+
 	//VPointをいくつか用意しておく
 	var socketFiles []string
-	socketFiles = append(socketFiles, "/tmp/mecm2m/vpoint_1_0001.sock", "/tmp/mecm2m/vpoint_1_0002.sock", "/tmp/mecm2m/vpoint_1_0003.sock")
+	socketFiles = append(socketFiles, socket_files.VPoints...)
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -78,12 +113,12 @@ func initialize(file string, gids chan uint64, wg *sync.WaitGroup) {
 			message.MyError(err, "initialize > listener.Accept")
 			break
 		}
-		go vpoint(conn, gid)
+		go vpoints(conn, gid)
 	}
 }
 
-//過去データ取得，現在データ取得，充足条件データ取得
-func vpoint(conn net.Conn, gid uint64) {
+// 過去データ取得，現在データ取得，充足条件データ取得
+func vpoints(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
 	decoder := gob.NewDecoder(conn)
@@ -237,7 +272,7 @@ LOOP:
 	}
 }
 
-//M2M APIと型同期をするための関数
+// M2M APIと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -262,7 +297,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//SensingDB, PSNode, PMNodeと型同期をするための関数
+// SensingDB, PSNode, PMNodeと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	m := &Format{}
 	switch command {

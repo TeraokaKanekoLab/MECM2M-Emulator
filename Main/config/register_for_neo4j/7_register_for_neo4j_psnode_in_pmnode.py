@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-url = "bolt://localhost:" + os.getenv("NEO4J_PORT")
+url = "bolt://localhost:" + os.getenv("NEO4J_PORT_PYTHON")
 graph = Graph(url, auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")))
 
 tx = graph.begin()

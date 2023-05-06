@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -81,7 +80,7 @@ func main() {
 	}
 
 	// 1. 各インスタンスの登録・socketファイルの準備
-	//config/register_for_neo4jの実行
+	// config/register_for_neo4jの実行
 	/*
 		err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -89,7 +88,7 @@ func main() {
 			}
 
 			if !info.IsDir() {
-				//ファイルの抽出
+				// ファイルの抽出
 				cmd := exec.Command("python3", path)
 				output, err := cmd.CombinedOutput()
 				if err != nil {
@@ -111,19 +110,19 @@ func main() {
 	config_exec_file := "./config/json_files/config_main_exec_file.json"
 	file, err := ioutil.ReadFile(config_exec_file)
 	if err != nil {
-		log.Fatal("readfile ", err)
+		message.MyError(err, "Failed to read config file for exec file")
 	}
 
 	var config Config
 
 	if err := json.Unmarshal(file, &config); err != nil {
-		log.Fatal("unmarshal ", err)
+		message.MyError(err, "Failed to unmarshal json")
 	}
 
-	//各プロセスのプロセス番号を配列に格納しておくことで，Mainプロセスを抜けるときに，まとめておいたプロセス番号のプロセスを一斉削除できる
+	// 各プロセスのプロセス番号を配列に格納しておくことで，Mainプロセスを抜けるときに，まとめておいたプロセス番号のプロセスを一斉削除できる
 	processIds := []int{}
 
-	//MEC Serverフレームワークの実行
+	// MEC Serverフレームワークの実行
 	//mec_server_num := config.MecServers.Environment.Num
 
 	for _, mec_server := range config.MecServers.MecServer {
@@ -133,27 +132,27 @@ func main() {
 		//vmnode_exec_file := mec_server.VMNode
 		fmt.Println("----------")
 
-		cmdServer := exec.Command(server_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/Server/socket_files/server_1.json") //2023-05-05 ソケットファイルの指定が必須 (フルパス)
+		cmdServer := exec.Command(server_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/Server/socket_files/server_1.json") // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
 		//cmdServer := exec.Command("pwd")
 		errCmdServer := cmdServer.Start()
 		if errCmdServer != nil {
-			log.Fatal(err)
+			message.MyError(err, "exec.Command > MEC Server > Start")
 		} else {
 			fmt.Println(server_exec_file, " is running")
 		}
 
-		cmdVPoint := exec.Command(vpoint_exec_file)
+		cmdVPoint := exec.Command(vpoint_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/VPoint/socket_files/vpoint.json") // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
 		errCmdVPoint := cmdVPoint.Start()
 		if errCmdVPoint != nil {
-			log.Fatal(err)
+			message.MyError(err, "exec.Command > MEC VPoint > Start")
 		} else {
 			fmt.Println(vpoint_exec_file, " is running")
 		}
 
-		cmdVSNode := exec.Command(vsnode_exec_file)
+		cmdVSNode := exec.Command(vsnode_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/VSNode/socket_files/vsnode.json") // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
 		errCmdVSNode := cmdVSNode.Start()
 		if errCmdVSNode != nil {
-			log.Fatal(err)
+			message.MyError(err, "exec.Command > MEC VSNode > Start")
 		} else {
 			fmt.Println(vsnode_exec_file, " is running")
 		}
@@ -162,7 +161,7 @@ func main() {
 			cmdVMNode := exec.Command(vmnode_exec_file)
 			errCmdVMNode := cmdVMNode.Start()
 			if errCmdVMNode != nil {
-				log.Fatal(err)
+				message.MyError(err, "exec.Command > MEC VMNode > Start")
 			} else {
 				fmt.Println(vmnode_exec_file, " is running")
 			}
@@ -171,7 +170,7 @@ func main() {
 		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
 	}
 
-	//PMNodeフレームワークの実行
+	// PMNodeフレームワークの実行
 	//pmnode_num := config.PmNodes.Environment.Num
 	/*
 		for _, pmnode := range config.PmNodes.PmNode {
@@ -185,7 +184,7 @@ func main() {
 			cmdMServer := exec.Command(mserver_exec_file)
 			errCmdMServer := cmdMServer.Start()
 			if errCmdMServer != nil {
-				log.Fatal(err)
+				message.MyError(err, "exec.Command > PMNode MServer > Start")
 			} else {
 				fmt.Println(mserver_exec_file, " is running")
 			}
@@ -193,7 +192,7 @@ func main() {
 			cmdVPoint := exec.Command(vpoint_exec_file)
 			errCmdVPoint := cmdVPoint.Start()
 			if errCmdVPoint != nil {
-				log.Fatal(err)
+				message.MyError(err, "exec.Command > PMNode VPoint > Start")
 			} else {
 				fmt.Println(vpoint_exec_file, " is running")
 			}
@@ -201,7 +200,7 @@ func main() {
 			cmdVSNode := exec.Command(vsnode_exec_file)
 			errCmdVSNode := cmdVSNode.Start()
 			if errCmdVSNode != nil {
-				log.Fatal(err)
+				message.MyError(err, "exec.Command > PMNode VSNode > Start")
 			} else {
 				fmt.Println(vsnode_exec_file, " is running")
 			}
@@ -209,7 +208,7 @@ func main() {
 			cmdPSNode := exec.Command(psnode_exec_file)
 			errCmdPSNode := cmdPSNode.Start()
 			if errCmdPSNode != nil {
-				log.Fatal(err)
+				message.MyError(err, "exec.Command > PMNode PSNode > Start")
 			} else {
 				fmt.Println(psnode_exec_file, " is running")
 			}
@@ -220,7 +219,7 @@ func main() {
 		}
 	*/
 
-	//PSNodeフレームワークの実行
+	// PSNodeフレームワークの実行
 	//psnode_num := config.PsNodes.Environment.Num
 
 	for _, psnode := range config.PsNodes.PsNode {
@@ -231,7 +230,7 @@ func main() {
 		cmdPSNode := exec.Command(psnode_exec_file)
 		errCmdPSNode := cmdPSNode.Start()
 		if errCmdPSNode != nil {
-			log.Fatal(err)
+			message.MyError(err, "exec.Command > PSNode > Start")
 		} else {
 			fmt.Println(psnode_exec_file, " is running")
 		}
@@ -242,17 +241,21 @@ func main() {
 	}
 	fmt.Println("Process IDs: ", processIds)
 
-	//main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
+	// main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
 
-	//ファイルを引数にとるようなデバイス登録を実行する関数を作る．その際，ファイルを指定する
-	//コマンドラインで待機しながら，プログラム開始からの時間を計測し配布することができない <- ticker() により解決
-	go ticker()
+	// ファイルを引数にとるようなデバイス登録を実行する関数を作る．その際，ファイルを指定する
+	// コマンドラインで待機しながら，プログラム開始からの時間を計測し配布することができない <- ticker() により解決
+	inputChan := make(chan string)
+	go ticker(inputChan)
 	for {
 		// クライアントがコマンドを入力
 		var command string
 		fmt.Printf("input command > ")
 		fmt.Scan(&command)
-		message.MyExit(command, processIds)
+		// APIを叩く以外のコマンドを制御
+		if commandBasicExecution(command, processIds, inputChan) {
+			continue
+		}
 
 		options := loadInput(command)
 		sockAddr := selectSocketFile(command)
@@ -265,16 +268,18 @@ func main() {
 		encoder := gob.NewEncoder(conn)
 		// commandExecutionする前に，Server側と型の同期を取りたい
 		syncFormatClient(command, decoder, encoder)
-		commandExecution(command, decoder, encoder, options)
+		// APIを叩くコマンドを制御
+		commandAPIExecution(command, decoder, encoder, options)
 	}
 }
 
-func ticker() {
-	//時間間隔指定
+func ticker(inputChan chan string) {
+	<-inputChan
+	// 時間間隔指定
 	t := time.NewTicker(10 * time.Second)
 	defer t.Stop()
 
-	//シグナル受信用チャネル
+	// シグナル受信用チャネル
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer signal.Stop(sig)
@@ -282,7 +287,7 @@ func ticker() {
 	for {
 		select {
 		case now := <-t.C:
-			//現在時刻(now)の送信
+			// 現在時刻(now)の送信
 			conn, err := net.Dial(protocol, timeSock)
 			if err != nil {
 				message.MyError(err, "ticker > net.Dial")
@@ -299,11 +304,11 @@ func ticker() {
 				message.MyError(err, "ticker > encoder.Encode")
 			}
 
-			//現在時刻を受信できたかどうかを受信
+			// 現在時刻を受信できたかどうかを受信
 			if err := decoder.Decode(m); err != nil {
 				message.MyError(err, "ticker > decoder.Decode")
 			}
-		//シグナルを受信した場合
+		// シグナルを受信した場合
 		case s := <-sig:
 			switch s {
 			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
@@ -392,8 +397,72 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 	}
 }
 
-// 入力したコマンドに応じて，送受信するメッセージの内容を選択
-func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder, options []string) {
+// APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)
+func commandBasicExecution(command string, processIds []int, inputChan chan string) bool {
+	flag := true
+	switch command {
+	// シミュレーションの実行
+	case "start":
+		inputChan <- "start"
+		for _, pid := range processIds {
+			process, err := os.FindProcess(pid)
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > start > os.FindProcess")
+			}
+
+			if err := process.Signal(syscall.Signal(syscall.SIGCONT)); err != nil {
+				message.MyError(err, "commandBasicExecution > start > process.Signal")
+			}
+		}
+		message.MyMessage("Simulating...")
+		return flag
+	// シミュレーションの終了
+	case "exit":
+		// 1. 各プロセスの削除
+		for _, pid := range processIds {
+			process, err := os.FindProcess(pid)
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > os.FindProcess")
+			}
+
+			err = process.Signal(os.Interrupt)
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > process.Signal")
+			} else {
+				fmt.Printf("process (%d) is killed\n", pid)
+			}
+		}
+
+		// 2-0. パスを入手
+		err := godotenv.Load(os.Getenv("HOME") + "/.env")
+		if err != nil {
+			message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
+		}
+
+		// 2. GraphDB, SensingDBのレコード削除
+		// GraphDB
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/GraphDB/clear_GraphDB.py"
+		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
+		}
+
+		// SensingDB
+		// hoge
+
+		message.MyMessage("Bye")
+		os.Exit(0)
+	default:
+		flag = false
+		return flag
+	}
+
+	return flag
+}
+
+// APIを叩くコマンドの実行
+func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder, options []string) {
 	switch command {
 	case "point":
 		var swlat, swlon, nelat, nelon float64
@@ -406,14 +475,14 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			NE: m2mapi.SquarePoint{Lat: nelat, Lon: nelon},
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > point > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > point > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
+		// ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
 		ms := []m2mapi.ResolvePoint{}
 		if err := decoder.Decode(&ms); err != nil {
-			message.MyError(err, "commandExecution > point > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > point > decoder.Decode")
 		}
 		message.MyReadMessage(ms)
 	case "node":
@@ -431,14 +500,14 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			CapsInput:  Caps,
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > node > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > node > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ノード解決の結果を受信する（PNodeのVNodeID_n, Cap）
+		// ノード解決の結果を受信する（PNodeのVNodeID_n, Cap）
 		ms := []m2mapi.ResolveNode{}
 		if err := decoder.Decode(&ms); err != nil {
-			message.MyError(err, "commandExecution > node > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > node > decoder.Decode")
 		}
 		message.MyReadMessage(ms)
 	case "past_node":
@@ -453,13 +522,13 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			Period:     m2mapi.PeriodInput{Start: Start, End: End},
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > past_node > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > past_node > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ノードの過去データ解決を受信する（Value, Cap, Time）
+		// ノードの過去データ解決を受信する（Value, Cap, Time）
 		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "commandExecution > past_node > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > past_node > decoder.Decode")
 		}
 		message.MyReadMessage(m)
 	case "past_point":
@@ -474,13 +543,13 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			Period:     m2mapi.PeriodInput{Start: Start, End: End},
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > past_point > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > past_point > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ポイントの過去データ解決を受信する（VNodeID_n, Value, Cap, Time）
+		// ポイントの過去データ解決を受信する（VNodeID_n, Value, Cap, Time）
 		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "commandExecution > past_point > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > past_point > decoder.Decode")
 		}
 		message.MyReadMessage(m)
 	case "current_node":
@@ -492,13 +561,13 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			Capability: Capability,
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > current_node > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > current_node > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ノードの現在データ解決を受信する（Value, Cap, Time）
+		// ノードの現在データ解決を受信する（Value, Cap, Time）
 		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "commandExecution > current_node > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > current_node > decoder.Decode")
 		}
 		message.MyReadMessage(m)
 	case "current_point":
@@ -510,13 +579,13 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			Capability: Capability,
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > current_point > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > current_point > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ポイントの現在データ解決を受信する（VNodeID_n, Value, Cap, Time）
+		// ポイントの現在データ解決を受信する（VNodeID_n, Value, Cap, Time）
 		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "commandExecution > current_point > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > current_point > decoder.Decode")
 		}
 		message.MyReadMessage(m)
 	case "condition_node":
@@ -535,18 +604,18 @@ func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder
 			Timeout:    Timeout,
 		}
 		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > condition_node > encoder.Encode")
+			message.MyError(err, "commandAPIExecution > condition_node > encoder.Encode")
 		}
 		message.MyWriteMessage(m)
 
-		//ノードの現在データを受信する（Value, Cap, Time）
+		// ノードの現在データを受信する（Value, Cap, Time）
 		ms := m2mapi.DataForRegist{}
 		if err := decoder.Decode(&ms); err != nil {
-			message.MyError(err, "commandExecution > condition_node > decoder.Decode")
+			message.MyError(err, "commandAPIExecution > condition_node > decoder.Decode")
 		}
 		message.MyReadMessage(ms)
 	case "device_register":
-		//デバイス登録を行う．
+		// デバイス登録を行う．
 	default:
 
 	}

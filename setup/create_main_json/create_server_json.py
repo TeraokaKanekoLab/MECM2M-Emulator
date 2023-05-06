@@ -12,7 +12,7 @@ def generate_random_ipv6():
 load_dotenv()
 json_file_path = os.getenv("PROJECT_PATH") + "/Main/config/json_files"
 
-#EDGE_SERVER_NUM
+# EDGE_SERVER_NUM
 EDGE_SERVER_NUM = 3
 
 data = {"servers":{}}
@@ -25,7 +25,7 @@ data["servers"]["ipv6"] = ipv6
 
 data["servers"]["server"] = []
 
-#S0をCloud Serverとし，S1以降をEdge Serverとする
+# S0をCloud Serverとし，S1以降をEdge Serverとする
 for i in range(EDGE_SERVER_NUM+1):
     server = data["servers"]["server"]
     label = "S" + str(i)
@@ -44,7 +44,7 @@ for i in range(EDGE_SERVER_NUM+1):
     }
     object_properties = server_dict["object-property"]
     if i > 0:
-        #Edge Serverのobject propertyを付加
+        # Edge Serverのobject propertyを付加
         cloud_label = "S0"
         isLowerOf_object_property = {
             "from": {
@@ -82,7 +82,7 @@ server_json = json_file_path + "/config_main_server.json"
 with open(server_json, 'w') as f:
     json.dump(data, f, indent=4)
 
-#ソケットファイル群ファイルもここで作る
+# ソケットファイル群ファイルもここで作る
 socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/Server/socket_files"
 if not os.path.exists(socket_files_dir_path):
     os.makedirs(socket_files_dir_path)

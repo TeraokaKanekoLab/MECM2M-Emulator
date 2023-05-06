@@ -3,16 +3,20 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mecm2m-Simulator/pkg/m2mapi"
 	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Simulator/pkg/vsnode"
 	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"strconv"
 	"sync"
+	"syscall"
 )
 
 const (
@@ -38,9 +42,40 @@ func cleanup(socketFiles ...string) {
 }
 
 func main() {
+	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
+	if len(os.Args) != 2 {
+		fmt.Println("There is no socket files")
+		os.Exit(1)
+	}
+
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
+
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
+
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
+	socket_file_name := os.Args[1]
+	data, err := ioutil.ReadFile(socket_file_name)
+	if err != nil {
+		message.MyError(err, "Failed to read socket file")
+	}
+
+	var socket_files vsnode.VSNodeSocketFiles
+
+	if err := json.Unmarshal(data, &socket_files); err != nil {
+		message.MyError(err, "Failed to unmarshal json")
+	}
+
 	//VSNodeをいくつか用意しておく
 	var socketFiles []string
-	socketFiles = append(socketFiles, "/tmp/mecm2m/vsnode_1_0001.sock", "/tmp/mecm2m/vsnode_1_0002.sock", "/tmp/mecm2m/vsnode_1_0003.sock")
+	socketFiles = append(socketFiles, socket_files.VSNodes...)
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
@@ -81,13 +116,13 @@ func initialize(file string, gids chan uint64, wg *sync.WaitGroup) {
 			message.MyError(err, "initialize > listener.Accept")
 			break
 		}
-		go vsnode(conn, gid)
+		go vsnodes(conn, gid)
 	}
 }
 
 // 過去データ取得，現在データ取得，充足条件データ取得
 // 2023/03/28 context.Background()を引数に入れてみる
-func vsnode(conn net.Conn, gid uint64) {
+func vsnodes(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
 	decoder := gob.NewDecoder(conn)

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -39,9 +38,9 @@ const (
 	graphDBSockAddr   = "/tmp/mecm2m/svr_1_graphdb.sock"
 	sensingDBSockAddr = "/tmp/mecm2m/svr_1_sensingdb.sock"
 
-	//Home MEC Server かどうかの判定
+	// Home MEC Server かどうかの判定
 	ServerID = "ServerID0001"
-	//vsnodePort = "8080"
+	// vsnodePort = "8080"
 )
 
 type Format struct {
@@ -60,25 +59,38 @@ func cleanup(socketFiles ...string) {
 
 func main() {
 	loadEnv()
-	//コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
+	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
 	if len(os.Args) != 2 {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
 
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
+
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
+
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {
-		log.Fatal(err)
+		message.MyError(err, "Failed to read socket file")
 	}
 
 	var socket_files server.ServerSocketFiles
 
 	if err := json.Unmarshal(data, &socket_files); err != nil {
-		panic(err)
+		message.MyError(err, "Failed to unmarshal json")
 	}
 
-	//MEC Server起動時に，MEC Server内のコンポーネント (API, LocalManager, PNManager, AAA, SensingDB, GraphDB, LocalRepo) のスレッドファイルを開けておく
+	// MEC Server起動時に，MEC Server内のコンポーネント (API, LocalManager, PNManager, AAA, SensingDB, GraphDB, LocalRepo) のスレッドファイルを開けておく
 	var socketFiles []string
 	socketFiles = append(socketFiles,
 		socket_files.M2MApi,
@@ -149,7 +161,7 @@ func m2mApi(conn net.Conn) {
 	message.MyMessage("[MESSEGE] Call m2m api thread")
 
 	for {
-		//型同期をして，型の種類に応じてスイッチ
+		// 型同期をして，型の種類に応じてスイッチ
 		switch m := syncFormatServer(decoder, encoder); m.(type) {
 		case *m2mapi.ResolvePoint:
 			format := m.(*m2mapi.ResolvePoint)
@@ -177,16 +189,16 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format) //1. 同じ内容
 
-			//GraphDB()によるDB検索
+			// GraphDB()によるDB検索
 
-			//受信する型は[]ResolvePoint
+			// 受信する型は[]ResolvePoint
 			ms := []m2mapi.ResolvePoint{}
 			if err := decoderDB.Decode(&ms); err != nil {
 				message.MyError(err, "m2mApi > Point > decoderDB.Decode")
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > Point > encoder.Encode")
 				break
@@ -218,16 +230,16 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage((*format)) //1. 同じ内容
 
-			//GraphDB()によるDB検索
+			// GraphDB()によるDB検索
 
-			//受信する型は[]ResolveNode
+			// 受信する型は[]ResolveNode
 			ms := []m2mapi.ResolveNode{}
 			if err := decoderDB.Decode(&ms); err != nil {
 				message.MyError(err, "m2mApi > Node > decoderDB.Decode")
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > Node > encoder.Encode")
 				break
@@ -245,7 +257,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
+			// どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
 			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
 			if err != nil {
 				message.MyError(err, "m2mApi > PastNode > net.Dial")
@@ -260,7 +272,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format) //1. 同じ内容
 
-			//VSNodeとのやりとり
+			// VSNodeとのやりとり
 
 			// 受信する型はResolvePastNode
 			ms := m2mapi.ResolvePastNode{}
@@ -269,7 +281,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > PastNode > encoder.Encode")
 				break
@@ -287,7 +299,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
+			// どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
 			connVP, err := net.Dial(protocol, "/tmp/mecm2m/vpoint_1_0001.sock")
 			if err != nil {
 				message.MyError(err, "m2mApi > PastPoint > net.Dial")
@@ -302,7 +314,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format) //1. 同じ内容
 
-			//VPointとのやりとり
+			// VPointとのやりとり
 
 			// 受信する型はResolvePastPoint
 			ms := m2mapi.ResolvePastPoint{}
@@ -311,7 +323,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > PastPoint > encoder.Encode")
 				break
@@ -329,7 +341,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
+			// どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
 			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > net.Dial")
@@ -344,7 +356,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format) //1. 同じ内容
 
-			//VSNodeとのやりとり
+			// VSNodeとのやりとり
 
 			// 受信する型はResolveCurrentNode
 			ms := m2mapi.ResolveCurrentNode{}
@@ -353,7 +365,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > encoder.Encode")
 				break
@@ -371,7 +383,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
+			// どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
 			connVP, err := net.Dial(protocol, "/tmp/mecm2m/vpoint_1_0001.sock")
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > net.Dial")
@@ -386,7 +398,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format) //1. 同じ内容
 
-			//VPointとのやりとり
+			// VPointとのやりとり
 
 			// 受信する型はResolveCurrentPoint
 			ms := m2mapi.ResolveCurrentPoint{}
@@ -395,7 +407,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > encoder.Encode")
 				break
@@ -413,7 +425,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//どのVSNodeとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
+			// どのVSNodeとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
 			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
 			if err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > net.Dial")
@@ -429,15 +441,15 @@ func m2mApi(conn net.Conn) {
 			message.MyWriteMessage(*format)
 			fmt.Println("Wait for data notification...")
 
-			//VSNodeからのデータ通知を受ける
-			//受信する型はDataForRegist
+			// VSNodeからのデータ通知を受ける
+			// 受信する型はDataForRegist
 			ms := m2mapi.DataForRegist{}
 			if err := decoderVS.Decode(&ms); err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > decoderVS.Decode")
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果をM2M Appに送信する
+			// 最終的な結果をM2M Appに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > encoder.Encode")
 				break
@@ -445,7 +457,7 @@ func m2mApi(conn net.Conn) {
 			message.MyWriteMessage(ms)
 		case string:
 			if m == "exit" {
-				//M2MAppでexitが入力されたら，breakする
+				// M2MAppでexitが入力されたら，breakする
 				break
 			}
 		}
@@ -539,7 +551,7 @@ func pnodeMgr(conn net.Conn) {
 	message.MyMessage("[MESSAGE] Call PNode Manager thread")
 
 	for {
-		//接続要求と切断要求の2種類でスイッチ
+		// 接続要求と切断要求の2種類でスイッチ
 		switch m := syncFormatServer(decoder, encoder); m.(type) {
 		case *mserver.ConnectNew:
 			format := m.(*mserver.ConnectNew)
@@ -553,7 +565,7 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//1. 自分のAAAサーバで認証
+			// 1. 自分のAAAサーバで認証
 			connAAA, err := net.Dial(protocol, aaaSockAddr)
 			if err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNewAAA > net.Dial")
@@ -572,9 +584,9 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyWriteMessage(*mAAA)
 
-			//AAAとのやりとり
+			// AAAとのやりとり
 
-			//受信する型はAAA
+			// 受信する型はAAA
 			msAAA := server.AAA{}
 			if err := decoderAAA.Decode(&msAAA); err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNew > decoderAAA.Decode")
@@ -586,8 +598,8 @@ func pnodeMgr(conn net.Conn) {
 				break
 			}
 
-			//2. 接続要求を受けたPMNodeのHomeMECServerのPNManagerに接続要求
-			//このリクエストはHomeMECServerのVMNodeHまで届く．これは，VMNodeHがPMNodeの位置情報を常に把握する必要があるから
+			// 2. 接続要求を受けたPMNodeのHomeMECServerのPNManagerに接続要求
+			// このリクエストはHomeMECServerのVMNodeHまで届く．これは，VMNodeHがPMNodeの位置情報を常に把握する必要があるから
 			connPNMgrH, err := net.Dial(protocol, "/tmp/mecm2m/svr_1_pnodemgr.sock")
 			if err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNewPNMgrH > net.Dial")
@@ -610,16 +622,16 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyWriteMessage(*mPNMgrH)
 
-			//Home MEC ServerのPNManagerとのやりとり
+			// Home MEC ServerのPNManagerとのやりとり
 
-			//受信する型はConnectForModule
+			// 受信する型はConnectForModule
 			msPNMgrH := mserver.ConnectForModule{}
 			if err := decoderPNMgrH.Decode(&msPNMgrH); err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNew > decoderPNMgrH.Decode")
 			}
 			message.MyReadMessage(msPNMgrH)
 
-			//3. 旧MEC Serverに切断要求
+			// 3. 旧MEC Serverに切断要求
 			connDisconn, err := net.Dial(protocol, "/tmp/mecm2m/svr_2_pnodemgr.sock")
 			if err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNewDisconn > net.Dial")
@@ -637,17 +649,17 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyWriteMessage(*mDisconnect)
 
-			//旧接続先のMEC Serverとのやりとり
+			// 旧接続先のMEC Serverとのやりとり
 
-			//受信する型はDisconnect
+			// 受信する型はDisconnect
 			msDisconnect := mserver.Disconnect{}
 			if err := decoderDisconn.Decode(&msDisconnect); err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNew > decoderDisconnect.Decode")
 			}
 			message.MyReadMessage(msDisconnect)
 
-			//4. 新しい接続先であるPSinkに対応するVPointに接続要求
-			//これも，VMNodeHと同様，VPointが接続先の情報を把握するため
+			// 4. 新しい接続先であるPSinkに対応するVPointに接続要求
+			// これも，VMNodeHと同様，VPointが接続先の情報を把握するため
 			connNewVP, err := net.Dial(protocol, "/tmp/mecm2m/vpoint_3_0001.sock")
 			if err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNewNewVP > net.Dial")
@@ -670,18 +682,18 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyWriteMessage(*mNewVP)
 
-			//新しい接続先のVPointとのやりとり
+			// 新しい接続先のVPointとのやりとり
 
-			//受信する型はConnectForModule
+			// 受信する型はConnectForModule
 			msNewVP := mserver.ConnectForModule{}
 			if err := decoderNewVP.Decode(&msNewVP); err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectNew > decoderNewVP.Decode")
 			}
 			message.MyReadMessage(msNewVP)
 
-			//5. VMNodeFに登録する
+			// 5. VMNodeFに登録する
 
-			//最終的な接続応答をPMNodeへ返す
+			// 最終的な接続応答をPMNodeへ返す
 			ms := mserver.ConnectNew{}
 			ms.Status = true
 			ms.SessionKey = "Correct"
@@ -701,8 +713,8 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			//VMNodeHスレッドに情報を渡す
-			//どのVMNodeHスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvmnodeh_1_H_1.sock
+			// VMNodeHスレッドに情報を渡す
+			// どのVMNodeHスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvmnodeh_1_H_1.sock
 			connVMH, err := net.Dial(protocol, "/tmp/mecm2m/vmnode_1_H_0001.sock")
 			if err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectForModule > net.Dial")
@@ -725,7 +737,7 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyWriteMessage(*m) //1. 同じ内容
 
-			//VMNodeとのやりとり
+			// VMNodeとのやりとり
 
 			// 受信する型はConnectForModule
 			ms := mserver.ConnectForModule{}
@@ -734,7 +746,7 @@ func pnodeMgr(conn net.Conn) {
 			}
 			message.MyReadMessage(ms)
 
-			//最終的な結果を新しい接続先になるMEC ServerのPNManagerに送信する
+			// 最終的な結果を新しい接続先になるMEC ServerのPNManagerに送信する
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "pmnodeMgr > ConnectForModule > encoder.Encode")
 				break
@@ -766,9 +778,9 @@ func aaa(conn net.Conn) {
 		}
 		message.MyReadMessage(*format)
 
-		//このサーバーがHomeMECServerであるかどうかでスイッチ
+		// このサーバーがHomeMECServerであるかどうかでスイッチ
 		if format.HomeMECID == "" || format.HomeMECID == ServerID {
-			//HomeMECServerもしくは固定ノード
+			// HomeMECServerもしくは固定ノード
 			ms := &server.AAA{
 				Status: true,
 			}
@@ -777,8 +789,8 @@ func aaa(conn net.Conn) {
 			}
 			message.MyWriteMessage(ms)
 		} else {
-			//Foreing Server
-			//Home MEC ServerのAAAに経由
+			// Foreing Server
+			// Home MEC ServerのAAAに経由
 			connHomeAAA, err := net.Dial(protocol, "/tmp/mecm2m/svr_1_aaa.sock")
 			if err != nil {
 				message.MyError(err, "AAA > ForeignMEC > net.Dial")
@@ -793,16 +805,16 @@ func aaa(conn net.Conn) {
 			}
 			message.MyWriteMessage(*format)
 
-			//Home MEC Server の AAA とのやりとり
+			// Home MEC Server の AAA とのやりとり
 
-			//受信型はAAA
+			// 受信型はAAA
 			ms := server.AAA{}
 			if err := decoderAAA.Decode(&ms); err != nil {
 				message.MyError(err, "AAA > ForeignMEC > decoderAAA.Decode")
 			}
 			message.MyReadMessage(ms)
 
-			//新しい接続先のAAAへ返信
+			// 新しい接続先のAAAへ返信
 			if err := encoder.Encode(&ms); err != nil {
 				message.MyError(err, "AAA > ForeignMEC > encoder.Encode")
 				break
@@ -822,7 +834,7 @@ func graphDB(conn net.Conn) {
 	message.MyMessage("[MESSEGE] Call GraphDB thread")
 
 	for {
-		//型同期をして，型の種類に応じてスイッチ
+		// 型同期をして，型の種類に応じてスイッチ
 		switch m := syncFormatServer(decoder, encoder); m.(type) {
 		case *m2mapi.ResolvePoint:
 			format := m.(*m2mapi.ResolvePoint)
@@ -843,7 +855,7 @@ func graphDB(conn net.Conn) {
 			nelon = format.NE.Lon
 
 			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedWith]->(vp:VPoint) WHERE ps.Lat > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Lon > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Lat < ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Lon < ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return ps.PSinkID, vp.Address;"}]}`
-			//今後はクラウドサーバ用の分岐が必要
+			// 今後はクラウドサーバ用の分岐が必要
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
@@ -890,7 +902,7 @@ func graphDB(conn net.Conn) {
 				format_caps = append(format_caps, cap)
 			}
 			payload := `{"statements": [{"statement": "MATCH (ps:PSink {PSinkID: ` + vpointid_n + `})-[:requestsViaDevApi]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return pn.Capability, pn.PNodeID;"}]}`
-			//今後はクラウドサーバ用の分岐が必要
+			// 今後はクラウドサーバ用の分岐が必要
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
@@ -900,7 +912,7 @@ func graphDB(conn net.Conn) {
 				dataArray := data.([]interface{})
 				pn := m2mapi.ResolveNode{}
 				capability := dataArray[0].(string)
-				//CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
+				// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
 				//pn.CapOutput = append(pn.CapOutput, capability)
 				pn.CapOutput = capability
 				pn.VNodeID_n = dataArray[1].(string)
@@ -909,7 +921,7 @@ func graphDB(conn net.Conn) {
 					if p.VNodeID_n == pn.VNodeID_n {
 						flag = 1
 					} /*else {
-						//CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
+						// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
 						p.Capabilities = append(p.Capabilities, capability)
 					}*/
 				}
@@ -936,7 +948,7 @@ func sensingDB(conn net.Conn) {
 	message.MyMessage("[MESSEGE] Call SensingDB thread")
 
 	for {
-		//型同期をして，型の種類に応じてスイッチ
+		// 型同期をして，型の種類に応じてスイッチ
 		switch m := syncFormatServer(decoder, encoder); m.(type) {
 		case *m2mapi.ResolvePastNode:
 			format := m.(*m2mapi.ResolvePastNode)
@@ -956,8 +968,8 @@ func sensingDB(conn net.Conn) {
 			start = format.Period.Start
 			end = format.Period.End
 
-			//SensingDBを開く
-			//"root:password@tcp(127.0.0.1:3306)/testdb"
+			// SensingDBを開く
+			// "root:password@tcp(127.0.0.1:3306)/testdb"
 			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
@@ -1015,7 +1027,7 @@ func sensingDB(conn net.Conn) {
 			start = format.Period.Start
 			end = format.Period.End
 
-			//SensingDBを開く
+			// SensingDBを開く
 			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
@@ -1110,7 +1122,7 @@ func sensingDB(conn net.Conn) {
 			VNodeID = format.VNodeID
 			VPointID = format.VPointID
 
-			//SensingDBを開く
+			// SensingDBを開く
 			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
@@ -1123,7 +1135,7 @@ func sensingDB(conn net.Conn) {
 				message.MyMessage("DB Connection Success")
 			}
 
-			//PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
+			// PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
 			var cmd string
 			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,ServerID,Lat,Lon,VNodeID,VPointID) VALUES(?,?,?,?,?,?,?,?,?,?);"
 
@@ -1172,7 +1184,7 @@ func bodyNeo4j(byteArray []byte) []interface{} {
 		return nil
 	}
 	var datas []interface{}
-	//message.MyMessage("jsonBody: ", jsonBody)
+	// message.MyMessage("jsonBody: ", jsonBody)
 	for _, v1 := range jsonBody {
 		for _, v2 := range v1.([]interface{}) {
 			for k3, v3 := range v2.(map[string]interface{}) {
@@ -1217,11 +1229,11 @@ func bodyGraphQL(byteArray []byte) []interface{} {
 }
 
 func loadEnv() {
-	//.envファイルの読み込み
+	// .envファイルの読み込み
 	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
-		log.Fatal(err)
+		message.MyError(err, "loadEnv > godotenv.Load")
 	}
 	mes := os.Getenv("SAMPLE_MESSAGE")
-	//fmt.Printf("\x1b[32m%v\x1b[0m\n", message)
+	// fmt.Printf("\x1b[32m%v\x1b[0m\n", message)
 	message.MyMessage(mes)
 }

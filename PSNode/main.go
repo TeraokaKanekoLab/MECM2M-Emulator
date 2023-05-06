@@ -14,6 +14,7 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -44,13 +45,26 @@ func cleanup(socketFiles ...string) {
 
 func main() {
 	//configファイルを読み込んで，センサデータ送信用のデータ，センサデータ登録用のデータを読み込む
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
+
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
+
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
 	//PSNodeをいくつか用意しておく
 	var socketFiles []string
 	socketFiles = append(socketFiles, "/tmp/mecm2m/psnode_1_0001.sock", "/tmp/mecm2m/psnode_1_0002.sock", "/tmp/mecm2m/psnode_1_0003.sock")
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -110,7 +124,7 @@ func main() {
 	defer close(gids)
 }
 
-//mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
+// mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
 func timeSync(mainContext context.Context, retTime chan time.Time) {
 	listener, err := net.Listen(protocol, timeSock)
 	if err != nil {
@@ -160,7 +174,7 @@ func timeSync(mainContext context.Context, retTime chan time.Time) {
 	}
 }
 
-//センサデータ送信，センサデータ登録
+// センサデータ送信，センサデータ登録
 func psnode(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
@@ -200,8 +214,8 @@ func psnode(conn net.Conn, gid uint64) {
 
 }
 
-//センサデータの登録
-//PSNode -> VPoint -> VSNode -> SensingDB
+// センサデータの登録
+// PSNode -> VPoint -> VSNode -> SensingDB
 func registerSensingData(t time.Time) {
 	//センサデータ登録用の型を指定
 	m := &m2mapi.DataForRegist{
@@ -235,7 +249,7 @@ func registerSensingData(t time.Time) {
 	//message.MyWriteMessage(m)
 }
 
-//VSNodeと型同期をするための関数
+// VSNodeと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -256,7 +270,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//SensingDBと型同期をするための関数
+// SensingDBと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	switch command {
 	case "RegisterSensingData":
