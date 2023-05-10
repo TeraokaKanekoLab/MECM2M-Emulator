@@ -25,8 +25,8 @@ for property in data["pmnodes"]:
         graph.create(node)
         #pmnode-psinkのリレーションを作成 (start)
         hserver = relation["HomeServer"]
-        count_psink = graph.run("MATCH (n:Server), (m:VPoint), (l:PSink) WHERE n.Label = \"%s\" AND (n)-[:supports]->(m)-[:isComposedOf]->(l) return count(l)" % hserver)
-        result_psink = graph.run("MATCH (n:Server), (m:VPoint), (l:PSink) WHERE n.Label = \"%s\" AND (n)-[:supports]->(m)-[:isComposedOf]->(l) return l" % hserver)
+        count_psink = graph.run("MATCH (n:Server), (m:VPoint), (l:PSink) WHERE n.Label = \"%s\" AND (n)-[:supports]->(m)-[:isComposedOf]->(l) RETURN count(l)" % hserver)
+        result_psink = graph.run("MATCH (n:Server), (m:VPoint), (l:PSink) WHERE n.Label = \"%s\" AND (n)-[:supports]->(m)-[:isComposedOf]->(l) RETURN l" % hserver)
         for record in result_psink:
             #ランダムなPSinkを選べるようにしたい
             pmnode_psink_psink = record["l"]
@@ -39,7 +39,7 @@ for property in data["pmnodes"]:
         #pmnode-vpointのリレーションを作成 (start)
         #pnode_id = relation["PNodeID"]
         #config_file = relation["config-file"]
-        result_vpoint = graph.run("MATCH (n:PSink), (m:VPoint) WHERE n.Label = \"%s\" AND (n)-[:isVirtualizedWith]->(m) return m" % pmnode_psink_psink_label)
+        result_vpoint = graph.run("MATCH (n:PSink), (m:VPoint) WHERE n.Label = \"%s\" AND (n)-[:isVirtualizedWith]->(m) RETURN m" % pmnode_psink_psink_label)
         for record in result_vpoint:
             vpoint_pmnode_vpoint = record["m"]
             vpoint_pmnode_vpoint_label = vpoint_pmnode_vpoint["Label"]
@@ -80,7 +80,7 @@ for property in data["pmnodes"]:
         graph.create(rel_vpoint_vsnode)
         #vmnodeh-vpointのリレーションを作成 (end)
         #vmnodeh-serverのリレーションを作成 (start)
-        result_server = graph.run("MATCH (n:VPoint), (m:Server) WHERE n.Label = \"%s\" AND (n)-[:isRunningOn]->(m) return m" % vpoint_pmnode_vpoint_label)
+        result_server = graph.run("MATCH (n:VPoint), (m:Server) WHERE n.Label = \"%s\" AND (n)-[:isRunningOn]->(m) RETURN m" % vpoint_pmnode_vpoint_label)
         for record in result_server:
             vsnode_server_server = record["m"]
         rel_vsnode_server = Relationship(node, "isRunningOn", vsnode_server_server)

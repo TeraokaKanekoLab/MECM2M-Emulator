@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"encoding/gob"
 	"encoding/json"
@@ -10,7 +11,9 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -81,29 +84,27 @@ func main() {
 
 	// 1. 各インスタンスの登録・socketファイルの準備
 	// config/register_for_neo4jの実行
-	/*
-		err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if !info.IsDir() {
-				// ファイルの抽出
-				cmd := exec.Command("python3", path)
-				output, err := cmd.CombinedOutput()
-				if err != nil {
-					fmt.Println(err)
-				}
-				fmt.Printf("%s\n", output)
-			}
-
-			return nil
-		})
-
+	err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			panic(err)
+			return err
 		}
-	*/
+
+		if !info.IsDir() {
+			// ファイルの抽出
+			cmd := exec.Command("python3", path)
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Printf("%s\n", output)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
 
 	// 2. 各プロセスファイルの実行
 	// 実行系ファイルをまとめたconfigファイルを読み込む
@@ -247,18 +248,52 @@ func main() {
 	// コマンドラインで待機しながら，プログラム開始からの時間を計測し配布することができない <- ticker() により解決
 	inputChan := make(chan string)
 	go ticker(inputChan)
+
+	// シミュレータ開始前
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		// クライアントがコマンドを入力
 		var command string
-		fmt.Printf("input command > ")
-		fmt.Scan(&command)
-		// APIを叩く以外のコマンドを制御
-		if commandBasicExecution(command, processIds, inputChan) {
+		fmt.Printf("Inactive > ")
+		command, _ = reader.ReadString('\n')
+
+		// 何も入力がなければそのままcontinue
+		command = strings.TrimSpace(command)
+		if command == "" {
+			continue
+		}
+
+		// シミュレーション前のコマンドを制御
+		if commandExecutionBeforeSimulator(command, processIds, inputChan) {
+			break
+		} else {
+			continue
+		}
+	}
+
+	// シミュレータ開始後
+	for {
+		// クライアントがコマンドを入力
+		var command string
+		fmt.Printf("Simulating > ")
+		command, _ = reader.ReadString('\n')
+
+		// 何も入力がなければそのままcontinue
+		command = strings.TrimSpace(command)
+		if command == "" {
 			continue
 		}
 
 		options := loadInput(command)
 		sockAddr := selectSocketFile(command)
+		if len(options) == 0 && sockAddr == "" {
+			// コマンドが見つからない
+			fmt.Println(command, ": command not found")
+			continue
+		} else if sockAddr == "basic command" {
+			commandExecutionAfterSimulator(command, processIds)
+			continue
+		}
 		conn, err := net.Dial(protocol, sockAddr)
 		if err != nil {
 			message.MyError(err, "main > net.Dial")
@@ -269,7 +304,7 @@ func main() {
 		// commandExecutionする前に，Server側と型の同期を取りたい
 		syncFormatClient(command, decoder, encoder)
 		// APIを叩くコマンドを制御
-		commandAPIExecution(command, decoder, encoder, options)
+		commandAPIExecution(command, decoder, encoder, options, processIds)
 	}
 }
 
@@ -326,25 +361,30 @@ func loadInput(command string) []string {
 	switch command {
 	case "point":
 		// SWLat,SWLon,NELat,NELon
-		file = "option_file/point.csv"
+		file = "option_file/m2m_api/point.csv"
 	case "node":
 		// VPointID_n, Caps
-		file = "option_file/node.csv"
+		file = "option_file/m2m_api/node.csv"
 	case "past_node":
 		// VNodeID_n, Cap, Period{Start, End}
-		file = "option_file/past_node.csv"
+		file = "option_file/m2m_api/past_node.csv"
 	case "past_point":
 		// VPointID_n, Cap, Period{Start, End}
-		file = "option_file/past_point.csv"
+		file = "option_file/m2m_api/past_point.csv"
 	case "current_node":
 		// VNodeID_n, Cap
-		file = "option_file/current_node.csv"
+		file = "option_file/m2m_api/current_node.csv"
 	case "current_point":
 		// VPointID_n, Cap
-		file = "option_file/current_point.csv"
+		file = "option_file/m2m_api/current_point.csv"
 	case "condition_node":
 		// VNodeID_n, Cap, LowerLimit, UpperLimit, Timeout(s)
-		file = "option_file/condition_node.csv"
+		file = "option_file/m2m_api/condition_node.csv"
+	case "exit", "register", "help":
+		options = append(options, "basic command")
+		return options
+	default:
+		return options
 	}
 	fp, err := os.Open(file)
 	if err != nil {
@@ -368,8 +408,10 @@ func selectSocketFile(command string) string {
 	switch command {
 	case "point", "node", "past_node", "past_point", "current_node", "current_point", "condition_node":
 		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
+	case "exit", "register", "help":
+		sockAddr = "basic command"
 	default:
-		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
+		sockAddr = ""
 	}
 	return sockAddr
 }
@@ -398,8 +440,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 }
 
 // APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)
-func commandBasicExecution(command string, processIds []int, inputChan chan string) bool {
-	flag := true
+func commandExecutionBeforeSimulator(command string, processIds []int, inputChan chan string) bool {
+	flag := false
 	switch command {
 	// シミュレーションの実行
 	case "start":
@@ -414,7 +456,8 @@ func commandBasicExecution(command string, processIds []int, inputChan chan stri
 				message.MyError(err, "commandBasicExecution > start > process.Signal")
 			}
 		}
-		message.MyMessage("Simulating...")
+		message.MyMessage("		*** Simulator is running *** 	")
+		flag = true
 		return flag
 	// シミュレーションの終了
 	case "exit":
@@ -453,16 +496,108 @@ func commandBasicExecution(command string, processIds []int, inputChan chan stri
 
 		message.MyMessage("Bye")
 		os.Exit(0)
+	// デバイスの登録
+	case "register":
+		// あらかじめ，登録するデバイスの情報をconfigファイルとして用意しておく
+		// ./option_file/register/register_psnode.py を実行
+		// 2023-05-10 一旦PSNodeの登録のみ
+		register_psnode_script := "./option_file/register/register_psnode.py"
+		register_psnode_file := "./option_file/register/register_psnode.json"
+		cmdGraphDB := exec.Command("python3", register_psnode_script, register_psnode_file)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandBasicExecution > register > cmdGraphDB.Run")
+		}
+
+		message.MyMessage("		*** Succeed: Register device *** 	")
+		return flag
+	// helpコマンド
+	case "help":
+		fmt.Println("[start]: 	Start MECM2M Simulator")
+		fmt.Println("[exit]: 	Exit MECM2M Simulator")
+		fmt.Println("[register]: 	Register PSNode")
+		return flag
 	default:
-		flag = false
+		// コマンドが見つからない
+		fmt.Println(command, ": command not found")
 		return flag
 	}
 
 	return flag
 }
 
+// APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)
+func commandExecutionAfterSimulator(command string, processIds []int) {
+	switch command {
+	// シミュレーションの終了
+	case "exit":
+		// 1. 各プロセスの削除
+		for _, pid := range processIds {
+			process, err := os.FindProcess(pid)
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > os.FindProcess")
+			}
+
+			err = process.Signal(os.Interrupt)
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > process.Signal")
+			} else {
+				fmt.Printf("process (%d) is killed\n", pid)
+			}
+		}
+
+		// 2-0. パスを入手
+		err := godotenv.Load(os.Getenv("HOME") + "/.env")
+		if err != nil {
+			message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
+		}
+
+		// 2. GraphDB, SensingDBのレコード削除
+		// GraphDB
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/GraphDB/clear_GraphDB.py"
+		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
+		}
+
+		// SensingDB
+		// hoge
+
+		message.MyMessage("Bye")
+		os.Exit(0)
+	// デバイスの登録
+	case "register":
+		// あらかじめ，登録するデバイスの情報をconfigファイルとして用意しておく
+		// ./option_file/register/register_psnode.py を実行
+		// 2023-05-10 一旦PSNodeの登録のみ
+		register_psnode_script := "./option_file/register/register_psnode.py"
+		register_psnode_file := "./option_file/register/register_psnode.json"
+		cmdGraphDB := exec.Command("python3", register_psnode_script, register_psnode_file)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandBasicExecution > register > cmdGraphDB.Run")
+		}
+
+		message.MyMessage("		*** Succeed: Register device *** 	")
+	// helpコマンド
+	case "help":
+		fmt.Println("[exit]: 		Exit MECM2M Simulator")
+		fmt.Println("[register]: 		Register PSNode")
+		fmt.Println("[point]: 		Resolve Point")
+		fmt.Println("[node]: 		Resolve Node")
+		fmt.Println("[past_node]: 		Resolve Past Data By Node")
+		fmt.Println("[current_node]: 	Resolve Current Data By Node")
+		fmt.Println("[past_point]: 		Resolbe Past Data By Point")
+		fmt.Println("[current_point]: 	Resolve Current Data By Point")
+	default:
+		// コマンドが見つからない
+		fmt.Println(command, ": command not found")
+	}
+}
+
 // APIを叩くコマンドの実行
-func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder, options []string) {
+func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder, options []string, processIds []int) {
 	switch command {
 	case "point":
 		var swlat, swlon, nelat, nelon float64
@@ -614,9 +749,8 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 			message.MyError(err, "commandAPIExecution > condition_node > decoder.Decode")
 		}
 		message.MyReadMessage(ms)
-	case "device_register":
-		// デバイス登録を行う．
 	default:
-
+		// コマンドが見つからない
+		fmt.Println(command, ": command not found")
 	}
 }

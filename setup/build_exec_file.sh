@@ -31,3 +31,5 @@ printf "\e[1;31m \n3. PSNODE FRAMEWORK \e[0m"
 printf "\e[1;31m \n3-1. BUILD PSNODE PROCESS \e[0m"
 # PSNodeプロセスの実行系ファイルを生成
 go build -o ${PROJECT_PATH}/PSNode/main ${PROJECT_PATH}/PSNode/main.go
+
+printf "\n"

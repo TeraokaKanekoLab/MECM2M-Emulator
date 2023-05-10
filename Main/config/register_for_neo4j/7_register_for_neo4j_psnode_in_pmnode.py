@@ -62,7 +62,7 @@ for vsn in vsnode:
         graph.create(rel)
         if from_node_label == "VSNode" and to_node_label == "PSNode":
             #vsnode-vpointのリレーションを作成 (start)
-            result_vpoint= graph.run("MATCH (n:PSNode), (m:PSink), (l:VPoint) WHERE n.label = \"%s\" AND (n)-[:respondsViaDevApi]->(m)-[:isVirtualizedWith]->(l) return l" % to_node_value)
+            result_vpoint= graph.run("MATCH (n:PSNode), (m:PSink), (l:VPoint) WHERE n.label = \"%s\" AND (n)-[:respondsViaDevApi]->(m)-[:isVirtualizedWith]->(l) RETURN l" % to_node_value)
             for record in result_vpoint:
                 vpoint_psnode_vpoint = record["l"]
                 vpoint_psnode_vpoint_label = vpoint_psnode_vpoint["Label"]
@@ -72,7 +72,7 @@ for vsn in vsnode:
             graph.create(rel_vpoint_vsnode)
             #vsnode-vpointのリレーションを作成 (end)
             #vsnode-serverのリレーションを作成 (start)
-            result_server = graph.run("MATCH (n:VPoint), (m:Server) WHERE n.label = \"%s\" AND (n)-[:isRunningOn]->(m) return m" % vpoint_psnode_vpoint_label)
+            result_server = graph.run("MATCH (n:VPoint), (m:Server) WHERE n.label = \"%s\" AND (n)-[:isRunningOn]->(m) RETURN m" % vpoint_psnode_vpoint_label)
             for record in result_server:
                 vsnode_server_server = record["m"]
             rel_vsnode_server = Relationship(from_node, "isRunningOn", vsnode_server_server)
