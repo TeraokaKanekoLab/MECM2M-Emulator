@@ -30,18 +30,21 @@ import (
 const (
 	protocol = "unix"
 
-	m2mApiSockAddr    = "/tmp/mecm2m/svr_1_m2mapi.sock"
-	localMgrSockAddr  = "/tmp/mecm2m/svr_1_localmgr.sock"
-	pnodeMgrSockAddr  = "/tmp/mecm2m/svr_1_pnodemgr.sock"
-	aaaSockAddr       = "/tmp/mecm2m/svr_1_aaa.sock"
-	localRepoSockAddr = "/tmp/mecm2m/svr_1_localrepo.sock"
-	graphDBSockAddr   = "/tmp/mecm2m/svr_1_graphdb.sock"
-	sensingDBSockAddr = "/tmp/mecm2m/svr_1_sensingdb.sock"
-
 	// Home MEC Server かどうかの判定
 	ServerID = "ServerID0001"
 	// vsnodePort = "8080"
 )
+
+// 各種システムコンポーネントのソケットアドレスをグローバルに設定
+var m2mApiSockAddr string
+
+// var localMgrSockAddr string
+var pnodeMgrSockAddr string
+var aaaSockAddr string
+
+// var localRepoSockAddr string
+var graphDBSockAddr string
+var sensingDBSockAddr string
 
 type Format struct {
 	FormType string
@@ -102,6 +105,14 @@ func main() {
 		socket_files.SensingDB,
 	)
 	cleanup(socketFiles...)
+
+	m2mApiSockAddr = socket_files.M2MApi
+	//localMgrSockAddr = socket_files.LocalMgr
+	pnodeMgrSockAddr = socket_files.PNodeMgr
+	aaaSockAddr = socket_files.AAA
+	//localRepoSockAddr = socket_files.LocalMgr
+	graphDBSockAddr = socket_files.GraphDB
+	sensingDBSockAddr = socket_files.SensingDB
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGALRM)
@@ -854,7 +865,7 @@ func graphDB(conn net.Conn) {
 			nelat = format.NE.Lat
 			nelon = format.NE.Lon
 
-			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedWith]->(vp:VPoint) WHERE ps.Lat > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Lon > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Lat < ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Lon < ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return ps.PSinkID, vp.Address;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedWith]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] < ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] < ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
 			// 今後はクラウドサーバ用の分岐が必要
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
@@ -863,9 +874,9 @@ func graphDB(conn net.Conn) {
 			pss := []m2mapi.ResolvePoint{}
 			for _, data := range datas {
 				dataArray := data.([]interface{})
+				fmt.Println(dataArray)
 				ps := m2mapi.ResolvePoint{}
 				ps.VPointID_n = dataArray[0].(string)
-				ps.Address = dataArray[1].(string)
 				flag := 0
 				for _, p := range pss {
 					if p.VPointID_n == ps.VPointID_n {
@@ -901,7 +912,7 @@ func graphDB(conn net.Conn) {
 				cap = "\\\"" + cap + "\\\""
 				format_caps = append(format_caps, cap)
 			}
-			payload := `{"statements": [{"statement": "MATCH (ps:PSink {PSinkID: ` + vpointid_n + `})-[:requestsViaDevApi]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return pn.Capability, pn.PNodeID;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:respondsViaPrimApi]->(vn:VNode)-[:isComposedOf]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
 			// 今後はクラウドサーバ用の分岐が必要
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
@@ -910,6 +921,7 @@ func graphDB(conn net.Conn) {
 			nds := []m2mapi.ResolveNode{}
 			for _, data := range datas {
 				dataArray := data.([]interface{})
+				fmt.Println(dataArray)
 				pn := m2mapi.ResolveNode{}
 				capability := dataArray[0].(string)
 				// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討

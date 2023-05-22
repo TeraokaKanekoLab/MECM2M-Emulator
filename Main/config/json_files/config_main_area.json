@@ -3,9 +3,12 @@
         "area": [
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:0",
-                    "Area": "3553001395300",
+                    "AreaID": "3553001395300",
                     "SW": [
                         35.53,
                         139.53
@@ -14,16 +17,18 @@
                         35.531,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395300"
                 },
                 "object-property": []
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:1",
-                    "Area": "3553001395310",
+                    "AreaID": "3553001395310",
                     "SW": [
                         35.53,
                         139.531
@@ -32,7 +37,6 @@
                         35.531,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395310"
                 },
                 "object-property": [
@@ -66,9 +70,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:2",
-                    "Area": "3553001395320",
+                    "AreaID": "3553001395320",
                     "SW": [
                         35.53,
                         139.532
@@ -77,7 +84,6 @@
                         35.531,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395320"
                 },
                 "object-property": [
@@ -111,9 +117,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:3",
-                    "Area": "3553001395330",
+                    "AreaID": "3553001395330",
                     "SW": [
                         35.53,
                         139.533
@@ -122,7 +131,6 @@
                         35.531,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395330"
                 },
                 "object-property": [
@@ -156,9 +164,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:4",
-                    "Area": "3553001395340",
+                    "AreaID": "3553001395340",
                     "SW": [
                         35.53,
                         139.534
@@ -167,7 +178,6 @@
                         35.531,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395340"
                 },
                 "object-property": [
@@ -201,9 +211,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:5",
-                    "Area": "3553001395350",
+                    "AreaID": "3553001395350",
                     "SW": [
                         35.53,
                         139.535
@@ -212,7 +225,6 @@
                         35.531,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395350"
                 },
                 "object-property": [
@@ -246,9 +258,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:6",
-                    "Area": "3553001395360",
+                    "AreaID": "3553001395360",
                     "SW": [
                         35.53,
                         139.536
@@ -257,7 +272,6 @@
                         35.531,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395360"
                 },
                 "object-property": [
@@ -291,9 +305,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:7",
-                    "Area": "3553001395370",
+                    "AreaID": "3553001395370",
                     "SW": [
                         35.53,
                         139.537
@@ -302,7 +319,6 @@
                         35.531,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395370"
                 },
                 "object-property": [
@@ -336,9 +352,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:8",
-                    "Area": "3553001395380",
+                    "AreaID": "3553001395380",
                     "SW": [
                         35.53,
                         139.538
@@ -347,7 +366,6 @@
                         35.531,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395380"
                 },
                 "object-property": [
@@ -381,9 +399,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A0:9",
-                    "Area": "3553001395390",
+                    "AreaID": "3553001395390",
                     "SW": [
                         35.53,
                         139.539
@@ -392,7 +413,6 @@
                         35.531,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553001395390"
                 },
                 "object-property": [
@@ -426,9 +446,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:0",
-                    "Area": "3553101395300",
+                    "AreaID": "3553101395300",
                     "SW": [
                         35.531,
                         139.53
@@ -437,7 +460,6 @@
                         35.532,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395300"
                 },
                 "object-property": [
@@ -471,9 +493,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:1",
-                    "Area": "3553101395310",
+                    "AreaID": "3553101395310",
                     "SW": [
                         35.531,
                         139.531
@@ -482,7 +507,6 @@
                         35.532,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395310"
                 },
                 "object-property": [
@@ -542,9 +566,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:2",
-                    "Area": "3553101395320",
+                    "AreaID": "3553101395320",
                     "SW": [
                         35.531,
                         139.532
@@ -553,7 +580,6 @@
                         35.532,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395320"
                 },
                 "object-property": [
@@ -613,9 +639,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:3",
-                    "Area": "3553101395330",
+                    "AreaID": "3553101395330",
                     "SW": [
                         35.531,
                         139.533
@@ -624,7 +653,6 @@
                         35.532,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395330"
                 },
                 "object-property": [
@@ -684,9 +712,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:4",
-                    "Area": "3553101395340",
+                    "AreaID": "3553101395340",
                     "SW": [
                         35.531,
                         139.534
@@ -695,7 +726,6 @@
                         35.532,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395340"
                 },
                 "object-property": [
@@ -755,9 +785,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:5",
-                    "Area": "3553101395350",
+                    "AreaID": "3553101395350",
                     "SW": [
                         35.531,
                         139.535
@@ -766,7 +799,6 @@
                         35.532,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395350"
                 },
                 "object-property": [
@@ -826,9 +858,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:6",
-                    "Area": "3553101395360",
+                    "AreaID": "3553101395360",
                     "SW": [
                         35.531,
                         139.536
@@ -837,7 +872,6 @@
                         35.532,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395360"
                 },
                 "object-property": [
@@ -897,9 +931,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:7",
-                    "Area": "3553101395370",
+                    "AreaID": "3553101395370",
                     "SW": [
                         35.531,
                         139.537
@@ -908,7 +945,6 @@
                         35.532,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395370"
                 },
                 "object-property": [
@@ -968,9 +1004,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:8",
-                    "Area": "3553101395380",
+                    "AreaID": "3553101395380",
                     "SW": [
                         35.531,
                         139.538
@@ -979,7 +1018,6 @@
                         35.532,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395380"
                 },
                 "object-property": [
@@ -1039,9 +1077,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A1:9",
-                    "Area": "3553101395390",
+                    "AreaID": "3553101395390",
                     "SW": [
                         35.531,
                         139.539
@@ -1050,7 +1091,6 @@
                         35.532,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553101395390"
                 },
                 "object-property": [
@@ -1110,9 +1150,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:0",
-                    "Area": "3553201395300",
+                    "AreaID": "3553201395300",
                     "SW": [
                         35.532,
                         139.53
@@ -1121,7 +1164,6 @@
                         35.533,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395300"
                 },
                 "object-property": [
@@ -1155,9 +1197,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:1",
-                    "Area": "3553201395310",
+                    "AreaID": "3553201395310",
                     "SW": [
                         35.532,
                         139.531
@@ -1166,7 +1211,6 @@
                         35.533,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395310"
                 },
                 "object-property": [
@@ -1226,9 +1270,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:2",
-                    "Area": "3553201395320",
+                    "AreaID": "3553201395320",
                     "SW": [
                         35.532,
                         139.532
@@ -1237,7 +1284,6 @@
                         35.533,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395320"
                 },
                 "object-property": [
@@ -1297,9 +1343,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:3",
-                    "Area": "3553201395330",
+                    "AreaID": "3553201395330",
                     "SW": [
                         35.532,
                         139.533
@@ -1308,7 +1357,6 @@
                         35.533,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395330"
                 },
                 "object-property": [
@@ -1368,9 +1416,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:4",
-                    "Area": "3553201395340",
+                    "AreaID": "3553201395340",
                     "SW": [
                         35.532,
                         139.534
@@ -1379,7 +1430,6 @@
                         35.533,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395340"
                 },
                 "object-property": [
@@ -1439,9 +1489,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:5",
-                    "Area": "3553201395350",
+                    "AreaID": "3553201395350",
                     "SW": [
                         35.532,
                         139.535
@@ -1450,7 +1503,6 @@
                         35.533,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395350"
                 },
                 "object-property": [
@@ -1510,9 +1562,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:6",
-                    "Area": "3553201395360",
+                    "AreaID": "3553201395360",
                     "SW": [
                         35.532,
                         139.536
@@ -1521,7 +1576,6 @@
                         35.533,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395360"
                 },
                 "object-property": [
@@ -1581,9 +1635,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:7",
-                    "Area": "3553201395370",
+                    "AreaID": "3553201395370",
                     "SW": [
                         35.532,
                         139.537
@@ -1592,7 +1649,6 @@
                         35.533,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395370"
                 },
                 "object-property": [
@@ -1652,9 +1708,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:8",
-                    "Area": "3553201395380",
+                    "AreaID": "3553201395380",
                     "SW": [
                         35.532,
                         139.538
@@ -1663,7 +1722,6 @@
                         35.533,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395380"
                 },
                 "object-property": [
@@ -1723,9 +1781,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A2:9",
-                    "Area": "3553201395390",
+                    "AreaID": "3553201395390",
                     "SW": [
                         35.532,
                         139.539
@@ -1734,7 +1795,6 @@
                         35.533,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553201395390"
                 },
                 "object-property": [
@@ -1794,9 +1854,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A3:0",
-                    "Area": "3553301395300",
+                    "AreaID": "3553301395300",
                     "SW": [
                         35.533,
                         139.53
@@ -1805,7 +1868,6 @@
                         35.534,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395300"
                 },
                 "object-property": [
@@ -1839,9 +1901,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A3:1",
-                    "Area": "3553301395310",
+                    "AreaID": "3553301395310",
                     "SW": [
                         35.533,
                         139.531
@@ -1850,7 +1915,6 @@
                         35.534,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395310"
                 },
                 "object-property": [
@@ -1910,9 +1974,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S1"
+                },
                 "data-property": {
                     "Label": "A3:2",
-                    "Area": "3553301395320",
+                    "AreaID": "3553301395320",
                     "SW": [
                         35.533,
                         139.532
@@ -1921,7 +1988,6 @@
                         35.534,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395320"
                 },
                 "object-property": [
@@ -1981,9 +2047,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:3",
-                    "Area": "3553301395330",
+                    "AreaID": "3553301395330",
                     "SW": [
                         35.533,
                         139.533
@@ -1992,7 +2061,6 @@
                         35.534,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395330"
                 },
                 "object-property": [
@@ -2052,9 +2120,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:4",
-                    "Area": "3553301395340",
+                    "AreaID": "3553301395340",
                     "SW": [
                         35.533,
                         139.534
@@ -2063,7 +2134,6 @@
                         35.534,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395340"
                 },
                 "object-property": [
@@ -2123,9 +2193,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:5",
-                    "Area": "3553301395350",
+                    "AreaID": "3553301395350",
                     "SW": [
                         35.533,
                         139.535
@@ -2134,7 +2207,6 @@
                         35.534,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395350"
                 },
                 "object-property": [
@@ -2194,9 +2266,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:6",
-                    "Area": "3553301395360",
+                    "AreaID": "3553301395360",
                     "SW": [
                         35.533,
                         139.536
@@ -2205,7 +2280,6 @@
                         35.534,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395360"
                 },
                 "object-property": [
@@ -2265,9 +2339,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:7",
-                    "Area": "3553301395370",
+                    "AreaID": "3553301395370",
                     "SW": [
                         35.533,
                         139.537
@@ -2276,7 +2353,6 @@
                         35.534,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395370"
                 },
                 "object-property": [
@@ -2336,9 +2412,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:8",
-                    "Area": "3553301395380",
+                    "AreaID": "3553301395380",
                     "SW": [
                         35.533,
                         139.538
@@ -2347,7 +2426,6 @@
                         35.534,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395380"
                 },
                 "object-property": [
@@ -2407,9 +2485,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A3:9",
-                    "Area": "3553301395390",
+                    "AreaID": "3553301395390",
                     "SW": [
                         35.533,
                         139.539
@@ -2418,7 +2499,6 @@
                         35.534,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553301395390"
                 },
                 "object-property": [
@@ -2478,9 +2558,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:0",
-                    "Area": "3553401395300",
+                    "AreaID": "3553401395300",
                     "SW": [
                         35.534,
                         139.53
@@ -2489,7 +2572,6 @@
                         35.535,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395300"
                 },
                 "object-property": [
@@ -2523,9 +2605,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:1",
-                    "Area": "3553401395310",
+                    "AreaID": "3553401395310",
                     "SW": [
                         35.534,
                         139.531
@@ -2534,7 +2619,6 @@
                         35.535,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395310"
                 },
                 "object-property": [
@@ -2594,9 +2678,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:2",
-                    "Area": "3553401395320",
+                    "AreaID": "3553401395320",
                     "SW": [
                         35.534,
                         139.532
@@ -2605,7 +2692,6 @@
                         35.535,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395320"
                 },
                 "object-property": [
@@ -2665,9 +2751,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:3",
-                    "Area": "3553401395330",
+                    "AreaID": "3553401395330",
                     "SW": [
                         35.534,
                         139.533
@@ -2676,7 +2765,6 @@
                         35.535,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395330"
                 },
                 "object-property": [
@@ -2736,9 +2824,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:4",
-                    "Area": "3553401395340",
+                    "AreaID": "3553401395340",
                     "SW": [
                         35.534,
                         139.534
@@ -2747,7 +2838,6 @@
                         35.535,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395340"
                 },
                 "object-property": [
@@ -2807,9 +2897,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:5",
-                    "Area": "3553401395350",
+                    "AreaID": "3553401395350",
                     "SW": [
                         35.534,
                         139.535
@@ -2818,7 +2911,6 @@
                         35.535,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395350"
                 },
                 "object-property": [
@@ -2878,9 +2970,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:6",
-                    "Area": "3553401395360",
+                    "AreaID": "3553401395360",
                     "SW": [
                         35.534,
                         139.536
@@ -2889,7 +2984,6 @@
                         35.535,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395360"
                 },
                 "object-property": [
@@ -2949,9 +3043,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:7",
-                    "Area": "3553401395370",
+                    "AreaID": "3553401395370",
                     "SW": [
                         35.534,
                         139.537
@@ -2960,7 +3057,6 @@
                         35.535,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395370"
                 },
                 "object-property": [
@@ -3020,9 +3116,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:8",
-                    "Area": "3553401395380",
+                    "AreaID": "3553401395380",
                     "SW": [
                         35.534,
                         139.538
@@ -3031,7 +3130,6 @@
                         35.535,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395380"
                 },
                 "object-property": [
@@ -3091,9 +3189,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A4:9",
-                    "Area": "3553401395390",
+                    "AreaID": "3553401395390",
                     "SW": [
                         35.534,
                         139.539
@@ -3102,7 +3203,6 @@
                         35.535,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553401395390"
                 },
                 "object-property": [
@@ -3162,9 +3262,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:0",
-                    "Area": "3553501395300",
+                    "AreaID": "3553501395300",
                     "SW": [
                         35.535,
                         139.53
@@ -3173,7 +3276,6 @@
                         35.536,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395300"
                 },
                 "object-property": [
@@ -3207,9 +3309,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:1",
-                    "Area": "3553501395310",
+                    "AreaID": "3553501395310",
                     "SW": [
                         35.535,
                         139.531
@@ -3218,7 +3323,6 @@
                         35.536,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395310"
                 },
                 "object-property": [
@@ -3278,9 +3382,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:2",
-                    "Area": "3553501395320",
+                    "AreaID": "3553501395320",
                     "SW": [
                         35.535,
                         139.532
@@ -3289,7 +3396,6 @@
                         35.536,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395320"
                 },
                 "object-property": [
@@ -3349,9 +3455,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:3",
-                    "Area": "3553501395330",
+                    "AreaID": "3553501395330",
                     "SW": [
                         35.535,
                         139.533
@@ -3360,7 +3469,6 @@
                         35.536,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395330"
                 },
                 "object-property": [
@@ -3420,9 +3528,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:4",
-                    "Area": "3553501395340",
+                    "AreaID": "3553501395340",
                     "SW": [
                         35.535,
                         139.534
@@ -3431,7 +3542,6 @@
                         35.536,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395340"
                 },
                 "object-property": [
@@ -3491,9 +3601,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:5",
-                    "Area": "3553501395350",
+                    "AreaID": "3553501395350",
                     "SW": [
                         35.535,
                         139.535
@@ -3502,7 +3615,6 @@
                         35.536,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395350"
                 },
                 "object-property": [
@@ -3562,9 +3674,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:6",
-                    "Area": "3553501395360",
+                    "AreaID": "3553501395360",
                     "SW": [
                         35.535,
                         139.536
@@ -3573,7 +3688,6 @@
                         35.536,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395360"
                 },
                 "object-property": [
@@ -3633,9 +3747,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:7",
-                    "Area": "3553501395370",
+                    "AreaID": "3553501395370",
                     "SW": [
                         35.535,
                         139.537
@@ -3644,7 +3761,6 @@
                         35.536,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395370"
                 },
                 "object-property": [
@@ -3704,9 +3820,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:8",
-                    "Area": "3553501395380",
+                    "AreaID": "3553501395380",
                     "SW": [
                         35.535,
                         139.538
@@ -3715,7 +3834,6 @@
                         35.536,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395380"
                 },
                 "object-property": [
@@ -3775,9 +3893,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A5:9",
-                    "Area": "3553501395390",
+                    "AreaID": "3553501395390",
                     "SW": [
                         35.535,
                         139.539
@@ -3786,7 +3907,6 @@
                         35.536,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553501395390"
                 },
                 "object-property": [
@@ -3846,9 +3966,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:0",
-                    "Area": "3553601395300",
+                    "AreaID": "3553601395300",
                     "SW": [
                         35.536,
                         139.53
@@ -3857,7 +3980,6 @@
                         35.537,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395300"
                 },
                 "object-property": [
@@ -3891,9 +4013,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:1",
-                    "Area": "3553601395310",
+                    "AreaID": "3553601395310",
                     "SW": [
                         35.536,
                         139.531
@@ -3902,7 +4027,6 @@
                         35.537,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395310"
                 },
                 "object-property": [
@@ -3962,9 +4086,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:2",
-                    "Area": "3553601395320",
+                    "AreaID": "3553601395320",
                     "SW": [
                         35.536,
                         139.532
@@ -3973,7 +4100,6 @@
                         35.537,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395320"
                 },
                 "object-property": [
@@ -4033,9 +4159,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:3",
-                    "Area": "3553601395330",
+                    "AreaID": "3553601395330",
                     "SW": [
                         35.536,
                         139.533
@@ -4044,7 +4173,6 @@
                         35.537,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395330"
                 },
                 "object-property": [
@@ -4104,9 +4232,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:4",
-                    "Area": "3553601395340",
+                    "AreaID": "3553601395340",
                     "SW": [
                         35.536,
                         139.534
@@ -4115,7 +4246,6 @@
                         35.537,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395340"
                 },
                 "object-property": [
@@ -4175,9 +4305,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S2"
+                },
                 "data-property": {
                     "Label": "A6:5",
-                    "Area": "3553601395350",
+                    "AreaID": "3553601395350",
                     "SW": [
                         35.536,
                         139.535
@@ -4186,7 +4319,6 @@
                         35.537,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395350"
                 },
                 "object-property": [
@@ -4246,9 +4378,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A6:6",
-                    "Area": "3553601395360",
+                    "AreaID": "3553601395360",
                     "SW": [
                         35.536,
                         139.536
@@ -4257,7 +4392,6 @@
                         35.537,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395360"
                 },
                 "object-property": [
@@ -4317,9 +4451,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A6:7",
-                    "Area": "3553601395370",
+                    "AreaID": "3553601395370",
                     "SW": [
                         35.536,
                         139.537
@@ -4328,7 +4465,6 @@
                         35.537,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395370"
                 },
                 "object-property": [
@@ -4388,9 +4524,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A6:8",
-                    "Area": "3553601395380",
+                    "AreaID": "3553601395380",
                     "SW": [
                         35.536,
                         139.538
@@ -4399,7 +4538,6 @@
                         35.537,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395380"
                 },
                 "object-property": [
@@ -4459,9 +4597,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A6:9",
-                    "Area": "3553601395390",
+                    "AreaID": "3553601395390",
                     "SW": [
                         35.536,
                         139.539
@@ -4470,7 +4611,6 @@
                         35.537,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553601395390"
                 },
                 "object-property": [
@@ -4530,9 +4670,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:0",
-                    "Area": "3553701395300",
+                    "AreaID": "3553701395300",
                     "SW": [
                         35.537,
                         139.53
@@ -4541,7 +4684,6 @@
                         35.538,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395300"
                 },
                 "object-property": [
@@ -4575,9 +4717,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:1",
-                    "Area": "3553701395310",
+                    "AreaID": "3553701395310",
                     "SW": [
                         35.537,
                         139.531
@@ -4586,7 +4731,6 @@
                         35.538,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395310"
                 },
                 "object-property": [
@@ -4646,9 +4790,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:2",
-                    "Area": "3553701395320",
+                    "AreaID": "3553701395320",
                     "SW": [
                         35.537,
                         139.532
@@ -4657,7 +4804,6 @@
                         35.538,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395320"
                 },
                 "object-property": [
@@ -4717,9 +4863,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:3",
-                    "Area": "3553701395330",
+                    "AreaID": "3553701395330",
                     "SW": [
                         35.537,
                         139.533
@@ -4728,7 +4877,6 @@
                         35.538,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395330"
                 },
                 "object-property": [
@@ -4788,9 +4936,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:4",
-                    "Area": "3553701395340",
+                    "AreaID": "3553701395340",
                     "SW": [
                         35.537,
                         139.534
@@ -4799,7 +4950,6 @@
                         35.538,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395340"
                 },
                 "object-property": [
@@ -4859,9 +5009,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:5",
-                    "Area": "3553701395350",
+                    "AreaID": "3553701395350",
                     "SW": [
                         35.537,
                         139.535
@@ -4870,7 +5023,6 @@
                         35.538,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395350"
                 },
                 "object-property": [
@@ -4930,9 +5082,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:6",
-                    "Area": "3553701395360",
+                    "AreaID": "3553701395360",
                     "SW": [
                         35.537,
                         139.536
@@ -4941,7 +5096,6 @@
                         35.538,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395360"
                 },
                 "object-property": [
@@ -5001,9 +5155,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:7",
-                    "Area": "3553701395370",
+                    "AreaID": "3553701395370",
                     "SW": [
                         35.537,
                         139.537
@@ -5012,7 +5169,6 @@
                         35.538,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395370"
                 },
                 "object-property": [
@@ -5072,9 +5228,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:8",
-                    "Area": "3553701395380",
+                    "AreaID": "3553701395380",
                     "SW": [
                         35.537,
                         139.538
@@ -5083,7 +5242,6 @@
                         35.538,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395380"
                 },
                 "object-property": [
@@ -5143,9 +5301,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A7:9",
-                    "Area": "3553701395390",
+                    "AreaID": "3553701395390",
                     "SW": [
                         35.537,
                         139.539
@@ -5154,7 +5315,6 @@
                         35.538,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553701395390"
                 },
                 "object-property": [
@@ -5214,9 +5374,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:0",
-                    "Area": "3553801395300",
+                    "AreaID": "3553801395300",
                     "SW": [
                         35.538,
                         139.53
@@ -5225,7 +5388,6 @@
                         35.539,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395300"
                 },
                 "object-property": [
@@ -5259,9 +5421,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:1",
-                    "Area": "3553801395310",
+                    "AreaID": "3553801395310",
                     "SW": [
                         35.538,
                         139.531
@@ -5270,7 +5435,6 @@
                         35.539,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395310"
                 },
                 "object-property": [
@@ -5330,9 +5494,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:2",
-                    "Area": "3553801395320",
+                    "AreaID": "3553801395320",
                     "SW": [
                         35.538,
                         139.532
@@ -5341,7 +5508,6 @@
                         35.539,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395320"
                 },
                 "object-property": [
@@ -5401,9 +5567,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:3",
-                    "Area": "3553801395330",
+                    "AreaID": "3553801395330",
                     "SW": [
                         35.538,
                         139.533
@@ -5412,7 +5581,6 @@
                         35.539,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395330"
                 },
                 "object-property": [
@@ -5472,9 +5640,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:4",
-                    "Area": "3553801395340",
+                    "AreaID": "3553801395340",
                     "SW": [
                         35.538,
                         139.534
@@ -5483,7 +5654,6 @@
                         35.539,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395340"
                 },
                 "object-property": [
@@ -5543,9 +5713,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:5",
-                    "Area": "3553801395350",
+                    "AreaID": "3553801395350",
                     "SW": [
                         35.538,
                         139.535
@@ -5554,7 +5727,6 @@
                         35.539,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395350"
                 },
                 "object-property": [
@@ -5614,9 +5786,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:6",
-                    "Area": "3553801395360",
+                    "AreaID": "3553801395360",
                     "SW": [
                         35.538,
                         139.536
@@ -5625,7 +5800,6 @@
                         35.539,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395360"
                 },
                 "object-property": [
@@ -5685,9 +5859,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:7",
-                    "Area": "3553801395370",
+                    "AreaID": "3553801395370",
                     "SW": [
                         35.538,
                         139.537
@@ -5696,7 +5873,6 @@
                         35.539,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395370"
                 },
                 "object-property": [
@@ -5756,9 +5932,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:8",
-                    "Area": "3553801395380",
+                    "AreaID": "3553801395380",
                     "SW": [
                         35.538,
                         139.538
@@ -5767,7 +5946,6 @@
                         35.539,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395380"
                 },
                 "object-property": [
@@ -5827,9 +6005,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A8:9",
-                    "Area": "3553801395390",
+                    "AreaID": "3553801395390",
                     "SW": [
                         35.538,
                         139.539
@@ -5838,7 +6019,6 @@
                         35.539,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553801395390"
                 },
                 "object-property": [
@@ -5898,9 +6078,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:0",
-                    "Area": "3553901395300",
+                    "AreaID": "3553901395300",
                     "SW": [
                         35.539,
                         139.53
@@ -5909,7 +6092,6 @@
                         35.54,
                         139.531
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395300"
                 },
                 "object-property": [
@@ -5943,9 +6125,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:1",
-                    "Area": "3553901395310",
+                    "AreaID": "3553901395310",
                     "SW": [
                         35.539,
                         139.531
@@ -5954,7 +6139,6 @@
                         35.54,
                         139.532
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395310"
                 },
                 "object-property": [
@@ -6014,9 +6198,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:2",
-                    "Area": "3553901395320",
+                    "AreaID": "3553901395320",
                     "SW": [
                         35.539,
                         139.532
@@ -6025,7 +6212,6 @@
                         35.54,
                         139.533
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395320"
                 },
                 "object-property": [
@@ -6085,9 +6271,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:3",
-                    "Area": "3553901395330",
+                    "AreaID": "3553901395330",
                     "SW": [
                         35.539,
                         139.533
@@ -6096,7 +6285,6 @@
                         35.54,
                         139.534
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395330"
                 },
                 "object-property": [
@@ -6156,9 +6344,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:4",
-                    "Area": "3553901395340",
+                    "AreaID": "3553901395340",
                     "SW": [
                         35.539,
                         139.534
@@ -6167,7 +6358,6 @@
                         35.54,
                         139.535
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395340"
                 },
                 "object-property": [
@@ -6227,9 +6417,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:5",
-                    "Area": "3553901395350",
+                    "AreaID": "3553901395350",
                     "SW": [
                         35.539,
                         139.535
@@ -6238,7 +6431,6 @@
                         35.54,
                         139.536
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395350"
                 },
                 "object-property": [
@@ -6298,9 +6490,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:6",
-                    "Area": "3553901395360",
+                    "AreaID": "3553901395360",
                     "SW": [
                         35.539,
                         139.536
@@ -6309,7 +6504,6 @@
                         35.54,
                         139.537
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395360"
                 },
                 "object-property": [
@@ -6369,9 +6563,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:7",
-                    "Area": "3553901395370",
+                    "AreaID": "3553901395370",
                     "SW": [
                         35.539,
                         139.537
@@ -6380,7 +6577,6 @@
                         35.54,
                         139.538
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395370"
                 },
                 "object-property": [
@@ -6440,9 +6636,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:8",
-                    "Area": "3553901395380",
+                    "AreaID": "3553901395380",
                     "SW": [
                         35.539,
                         139.538
@@ -6451,7 +6650,6 @@
                         35.54,
                         139.539
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395380"
                 },
                 "object-property": [
@@ -6511,9 +6709,12 @@
             },
             {
                 "property-label": "Area",
+                "relation-label": {
+                    "Server": "S3"
+                },
                 "data-property": {
                     "Label": "A9:9",
-                    "Area": "3553901395390",
+                    "AreaID": "3553901395390",
                     "SW": [
                         35.539,
                         139.539
@@ -6522,7 +6723,6 @@
                         35.54,
                         139.54
                     ],
-                    "Address": "Hiyoshi, Kohoku, Yokohama, Kanagawa",
                     "Description": "Area3553901395390"
                 },
                 "object-property": [

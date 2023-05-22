@@ -1,9 +1,21 @@
 {
     "mec-servers": {
         "environment": {
-            "num": 1
+            "num": 3
         },
         "mec-server": [
+            {
+                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
+                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
+                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
+            },
+            {
+                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
+                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
+                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
+            },
             {
                 "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
                 "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",

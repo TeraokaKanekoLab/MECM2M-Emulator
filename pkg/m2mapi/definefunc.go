@@ -36,7 +36,7 @@ type ResolvePoint struct {
 
 	//output
 	VPointID_n string
-	Address    string
+	//Address    string
 }
 
 type ResolveNode struct {

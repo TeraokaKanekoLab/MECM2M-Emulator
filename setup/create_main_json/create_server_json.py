@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import random
 import ipaddress
+import glob
 
 def generate_random_ipv6():
     random_int = random.getrandbits(128)
@@ -86,6 +87,11 @@ with open(server_json, 'w') as f:
 socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/Server/socket_files"
 if not os.path.exists(socket_files_dir_path):
     os.makedirs(socket_files_dir_path)
+else:
+    files = glob.glob(f"{socket_files_dir_path}/*")
+    for file in files:
+        if os.path.isfile(file):
+            os.remove(file)
 
 for i in range(EDGE_SERVER_NUM):
     socket_data = {

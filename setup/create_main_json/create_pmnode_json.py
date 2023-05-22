@@ -7,6 +7,42 @@ from datetime import datetime
 import socket
 import ipaddress
 
+# PMNode
+# ---------------
+## Data Property
+## * PNodeID
+## * PNode Type (デバイスとクラスの対応づけ)
+## * VNode Module ID (VNode moduleの実行系ファイル)
+## * Socket Address (VNode のソケットファイル，本来はIP:Port)
+## * Lat Lon
+## * Capability
+## * Credential
+## * Session Key
+## * Description 
+## * Home IPv6 Address
+## * Update Time
+## * Velocity
+## * Acceleration
+## * Direction
+# ---------------
+## Object Property
+## * aggregates (PSink->PNode)
+## * isConnectedTo (PNode->PSink)
+
+# VMNode
+# ---------------
+## Data Property
+## * VNodeID
+## * Socket Address (VNode のソケットファイル，本来はIP:Port)
+## * Software Module (VNode moduleの実行系ファイル)
+## * Description
+## * Foreign Socket Address (VMNodeF のソケットファイル，本来はIP:Port)
+## * Representative Socket Address (VMNodeR のソケットファイル，本来はIP:Port)
+# ---------------
+## Object Property
+## * isVirtualizedBy (PNode->VNode)
+## * isPhysicalizedBy (VNode->PNode)
+
 def generate_random_ipv6():
     random_int = random.getrandbits(128)
     ipv6 = ipaddress.IPv6Address(random_int)

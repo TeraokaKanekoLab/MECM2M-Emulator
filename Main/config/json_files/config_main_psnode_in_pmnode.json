@@ -14,8 +14,8 @@
                     "IPv6Pref": "9223372036854775808",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5302,
-                        139.5308
+                        35.5301,
+                        139.53
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -63,8 +63,8 @@
                     "IPv6Pref": "9223372036854775809",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5302,
-                        139.5308
+                        35.5301,
+                        139.53
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -112,8 +112,8 @@
                     "IPv6Pref": "9223372036854775810",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5302,
-                        139.5308
+                        35.5301,
+                        139.53
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -161,8 +161,8 @@
                     "IPv6Pref": "9223372036854775811",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5306,
-                        139.5313
+                        35.53,
+                        139.5316
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -210,8 +210,8 @@
                     "IPv6Pref": "9223372036854775812",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5306,
-                        139.5313
+                        35.53,
+                        139.5316
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -259,8 +259,8 @@
                     "IPv6Pref": "9223372036854775813",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5306,
-                        139.5313
+                        35.53,
+                        139.5316
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -308,8 +308,8 @@
                     "IPv6Pref": "9223372036854775814",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5304,
-                        139.5322
+                        35.5307,
+                        139.5327
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -357,8 +357,8 @@
                     "IPv6Pref": "9223372036854775815",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5304,
-                        139.5322
+                        35.5307,
+                        139.5327
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -406,8 +406,8 @@
                     "IPv6Pref": "9223372036854775816",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5304,
-                        139.5322
+                        35.5307,
+                        139.5327
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -455,8 +455,8 @@
                     "IPv6Pref": "9223372036854775817",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5308,
-                        139.5337
+                        35.5301,
+                        139.5332
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -504,8 +504,8 @@
                     "IPv6Pref": "9223372036854775818",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5308,
-                        139.5337
+                        35.5301,
+                        139.5332
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -553,8 +553,8 @@
                     "IPv6Pref": "9223372036854775819",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5308,
-                        139.5337
+                        35.5301,
+                        139.5332
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -602,8 +602,8 @@
                     "IPv6Pref": "9223372036854775820",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5305,
-                        139.5341
+                        35.5302,
+                        139.5347
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -651,8 +651,8 @@
                     "IPv6Pref": "9223372036854775821",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5305,
-                        139.5341
+                        35.5302,
+                        139.5347
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -700,8 +700,8 @@
                     "IPv6Pref": "9223372036854775822",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5305,
-                        139.5341
+                        35.5302,
+                        139.5347
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -749,8 +749,8 @@
                     "IPv6Pref": "9223372036854775823",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5304,
-                        139.5351
+                        35.5308,
+                        139.5352
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -798,8 +798,8 @@
                     "IPv6Pref": "9223372036854775824",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5304,
-                        139.5351
+                        35.5308,
+                        139.5352
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -847,8 +847,8 @@
                     "IPv6Pref": "9223372036854775825",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5304,
-                        139.5351
+                        35.5308,
+                        139.5352
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -896,8 +896,8 @@
                     "IPv6Pref": "9223372036854775826",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5306,
-                        139.5361
+                        35.5303,
+                        139.5369
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -945,8 +945,8 @@
                     "IPv6Pref": "9223372036854775827",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5306,
-                        139.5361
+                        35.5303,
+                        139.5369
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -994,8 +994,8 @@
                     "IPv6Pref": "9223372036854775828",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5306,
-                        139.5361
+                        35.5303,
+                        139.5369
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1043,8 +1043,8 @@
                     "IPv6Pref": "9223372036854775829",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5309,
-                        139.5378
+                        35.5302,
+                        139.5374
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1092,8 +1092,8 @@
                     "IPv6Pref": "9223372036854775830",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5309,
-                        139.5378
+                        35.5302,
+                        139.5374
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1141,8 +1141,8 @@
                     "IPv6Pref": "9223372036854775831",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5309,
-                        139.5378
+                        35.5302,
+                        139.5374
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1190,8 +1190,8 @@
                     "IPv6Pref": "9223372036854775832",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5307,
-                        139.538
+                        35.5305,
+                        139.5382
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1239,8 +1239,8 @@
                     "IPv6Pref": "9223372036854775833",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5307,
-                        139.538
+                        35.5305,
+                        139.5382
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1288,8 +1288,8 @@
                     "IPv6Pref": "9223372036854775834",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5307,
-                        139.538
+                        35.5305,
+                        139.5382
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1337,8 +1337,8 @@
                     "IPv6Pref": "9223372036854775835",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5305,
-                        139.5393
+                        35.5301,
+                        139.5396
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1386,8 +1386,8 @@
                     "IPv6Pref": "9223372036854775836",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5305,
-                        139.5393
+                        35.5301,
+                        139.5396
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1435,8 +1435,8 @@
                     "IPv6Pref": "9223372036854775837",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5305,
-                        139.5393
+                        35.5301,
+                        139.5396
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1484,8 +1484,8 @@
                     "IPv6Pref": "9223372036854775838",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5315,
-                        139.5303
+                        35.5316,
+                        139.5302
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1533,8 +1533,8 @@
                     "IPv6Pref": "9223372036854775839",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5315,
-                        139.5303
+                        35.5316,
+                        139.5302
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1582,8 +1582,8 @@
                     "IPv6Pref": "9223372036854775840",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5315,
-                        139.5303
+                        35.5316,
+                        139.5302
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1631,8 +1631,8 @@
                     "IPv6Pref": "9223372036854775841",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5311,
-                        139.5314
+                        35.5312,
+                        139.5312
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1680,8 +1680,8 @@
                     "IPv6Pref": "9223372036854775842",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5311,
-                        139.5314
+                        35.5312,
+                        139.5312
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1729,8 +1729,8 @@
                     "IPv6Pref": "9223372036854775843",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5311,
-                        139.5314
+                        35.5312,
+                        139.5312
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1778,8 +1778,8 @@
                     "IPv6Pref": "9223372036854775844",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5313,
-                        139.5324
+                        35.5314,
+                        139.5321
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1827,8 +1827,8 @@
                     "IPv6Pref": "9223372036854775845",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5313,
-                        139.5324
+                        35.5314,
+                        139.5321
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -1876,8 +1876,8 @@
                     "IPv6Pref": "9223372036854775846",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5313,
-                        139.5324
+                        35.5314,
+                        139.5321
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -1925,8 +1925,8 @@
                     "IPv6Pref": "9223372036854775847",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5314,
-                        139.5332
+                        35.5317,
+                        139.5335
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -1974,8 +1974,8 @@
                     "IPv6Pref": "9223372036854775848",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5314,
-                        139.5332
+                        35.5317,
+                        139.5335
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2023,8 +2023,8 @@
                     "IPv6Pref": "9223372036854775849",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5314,
-                        139.5332
+                        35.5317,
+                        139.5335
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2072,8 +2072,8 @@
                     "IPv6Pref": "9223372036854775850",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5313,
-                        139.5341
+                        35.5316,
+                        139.5342
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -2121,8 +2121,8 @@
                     "IPv6Pref": "9223372036854775851",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5313,
-                        139.5341
+                        35.5316,
+                        139.5342
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2170,8 +2170,8 @@
                     "IPv6Pref": "9223372036854775852",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5313,
-                        139.5341
+                        35.5316,
+                        139.5342
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2219,8 +2219,8 @@
                     "IPv6Pref": "9223372036854775853",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.532,
-                        139.5359
+                        35.5319,
+                        139.5355
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -2268,8 +2268,8 @@
                     "IPv6Pref": "9223372036854775854",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.532,
-                        139.5359
+                        35.5319,
+                        139.5355
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2317,8 +2317,8 @@
                     "IPv6Pref": "9223372036854775855",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.532,
-                        139.5359
+                        35.5319,
+                        139.5355
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2367,7 +2367,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5319,
-                        139.5363
+                        139.536
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -2416,7 +2416,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5319,
-                        139.5363
+                        139.536
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2465,7 +2465,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5319,
-                        139.5363
+                        139.536
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2513,8 +2513,8 @@
                     "IPv6Pref": "9223372036854775859",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5313,
-                        139.537
+                        35.5317,
+                        139.5374
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -2562,8 +2562,8 @@
                     "IPv6Pref": "9223372036854775860",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5313,
-                        139.537
+                        35.5317,
+                        139.5374
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2611,8 +2611,8 @@
                     "IPv6Pref": "9223372036854775861",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5313,
-                        139.537
+                        35.5317,
+                        139.5374
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2660,7 +2660,7 @@
                     "IPv6Pref": "9223372036854775862",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5312,
+                        35.5319,
                         139.5381
                     ],
                     "Capability": "MaxTemp",
@@ -2709,7 +2709,7 @@
                     "IPv6Pref": "9223372036854775863",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5312,
+                        35.5319,
                         139.5381
                     ],
                     "Capability": "MaxHumid",
@@ -2758,7 +2758,7 @@
                     "IPv6Pref": "9223372036854775864",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5312,
+                        35.5319,
                         139.5381
                     ],
                     "Capability": "MaxWind",
@@ -2807,8 +2807,8 @@
                     "IPv6Pref": "9223372036854775865",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5315,
-                        139.5392
+                        35.5318,
+                        139.5398
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -2856,8 +2856,8 @@
                     "IPv6Pref": "9223372036854775866",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5315,
-                        139.5392
+                        35.5318,
+                        139.5398
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -2905,8 +2905,8 @@
                     "IPv6Pref": "9223372036854775867",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5315,
-                        139.5392
+                        35.5318,
+                        139.5398
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -2954,7 +2954,7 @@
                     "IPv6Pref": "9223372036854775868",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5323,
+                        35.5325,
                         139.5309
                     ],
                     "Capability": "MaxTemp",
@@ -3003,7 +3003,7 @@
                     "IPv6Pref": "9223372036854775869",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5323,
+                        35.5325,
                         139.5309
                     ],
                     "Capability": "MaxHumid",
@@ -3052,7 +3052,7 @@
                     "IPv6Pref": "9223372036854775870",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5323,
+                        35.5325,
                         139.5309
                     ],
                     "Capability": "MaxWind",
@@ -3248,8 +3248,8 @@
                     "IPv6Pref": "9223372036854775874",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.533,
-                        139.5325
+                        35.5328,
+                        139.532
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -3297,8 +3297,8 @@
                     "IPv6Pref": "9223372036854775875",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.533,
-                        139.5325
+                        35.5328,
+                        139.532
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -3346,8 +3346,8 @@
                     "IPv6Pref": "9223372036854775876",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.533,
-                        139.5325
+                        35.5328,
+                        139.532
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -3395,8 +3395,8 @@
                     "IPv6Pref": "9223372036854775877",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5326,
-                        139.533
+                        35.5322,
+                        139.5338
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -3444,8 +3444,8 @@
                     "IPv6Pref": "9223372036854775878",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5326,
-                        139.533
+                        35.5322,
+                        139.5338
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -3493,8 +3493,8 @@
                     "IPv6Pref": "9223372036854775879",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5326,
-                        139.533
+                        35.5322,
+                        139.5338
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -3542,8 +3542,8 @@
                     "IPv6Pref": "9223372036854775880",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.532,
-                        139.5349
+                        35.5322,
+                        139.5348
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -3591,8 +3591,8 @@
                     "IPv6Pref": "9223372036854775881",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.532,
-                        139.5349
+                        35.5322,
+                        139.5348
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -3640,8 +3640,8 @@
                     "IPv6Pref": "9223372036854775882",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.532,
-                        139.5349
+                        35.5322,
+                        139.5348
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -3689,8 +3689,8 @@
                     "IPv6Pref": "9223372036854775883",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5327,
-                        139.5358
+                        35.532,
+                        139.5356
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -3738,8 +3738,8 @@
                     "IPv6Pref": "9223372036854775884",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5327,
-                        139.5358
+                        35.532,
+                        139.5356
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -3787,8 +3787,8 @@
                     "IPv6Pref": "9223372036854775885",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5327,
-                        139.5358
+                        35.532,
+                        139.5356
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -3836,7 +3836,7 @@
                     "IPv6Pref": "9223372036854775886",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5329,
+                        35.5322,
                         139.5363
                     ],
                     "Capability": "MaxTemp",
@@ -3885,7 +3885,7 @@
                     "IPv6Pref": "9223372036854775887",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5329,
+                        35.5322,
                         139.5363
                     ],
                     "Capability": "MaxHumid",
@@ -3934,7 +3934,7 @@
                     "IPv6Pref": "9223372036854775888",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5329,
+                        35.5322,
                         139.5363
                     ],
                     "Capability": "MaxWind",
@@ -3983,8 +3983,8 @@
                     "IPv6Pref": "9223372036854775889",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5321,
-                        139.5379
+                        35.532,
+                        139.5373
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4032,8 +4032,8 @@
                     "IPv6Pref": "9223372036854775890",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5321,
-                        139.5379
+                        35.532,
+                        139.5373
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4081,8 +4081,8 @@
                     "IPv6Pref": "9223372036854775891",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5321,
-                        139.5379
+                        35.532,
+                        139.5373
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -4130,8 +4130,8 @@
                     "IPv6Pref": "9223372036854775892",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5321,
-                        139.5382
+                        35.532,
+                        139.5381
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4179,8 +4179,8 @@
                     "IPv6Pref": "9223372036854775893",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5321,
-                        139.5382
+                        35.532,
+                        139.5381
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4228,8 +4228,8 @@
                     "IPv6Pref": "9223372036854775894",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5321,
-                        139.5382
+                        35.532,
+                        139.5381
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -4277,8 +4277,8 @@
                     "IPv6Pref": "9223372036854775895",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5322,
-                        139.5395
+                        35.5327,
+                        139.5399
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4326,8 +4326,8 @@
                     "IPv6Pref": "9223372036854775896",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5322,
-                        139.5395
+                        35.5327,
+                        139.5399
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4375,8 +4375,8 @@
                     "IPv6Pref": "9223372036854775897",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5322,
-                        139.5395
+                        35.5327,
+                        139.5399
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -4424,8 +4424,8 @@
                     "IPv6Pref": "9223372036854775898",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5333,
-                        139.5308
+                        35.5332,
+                        139.5302
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4473,8 +4473,8 @@
                     "IPv6Pref": "9223372036854775899",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5333,
-                        139.5308
+                        35.5332,
+                        139.5302
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4522,8 +4522,8 @@
                     "IPv6Pref": "9223372036854775900",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5333,
-                        139.5308
+                        35.5332,
+                        139.5302
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -4571,8 +4571,8 @@
                     "IPv6Pref": "9223372036854775901",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5339,
-                        139.5318
+                        35.5332,
+                        139.5317
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4620,8 +4620,8 @@
                     "IPv6Pref": "9223372036854775902",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5339,
-                        139.5318
+                        35.5332,
+                        139.5317
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4669,8 +4669,8 @@
                     "IPv6Pref": "9223372036854775903",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5339,
-                        139.5318
+                        35.5332,
+                        139.5317
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -4718,8 +4718,8 @@
                     "IPv6Pref": "9223372036854775904",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5333,
-                        139.5324
+                        35.5338,
+                        139.5327
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -4767,8 +4767,8 @@
                     "IPv6Pref": "9223372036854775905",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5333,
-                        139.5324
+                        35.5338,
+                        139.5327
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -4816,8 +4816,8 @@
                     "IPv6Pref": "9223372036854775906",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5333,
-                        139.5324
+                        35.5338,
+                        139.5327
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5012,8 +5012,8 @@
                     "IPv6Pref": "9223372036854775910",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5334,
-                        139.5342
+                        35.5332,
+                        139.5344
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5061,8 +5061,8 @@
                     "IPv6Pref": "9223372036854775911",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5334,
-                        139.5342
+                        35.5332,
+                        139.5344
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5110,8 +5110,8 @@
                     "IPv6Pref": "9223372036854775912",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5334,
-                        139.5342
+                        35.5332,
+                        139.5344
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5159,8 +5159,8 @@
                     "IPv6Pref": "9223372036854775913",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5337,
-                        139.5351
+                        35.5331,
+                        139.5357
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5208,8 +5208,8 @@
                     "IPv6Pref": "9223372036854775914",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5337,
-                        139.5351
+                        35.5331,
+                        139.5357
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5257,8 +5257,8 @@
                     "IPv6Pref": "9223372036854775915",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5337,
-                        139.5351
+                        35.5331,
+                        139.5357
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5306,8 +5306,8 @@
                     "IPv6Pref": "9223372036854775916",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5336,
-                        139.5361
+                        35.5334,
+                        139.5365
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5355,8 +5355,8 @@
                     "IPv6Pref": "9223372036854775917",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5336,
-                        139.5361
+                        35.5334,
+                        139.5365
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5404,8 +5404,8 @@
                     "IPv6Pref": "9223372036854775918",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5336,
-                        139.5361
+                        35.5334,
+                        139.5365
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5454,7 +5454,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5332,
-                        139.538
+                        139.5373
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5503,7 +5503,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5332,
-                        139.538
+                        139.5373
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5552,7 +5552,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5332,
-                        139.538
+                        139.5373
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5600,8 +5600,8 @@
                     "IPv6Pref": "9223372036854775922",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5336,
-                        139.5385
+                        35.533,
+                        139.5389
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5649,8 +5649,8 @@
                     "IPv6Pref": "9223372036854775923",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5336,
-                        139.5385
+                        35.533,
+                        139.5389
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5698,8 +5698,8 @@
                     "IPv6Pref": "9223372036854775924",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5336,
-                        139.5385
+                        35.533,
+                        139.5389
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5747,8 +5747,8 @@
                     "IPv6Pref": "9223372036854775925",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5339,
-                        139.5391
+                        35.5338,
+                        139.5392
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5796,8 +5796,8 @@
                     "IPv6Pref": "9223372036854775926",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5339,
-                        139.5391
+                        35.5338,
+                        139.5392
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5845,8 +5845,8 @@
                     "IPv6Pref": "9223372036854775927",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5339,
-                        139.5391
+                        35.5338,
+                        139.5392
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -5894,8 +5894,8 @@
                     "IPv6Pref": "9223372036854775928",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5349,
-                        139.531
+                        35.5344,
+                        139.5303
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -5943,8 +5943,8 @@
                     "IPv6Pref": "9223372036854775929",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5349,
-                        139.531
+                        35.5344,
+                        139.5303
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -5992,8 +5992,8 @@
                     "IPv6Pref": "9223372036854775930",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5349,
-                        139.531
+                        35.5344,
+                        139.5303
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6041,8 +6041,8 @@
                     "IPv6Pref": "9223372036854775931",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5345,
-                        139.5316
+                        35.5342,
+                        139.5311
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6090,8 +6090,8 @@
                     "IPv6Pref": "9223372036854775932",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5345,
-                        139.5316
+                        35.5342,
+                        139.5311
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6139,8 +6139,8 @@
                     "IPv6Pref": "9223372036854775933",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5345,
-                        139.5316
+                        35.5342,
+                        139.5311
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6188,8 +6188,8 @@
                     "IPv6Pref": "9223372036854775934",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5329
+                        35.5345,
+                        139.5322
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6237,8 +6237,8 @@
                     "IPv6Pref": "9223372036854775935",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5329
+                        35.5345,
+                        139.5322
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6286,8 +6286,8 @@
                     "IPv6Pref": "9223372036854775936",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5343,
-                        139.5329
+                        35.5345,
+                        139.5322
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6335,8 +6335,8 @@
                     "IPv6Pref": "9223372036854775937",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5333
+                        35.5345,
+                        139.5332
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6384,8 +6384,8 @@
                     "IPv6Pref": "9223372036854775938",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5333
+                        35.5345,
+                        139.5332
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6433,8 +6433,8 @@
                     "IPv6Pref": "9223372036854775939",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5343,
-                        139.5333
+                        35.5345,
+                        139.5332
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6482,8 +6482,8 @@
                     "IPv6Pref": "9223372036854775940",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5345,
-                        139.5349
+                        35.5346,
+                        139.5341
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6531,8 +6531,8 @@
                     "IPv6Pref": "9223372036854775941",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5345,
-                        139.5349
+                        35.5346,
+                        139.5341
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6580,8 +6580,8 @@
                     "IPv6Pref": "9223372036854775942",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5345,
-                        139.5349
+                        35.5346,
+                        139.5341
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6630,7 +6630,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5349,
-                        139.5357
+                        139.5351
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6679,7 +6679,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5349,
-                        139.5357
+                        139.5351
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6728,7 +6728,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5349,
-                        139.5357
+                        139.5351
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6776,8 +6776,8 @@
                     "IPv6Pref": "9223372036854775946",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5341,
-                        139.5365
+                        35.5347,
+                        139.537
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6825,8 +6825,8 @@
                     "IPv6Pref": "9223372036854775947",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5341,
-                        139.5365
+                        35.5347,
+                        139.537
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -6874,8 +6874,8 @@
                     "IPv6Pref": "9223372036854775948",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5341,
-                        139.5365
+                        35.5347,
+                        139.537
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -6923,8 +6923,8 @@
                     "IPv6Pref": "9223372036854775949",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5372
+                        35.535,
+                        139.5371
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -6972,8 +6972,8 @@
                     "IPv6Pref": "9223372036854775950",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5343,
-                        139.5372
+                        35.535,
+                        139.5371
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7021,8 +7021,8 @@
                     "IPv6Pref": "9223372036854775951",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5343,
-                        139.5372
+                        35.535,
+                        139.5371
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7071,7 +7071,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5342,
-                        139.5385
+                        139.5386
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7120,7 +7120,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5342,
-                        139.5385
+                        139.5386
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7169,7 +7169,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5342,
-                        139.5385
+                        139.5386
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7217,8 +7217,8 @@
                     "IPv6Pref": "9223372036854775955",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5343,
-                        139.539
+                        35.5342,
+                        139.5396
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7266,8 +7266,8 @@
                     "IPv6Pref": "9223372036854775956",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5343,
-                        139.539
+                        35.5342,
+                        139.5396
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7315,8 +7315,8 @@
                     "IPv6Pref": "9223372036854775957",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5343,
-                        139.539
+                        35.5342,
+                        139.5396
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7365,7 +7365,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5352,
-                        139.5306
+                        139.5305
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7414,7 +7414,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5352,
-                        139.5306
+                        139.5305
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7463,7 +7463,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5352,
-                        139.5306
+                        139.5305
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7511,8 +7511,8 @@
                     "IPv6Pref": "9223372036854775961",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5351,
-                        139.5317
+                        35.5355,
+                        139.532
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7560,8 +7560,8 @@
                     "IPv6Pref": "9223372036854775962",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5351,
-                        139.5317
+                        35.5355,
+                        139.532
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7609,8 +7609,8 @@
                     "IPv6Pref": "9223372036854775963",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5351,
-                        139.5317
+                        35.5355,
+                        139.532
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7658,8 +7658,8 @@
                     "IPv6Pref": "9223372036854775964",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5356,
-                        139.5328
+                        35.536,
+                        139.5325
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7707,8 +7707,8 @@
                     "IPv6Pref": "9223372036854775965",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5356,
-                        139.5328
+                        35.536,
+                        139.5325
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7756,8 +7756,8 @@
                     "IPv6Pref": "9223372036854775966",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5356,
-                        139.5328
+                        35.536,
+                        139.5325
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7806,7 +7806,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5356,
-                        139.5338
+                        139.5332
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -7855,7 +7855,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5356,
-                        139.5338
+                        139.5332
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -7904,7 +7904,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5356,
-                        139.5338
+                        139.5332
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -7952,8 +7952,8 @@
                     "IPv6Pref": "9223372036854775970",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5359,
-                        139.5342
+                        35.5356,
+                        139.5341
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8001,8 +8001,8 @@
                     "IPv6Pref": "9223372036854775971",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5359,
-                        139.5342
+                        35.5356,
+                        139.5341
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8050,8 +8050,8 @@
                     "IPv6Pref": "9223372036854775972",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5359,
-                        139.5342
+                        35.5356,
+                        139.5341
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8099,7 +8099,7 @@
                     "IPv6Pref": "9223372036854775973",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5354,
+                        35.5356,
                         139.5352
                     ],
                     "Capability": "MaxTemp",
@@ -8148,7 +8148,7 @@
                     "IPv6Pref": "9223372036854775974",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5354,
+                        35.5356,
                         139.5352
                     ],
                     "Capability": "MaxHumid",
@@ -8197,7 +8197,7 @@
                     "IPv6Pref": "9223372036854775975",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5354,
+                        35.5356,
                         139.5352
                     ],
                     "Capability": "MaxWind",
@@ -8246,8 +8246,8 @@
                     "IPv6Pref": "9223372036854775976",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5353,
-                        139.5364
+                        35.5354,
+                        139.5367
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8295,8 +8295,8 @@
                     "IPv6Pref": "9223372036854775977",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5353,
-                        139.5364
+                        35.5354,
+                        139.5367
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8344,8 +8344,8 @@
                     "IPv6Pref": "9223372036854775978",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5353,
-                        139.5364
+                        35.5354,
+                        139.5367
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8393,8 +8393,8 @@
                     "IPv6Pref": "9223372036854775979",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.535,
-                        139.5373
+                        35.5355,
+                        139.5374
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8442,8 +8442,8 @@
                     "IPv6Pref": "9223372036854775980",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.535,
-                        139.5373
+                        35.5355,
+                        139.5374
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8491,8 +8491,8 @@
                     "IPv6Pref": "9223372036854775981",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.535,
-                        139.5373
+                        35.5355,
+                        139.5374
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8540,8 +8540,8 @@
                     "IPv6Pref": "9223372036854775982",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5357,
-                        139.5386
+                        35.5359,
+                        139.5389
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8589,8 +8589,8 @@
                     "IPv6Pref": "9223372036854775983",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5357,
-                        139.5386
+                        35.5359,
+                        139.5389
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8638,8 +8638,8 @@
                     "IPv6Pref": "9223372036854775984",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5357,
-                        139.5386
+                        35.5359,
+                        139.5389
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8687,8 +8687,8 @@
                     "IPv6Pref": "9223372036854775985",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5358,
-                        139.5393
+                        35.5356,
+                        139.5391
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8736,8 +8736,8 @@
                     "IPv6Pref": "9223372036854775986",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5358,
-                        139.5393
+                        35.5356,
+                        139.5391
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8785,8 +8785,8 @@
                     "IPv6Pref": "9223372036854775987",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5358,
-                        139.5393
+                        35.5356,
+                        139.5391
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8834,8 +8834,8 @@
                     "IPv6Pref": "9223372036854775988",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5308
+                        35.5363,
+                        139.5309
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -8883,8 +8883,8 @@
                     "IPv6Pref": "9223372036854775989",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5308
+                        35.5363,
+                        139.5309
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -8932,8 +8932,8 @@
                     "IPv6Pref": "9223372036854775990",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5365,
-                        139.5308
+                        35.5363,
+                        139.5309
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -8981,8 +8981,8 @@
                     "IPv6Pref": "9223372036854775991",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5312
+                        35.5364,
+                        139.5315
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9030,8 +9030,8 @@
                     "IPv6Pref": "9223372036854775992",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5312
+                        35.5364,
+                        139.5315
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9079,8 +9079,8 @@
                     "IPv6Pref": "9223372036854775993",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5365,
-                        139.5312
+                        35.5364,
+                        139.5315
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9129,7 +9129,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5369,
-                        139.5328
+                        139.5327
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9178,7 +9178,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5369,
-                        139.5328
+                        139.5327
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9227,7 +9227,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5369,
-                        139.5328
+                        139.5327
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9275,8 +9275,8 @@
                     "IPv6Pref": "9223372036854775997",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5369,
-                        139.5335
+                        35.5366,
+                        139.5337
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9324,8 +9324,8 @@
                     "IPv6Pref": "9223372036854775998",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5369,
-                        139.5335
+                        35.5366,
+                        139.5337
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9373,8 +9373,8 @@
                     "IPv6Pref": "9223372036854775999",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5369,
-                        139.5335
+                        35.5366,
+                        139.5337
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9422,8 +9422,8 @@
                     "IPv6Pref": "9223372036854776000",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5341
+                        35.5369,
+                        139.535
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9471,8 +9471,8 @@
                     "IPv6Pref": "9223372036854776001",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5365,
-                        139.5341
+                        35.5369,
+                        139.535
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9520,8 +9520,8 @@
                     "IPv6Pref": "9223372036854776002",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5365,
-                        139.5341
+                        35.5369,
+                        139.535
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9569,8 +9569,8 @@
                     "IPv6Pref": "9223372036854776003",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5363,
-                        139.5352
+                        35.537,
+                        139.5359
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9618,8 +9618,8 @@
                     "IPv6Pref": "9223372036854776004",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5363,
-                        139.5352
+                        35.537,
+                        139.5359
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9667,8 +9667,8 @@
                     "IPv6Pref": "9223372036854776005",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5363,
-                        139.5352
+                        35.537,
+                        139.5359
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9716,8 +9716,8 @@
                     "IPv6Pref": "9223372036854776006",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5362,
-                        139.5367
+                        35.5369,
+                        139.5365
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9765,8 +9765,8 @@
                     "IPv6Pref": "9223372036854776007",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5362,
-                        139.5367
+                        35.5369,
+                        139.5365
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9814,8 +9814,8 @@
                     "IPv6Pref": "9223372036854776008",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5362,
-                        139.5367
+                        35.5369,
+                        139.5365
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -9864,7 +9864,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5366,
-                        139.5372
+                        139.5371
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -9913,7 +9913,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5366,
-                        139.5372
+                        139.5371
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -9962,7 +9962,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5366,
-                        139.5372
+                        139.5371
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10010,8 +10010,8 @@
                     "IPv6Pref": "9223372036854776012",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5366,
-                        139.538
+                        35.5364,
+                        139.5383
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10059,8 +10059,8 @@
                     "IPv6Pref": "9223372036854776013",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5366,
-                        139.538
+                        35.5364,
+                        139.5383
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10108,8 +10108,8 @@
                     "IPv6Pref": "9223372036854776014",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5366,
-                        139.538
+                        35.5364,
+                        139.5383
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10157,8 +10157,8 @@
                     "IPv6Pref": "9223372036854776015",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5364,
-                        139.5398
+                        35.5366,
+                        139.5391
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10206,8 +10206,8 @@
                     "IPv6Pref": "9223372036854776016",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5364,
-                        139.5398
+                        35.5366,
+                        139.5391
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10255,8 +10255,8 @@
                     "IPv6Pref": "9223372036854776017",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5364,
-                        139.5398
+                        35.5366,
+                        139.5391
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10304,8 +10304,8 @@
                     "IPv6Pref": "9223372036854776018",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5377,
-                        139.5301
+                        35.5375,
+                        139.5305
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10353,8 +10353,8 @@
                     "IPv6Pref": "9223372036854776019",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5377,
-                        139.5301
+                        35.5375,
+                        139.5305
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10402,8 +10402,8 @@
                     "IPv6Pref": "9223372036854776020",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5377,
-                        139.5301
+                        35.5375,
+                        139.5305
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10451,8 +10451,8 @@
                     "IPv6Pref": "9223372036854776021",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5371,
-                        139.5318
+                        35.5376,
+                        139.5315
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10500,8 +10500,8 @@
                     "IPv6Pref": "9223372036854776022",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5371,
-                        139.5318
+                        35.5376,
+                        139.5315
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10549,8 +10549,8 @@
                     "IPv6Pref": "9223372036854776023",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5371,
-                        139.5318
+                        35.5376,
+                        139.5315
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10598,8 +10598,8 @@
                     "IPv6Pref": "9223372036854776024",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.537,
-                        139.533
+                        35.5378,
+                        139.5325
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10647,8 +10647,8 @@
                     "IPv6Pref": "9223372036854776025",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.537,
-                        139.533
+                        35.5378,
+                        139.5325
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10696,8 +10696,8 @@
                     "IPv6Pref": "9223372036854776026",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.537,
-                        139.533
+                        35.5378,
+                        139.5325
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10746,7 +10746,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5374,
-                        139.5338
+                        139.533
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10795,7 +10795,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5374,
-                        139.5338
+                        139.533
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10844,7 +10844,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5374,
-                        139.5338
+                        139.533
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -10892,8 +10892,8 @@
                     "IPv6Pref": "9223372036854776030",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5379,
-                        139.5344
+                        35.538,
+                        139.5346
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -10941,8 +10941,8 @@
                     "IPv6Pref": "9223372036854776031",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5379,
-                        139.5344
+                        35.538,
+                        139.5346
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -10990,8 +10990,8 @@
                     "IPv6Pref": "9223372036854776032",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5379,
-                        139.5344
+                        35.538,
+                        139.5346
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11039,8 +11039,8 @@
                     "IPv6Pref": "9223372036854776033",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5377,
-                        139.5353
+                        35.5372,
+                        139.5358
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11088,8 +11088,8 @@
                     "IPv6Pref": "9223372036854776034",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5377,
-                        139.5353
+                        35.5372,
+                        139.5358
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11137,8 +11137,8 @@
                     "IPv6Pref": "9223372036854776035",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5377,
-                        139.5353
+                        35.5372,
+                        139.5358
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11186,8 +11186,8 @@
                     "IPv6Pref": "9223372036854776036",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5376,
-                        139.5366
+                        35.5373,
+                        139.5369
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11235,8 +11235,8 @@
                     "IPv6Pref": "9223372036854776037",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5376,
-                        139.5366
+                        35.5373,
+                        139.5369
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11284,8 +11284,8 @@
                     "IPv6Pref": "9223372036854776038",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5376,
-                        139.5366
+                        35.5373,
+                        139.5369
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11333,8 +11333,8 @@
                     "IPv6Pref": "9223372036854776039",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5374,
-                        139.5374
+                        35.5373,
+                        139.5371
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11382,8 +11382,8 @@
                     "IPv6Pref": "9223372036854776040",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5374,
-                        139.5374
+                        35.5373,
+                        139.5371
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11431,8 +11431,8 @@
                     "IPv6Pref": "9223372036854776041",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5374,
-                        139.5374
+                        35.5373,
+                        139.5371
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11480,8 +11480,8 @@
                     "IPv6Pref": "9223372036854776042",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5374,
-                        139.538
+                        35.5377,
+                        139.5386
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11529,8 +11529,8 @@
                     "IPv6Pref": "9223372036854776043",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5374,
-                        139.538
+                        35.5377,
+                        139.5386
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11578,8 +11578,8 @@
                     "IPv6Pref": "9223372036854776044",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5374,
-                        139.538
+                        35.5377,
+                        139.5386
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11628,7 +11628,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5377,
-                        139.5398
+                        139.5391
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11677,7 +11677,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5377,
-                        139.5398
+                        139.5391
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11726,7 +11726,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5377,
-                        139.5398
+                        139.5391
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11774,8 +11774,8 @@
                     "IPv6Pref": "9223372036854776048",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5384,
-                        139.5308
+                        35.5388,
+                        139.5309
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11823,8 +11823,8 @@
                     "IPv6Pref": "9223372036854776049",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5384,
-                        139.5308
+                        35.5388,
+                        139.5309
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -11872,8 +11872,8 @@
                     "IPv6Pref": "9223372036854776050",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5384,
-                        139.5308
+                        35.5388,
+                        139.5309
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -11921,8 +11921,8 @@
                     "IPv6Pref": "9223372036854776051",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5383,
-                        139.5317
+                        35.5381,
+                        139.5312
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -11970,8 +11970,8 @@
                     "IPv6Pref": "9223372036854776052",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5383,
-                        139.5317
+                        35.5381,
+                        139.5312
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12019,8 +12019,8 @@
                     "IPv6Pref": "9223372036854776053",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5383,
-                        139.5317
+                        35.5381,
+                        139.5312
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12068,8 +12068,8 @@
                     "IPv6Pref": "9223372036854776054",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5385,
-                        139.5324
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12117,8 +12117,8 @@
                     "IPv6Pref": "9223372036854776055",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5385,
-                        139.5324
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12166,8 +12166,8 @@
                     "IPv6Pref": "9223372036854776056",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5385,
-                        139.5324
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12215,8 +12215,8 @@
                     "IPv6Pref": "9223372036854776057",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5385,
-                        139.5332
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12264,8 +12264,8 @@
                     "IPv6Pref": "9223372036854776058",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5385,
-                        139.5332
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12313,8 +12313,8 @@
                     "IPv6Pref": "9223372036854776059",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5385,
-                        139.5332
+                        35.5383,
+                        139.533
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12362,8 +12362,8 @@
                     "IPv6Pref": "9223372036854776060",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5388,
-                        139.5345
+                        35.5387,
+                        139.5343
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12411,8 +12411,8 @@
                     "IPv6Pref": "9223372036854776061",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5388,
-                        139.5345
+                        35.5387,
+                        139.5343
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12460,8 +12460,8 @@
                     "IPv6Pref": "9223372036854776062",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5388,
-                        139.5345
+                        35.5387,
+                        139.5343
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12509,8 +12509,8 @@
                     "IPv6Pref": "9223372036854776063",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5383,
-                        139.5357
+                        35.5385,
+                        139.5353
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12558,8 +12558,8 @@
                     "IPv6Pref": "9223372036854776064",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5383,
-                        139.5357
+                        35.5385,
+                        139.5353
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12607,8 +12607,8 @@
                     "IPv6Pref": "9223372036854776065",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5383,
-                        139.5357
+                        35.5385,
+                        139.5353
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12656,8 +12656,8 @@
                     "IPv6Pref": "9223372036854776066",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5384,
-                        139.5364
+                        35.5389,
+                        139.5361
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12705,8 +12705,8 @@
                     "IPv6Pref": "9223372036854776067",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5384,
-                        139.5364
+                        35.5389,
+                        139.5361
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12754,8 +12754,8 @@
                     "IPv6Pref": "9223372036854776068",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5384,
-                        139.5364
+                        35.5389,
+                        139.5361
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12803,8 +12803,8 @@
                     "IPv6Pref": "9223372036854776069",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5384,
-                        139.537
+                        35.5386,
+                        139.5378
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -12852,8 +12852,8 @@
                     "IPv6Pref": "9223372036854776070",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5384,
-                        139.537
+                        35.5386,
+                        139.5378
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -12901,8 +12901,8 @@
                     "IPv6Pref": "9223372036854776071",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5384,
-                        139.537
+                        35.5386,
+                        139.5378
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -12951,7 +12951,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5385,
-                        139.5387
+                        139.5381
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13000,7 +13000,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5385,
-                        139.5387
+                        139.5381
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13049,7 +13049,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5385,
-                        139.5387
+                        139.5381
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13097,7 +13097,7 @@
                     "IPv6Pref": "9223372036854776075",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5386,
+                        35.5384,
                         139.5397
                     ],
                     "Capability": "MaxTemp",
@@ -13146,7 +13146,7 @@
                     "IPv6Pref": "9223372036854776076",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5386,
+                        35.5384,
                         139.5397
                     ],
                     "Capability": "MaxHumid",
@@ -13195,7 +13195,7 @@
                     "IPv6Pref": "9223372036854776077",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5386,
+                        35.5384,
                         139.5397
                     ],
                     "Capability": "MaxWind",
@@ -13244,8 +13244,8 @@
                     "IPv6Pref": "9223372036854776078",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5398,
-                        139.5302
+                        35.5392,
+                        139.5305
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13293,8 +13293,8 @@
                     "IPv6Pref": "9223372036854776079",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5398,
-                        139.5302
+                        35.5392,
+                        139.5305
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13342,8 +13342,8 @@
                     "IPv6Pref": "9223372036854776080",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5398,
-                        139.5302
+                        35.5392,
+                        139.5305
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13391,8 +13391,8 @@
                     "IPv6Pref": "9223372036854776081",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5391,
-                        139.5311
+                        35.5398,
+                        139.5313
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13440,8 +13440,8 @@
                     "IPv6Pref": "9223372036854776082",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5391,
-                        139.5311
+                        35.5398,
+                        139.5313
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13489,8 +13489,8 @@
                     "IPv6Pref": "9223372036854776083",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5391,
-                        139.5311
+                        35.5398,
+                        139.5313
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13538,8 +13538,8 @@
                     "IPv6Pref": "9223372036854776084",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.54,
-                        139.5322
+                        35.5395,
+                        139.532
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13587,8 +13587,8 @@
                     "IPv6Pref": "9223372036854776085",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.54,
-                        139.5322
+                        35.5395,
+                        139.532
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13636,8 +13636,8 @@
                     "IPv6Pref": "9223372036854776086",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.54,
-                        139.5322
+                        35.5395,
+                        139.532
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13685,8 +13685,8 @@
                     "IPv6Pref": "9223372036854776087",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5396,
-                        139.533
+                        35.539,
+                        139.5339
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13734,8 +13734,8 @@
                     "IPv6Pref": "9223372036854776088",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5396,
-                        139.533
+                        35.539,
+                        139.5339
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13783,8 +13783,8 @@
                     "IPv6Pref": "9223372036854776089",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5396,
-                        139.533
+                        35.539,
+                        139.5339
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13832,8 +13832,8 @@
                     "IPv6Pref": "9223372036854776090",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5398,
-                        139.5349
+                        35.5399,
+                        139.5345
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -13881,8 +13881,8 @@
                     "IPv6Pref": "9223372036854776091",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5398,
-                        139.5349
+                        35.5399,
+                        139.5345
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -13930,8 +13930,8 @@
                     "IPv6Pref": "9223372036854776092",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5398,
-                        139.5349
+                        35.5399,
+                        139.5345
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -13980,7 +13980,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5392,
-                        139.535
+                        139.5356
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -14029,7 +14029,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5392,
-                        139.535
+                        139.5356
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -14078,7 +14078,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5392,
-                        139.535
+                        139.5356
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -14126,7 +14126,7 @@
                     "IPv6Pref": "9223372036854776096",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.539,
+                        35.5391,
                         139.5368
                     ],
                     "Capability": "MaxTemp",
@@ -14175,7 +14175,7 @@
                     "IPv6Pref": "9223372036854776097",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.539,
+                        35.5391,
                         139.5368
                     ],
                     "Capability": "MaxHumid",
@@ -14224,7 +14224,7 @@
                     "IPv6Pref": "9223372036854776098",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.539,
+                        35.5391,
                         139.5368
                     ],
                     "Capability": "MaxWind",
@@ -14273,8 +14273,8 @@
                     "IPv6Pref": "9223372036854776099",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5392,
-                        139.5374
+                        35.5397,
+                        139.5377
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -14322,8 +14322,8 @@
                     "IPv6Pref": "9223372036854776100",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5392,
-                        139.5374
+                        35.5397,
+                        139.5377
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -14371,8 +14371,8 @@
                     "IPv6Pref": "9223372036854776101",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5392,
-                        139.5374
+                        35.5397,
+                        139.5377
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -14421,7 +14421,7 @@
                     "PNType": "Temp_Sensor",
                     "Position": [
                         35.5392,
-                        139.5389
+                        139.5386
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -14470,7 +14470,7 @@
                     "PNType": "Humid_Sensor",
                     "Position": [
                         35.5392,
-                        139.5389
+                        139.5386
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -14519,7 +14519,7 @@
                     "PNType": "Anemometer",
                     "Position": [
                         35.5392,
-                        139.5389
+                        139.5386
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
@@ -14567,8 +14567,8 @@
                     "IPv6Pref": "9223372036854776105",
                     "PNType": "Temp_Sensor",
                     "Position": [
-                        35.5399,
-                        139.5392
+                        35.5391,
+                        139.5391
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
@@ -14616,8 +14616,8 @@
                     "IPv6Pref": "9223372036854776106",
                     "PNType": "Humid_Sensor",
                     "Position": [
-                        35.5399,
-                        139.5392
+                        35.5391,
+                        139.5391
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
@@ -14665,8 +14665,8 @@
                     "IPv6Pref": "9223372036854776107",
                     "PNType": "Anemometer",
                     "Position": [
-                        35.5399,
-                        139.5392
+                        35.5391,
+                        139.5391
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",

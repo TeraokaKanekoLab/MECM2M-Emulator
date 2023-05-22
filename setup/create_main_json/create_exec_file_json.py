@@ -6,17 +6,17 @@ import glob
 load_dotenv()
 json_file_path = os.getenv("PROJECT_PATH") + "/Main/config/json_files"
 
-#MEC_SERVER_NUM
+#EDGE_SERVER_NUM
 #CLOUD_SERVER_NUM
 #PMNODE_NUM
 #PSNODE_NUM
-MEC_SERVER_NUM = 1
+EDGE_SERVER_NUM = int(os.getenv("EDGE_SERVER_NUM"))
 PMNODE_NUM = 1
 PSNODE_NUM = 1
 
 data = {"mec-servers":{"environment":{}}, "pmnodes":{"environment":{}}, "psnodes":{"environment":{}}}
 
-data["mec-servers"]["environment"]["num"] = MEC_SERVER_NUM
+data["mec-servers"]["environment"]["num"] = EDGE_SERVER_NUM
 data["pmnodes"]["environment"]["num"] = PMNODE_NUM
 data["psnodes"]["environment"]["num"] = PSNODE_NUM
 
@@ -28,7 +28,7 @@ matching_files = glob.glob(pattern)
 for file_name in matching_files:
     os.remove(file_name)
     #print(f"Remove file: {file_name}")
-while i < MEC_SERVER_NUM:
+while i < EDGE_SERVER_NUM:
     server_dict = os.getenv("PROJECT_PATH") + "/MECServer/Server/"
     vpoint_dict = os.getenv("PROJECT_PATH") + "/MECServer/VPoint/"
     vsnode_dict = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/"

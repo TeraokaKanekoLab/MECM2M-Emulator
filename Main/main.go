@@ -126,6 +126,7 @@ func main() {
 	// MEC Serverフレームワークの実行
 	//mec_server_num := config.MecServers.Environment.Num
 
+	server_num := 1
 	for _, mec_server := range config.MecServers.MecServer {
 		server_exec_file := mec_server.Server
 		vpoint_exec_file := mec_server.VPoint
@@ -133,8 +134,8 @@ func main() {
 		//vmnode_exec_file := mec_server.VMNode
 		fmt.Println("----------")
 
-		cmdServer := exec.Command(server_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/Server/socket_files/server_1.json") // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-		//cmdServer := exec.Command("pwd")
+		server_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
+		cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
 		errCmdServer := cmdServer.Start()
 		if errCmdServer != nil {
 			message.MyError(err, "exec.Command > MEC Server > Start")
@@ -169,6 +170,7 @@ func main() {
 		*/
 
 		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
+		server_num++
 	}
 
 	// PMNodeフレームワークの実行
@@ -484,7 +486,7 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 
 		// 2. GraphDB, SensingDBのレコード削除
 		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/GraphDB/clear_GraphDB.py"
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
 		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
 		errCmdGraphDB := cmdGraphDB.Run()
 		if errCmdGraphDB != nil {
@@ -492,7 +494,12 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 		}
 
 		// SensingDB
-		// hoge
+		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+		errCmdSensingDB := cmdSensingDB.Run()
+		if errCmdSensingDB != nil {
+			message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
+		}
 
 		message.MyMessage("Bye")
 		os.Exit(0)
@@ -554,7 +561,7 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 
 		// 2. GraphDB, SensingDBのレコード削除
 		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/setup/GraphDB/clear_GraphDB.py"
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
 		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
 		errCmdGraphDB := cmdGraphDB.Run()
 		if errCmdGraphDB != nil {
@@ -562,7 +569,12 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 		}
 
 		// SensingDB
-		// hoge
+		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+		errCmdSensingDB := cmdSensingDB.Run()
+		if errCmdSensingDB != nil {
+			message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
+		}
 
 		message.MyMessage("Bye")
 		os.Exit(0)
@@ -612,7 +624,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		if err := encoder.Encode(m); err != nil {
 			message.MyError(err, "commandAPIExecution > point > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(&m)
 
 		// ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
 		ms := []m2mapi.ResolvePoint{}
