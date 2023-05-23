@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -84,30 +83,33 @@ func main() {
 
 	// 1. 各インスタンスの登録・socketファイルの準備
 	// config/register_for_neo4jの実行
-	err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.IsDir() {
-			// ファイルの抽出
-			cmd := exec.Command("python3", path)
-			output, err := cmd.CombinedOutput()
+	/*
+		err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				fmt.Println(err)
+				return err
 			}
-			fmt.Printf("%s\n", output)
+
+			if !info.IsDir() {
+				// ファイルの抽出
+				cmd := exec.Command("python3", path)
+				output, err := cmd.CombinedOutput()
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Printf("%s\n", output)
+			}
+
+			return nil
+		})
+
+		if err != nil {
+			panic(err)
 		}
-
-		return nil
-	})
-
-	if err != nil {
-		panic(err)
-	}
+	*/
 
 	// 2. 各プロセスファイルの実行
 	// 実行系ファイルをまとめたconfigファイルを読み込む
+
 	config_exec_file := "./config/json_files/config_main_exec_file.json"
 	file, err := ioutil.ReadFile(config_exec_file)
 	if err != nil {
@@ -172,6 +174,19 @@ func main() {
 		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
 		server_num++
 	}
+
+	// Cloud Serverの実行
+	fmt.Println("----------")
+	cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/CloudServer/Server/socket_files/server_0.json"
+	cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/CloudServer/Server/main"
+	cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
+	errCmdCloudServer := cmdCloudServer.Start()
+	if errCmdCloudServer != nil {
+		message.MyError(err, "exec.Command > Cloud Server > Start")
+	} else {
+		fmt.Println(cloud_server_exec_file, " is running")
+	}
+	processIds = append(processIds, cmdCloudServer.Process.Pid)
 
 	// PMNodeフレームワークの実行
 	//pmnode_num := config.PmNodes.Environment.Num
@@ -464,6 +479,7 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 	// シミュレーションの終了
 	case "exit":
 		// 1. 各プロセスの削除
+
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
 			if err != nil {
@@ -477,30 +493,31 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
 		}
+		/*
+			// 2-0. パスを入手
+			err := godotenv.Load(os.Getenv("HOME") + "/.env")
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
+			}
 
-		// 2-0. パスを入手
-		err := godotenv.Load(os.Getenv("HOME") + "/.env")
-		if err != nil {
-			message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
-		}
+			// 2. GraphDB, SensingDBのレコード削除
+			// GraphDB
+			clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
+			cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+			errCmdGraphDB := cmdGraphDB.Run()
+			if errCmdGraphDB != nil {
+				message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
+			}
 
-		// 2. GraphDB, SensingDBのレコード削除
-		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-		errCmdGraphDB := cmdGraphDB.Run()
-		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
-		}
+			// SensingDB
+			clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+			cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+			errCmdSensingDB := cmdSensingDB.Run()
+			if errCmdSensingDB != nil {
+				message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
+			}
 
-		// SensingDB
-		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-		errCmdSensingDB := cmdSensingDB.Run()
-		if errCmdSensingDB != nil {
-			message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
-		}
-
+		*/
 		message.MyMessage("Bye")
 		os.Exit(0)
 	// デバイスの登録
@@ -552,30 +569,30 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
 		}
+		/*
+			// 2-0. パスを入手
+			err := godotenv.Load(os.Getenv("HOME") + "/.env")
+			if err != nil {
+				message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
+			}
 
-		// 2-0. パスを入手
-		err := godotenv.Load(os.Getenv("HOME") + "/.env")
-		if err != nil {
-			message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
-		}
+			// 2. GraphDB, SensingDBのレコード削除
+			// GraphDB
+			clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
+			cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+			errCmdGraphDB := cmdGraphDB.Run()
+			if errCmdGraphDB != nil {
+				message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
+			}
 
-		// 2. GraphDB, SensingDBのレコード削除
-		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-		errCmdGraphDB := cmdGraphDB.Run()
-		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
-		}
-
-		// SensingDB
-		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-		errCmdSensingDB := cmdSensingDB.Run()
-		if errCmdSensingDB != nil {
-			message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
-		}
-
+			// SensingDB
+			clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+			cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+			errCmdSensingDB := cmdSensingDB.Run()
+			if errCmdSensingDB != nil {
+				message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
+			}
+		*/
 		message.MyMessage("Bye")
 		os.Exit(0)
 	// デバイスの登録
@@ -624,7 +641,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		if err := encoder.Encode(m); err != nil {
 			message.MyError(err, "commandAPIExecution > point > encoder.Encode")
 		}
-		message.MyWriteMessage(&m)
+		message.MyWriteMessage(*m)
 
 		// ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
 		ms := []m2mapi.ResolvePoint{}

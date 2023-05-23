@@ -1,17 +1,17 @@
 package server
 
 type AAA struct {
-	//input
+	// input
 	VNodeID_n  string
 	HomeMECID  string
 	Credential string
 
-	//output
+	// output
 	Status bool
-	//VNodeID_n string (dup)
+	// VNodeID_n string (dup)
 }
 
-//Serverのソケットファイル群
+// Serverのソケットファイル群
 type ServerSocketFiles struct {
 	M2MApi    string `json:"m2mApi"`
 	LocalMgr  string `json:"localMgr"`

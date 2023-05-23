@@ -1,0 +1,9 @@
+{
+    "m2mApi": "/tmp/mecm2m/svr_0_m2mapi.sock",
+    "localMgr": "/tmp/mecm2m/svr_0_localmgr.sock",
+    "pnodeMgr": "/tmp/mecm2m/svr_0_pnodemgr.sock",
+    "aaa": "/tmp/mecm2m/svr_0_aaa.sock",
+    "localRepo": "/tmp/mecm2m/svr_0_localrepo.sock",
+    "graphDB": "/tmp/mecm2m/svr_0_graphdb.sock",
+    "sensingDB": "/tmp/mecm2m/svr_0_sensingdb.sock"
+}

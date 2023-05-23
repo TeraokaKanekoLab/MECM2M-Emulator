@@ -32,4 +32,10 @@ printf "\e[1;31m \n3-1. BUILD PSNODE PROCESS \e[0m"
 # PSNodeプロセスの実行系ファイルを生成
 go build -o ${PROJECT_PATH}/PSNode/main ${PROJECT_PATH}/PSNode/main.go
 
+printf "\e[1;31m \n4. CLOUD SERVER FRAMEWORK \e[0m"
+
+printf "\e[1;31m \n4-1. BUILD CLOUD SERVER PROCESS \e[0m"
+# Cloud Serverプロセスの実行系ファイルを生成
+go build -o ${PROJECT_PATH}/CloudServer/Server/main ${PROJECT_PATH}/CloudServer/Server/main.go
+
 printf "\n"

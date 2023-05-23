@@ -194,7 +194,7 @@ while neLat <= MAX_LAT:
                     "property-label": "VSNode",
                     "data-property": {
                         "Label": label_vsnode,
-                        "VSNodeID": vsnode_id,
+                        "VNodeID": vsnode_id,
                         "SocketAddress": socket_address,
                         "SoftwareModule": vnode_module_id,
                         "Description": vsnode_description

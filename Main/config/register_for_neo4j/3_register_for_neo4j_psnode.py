@@ -14,7 +14,7 @@ local_graph = Graph(local_url, auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO
 local_tx = local_graph.begin()
 
 args = sys.argv
-json_file = os.getenv("HOME") + os.getenv("PROJECT_PATH") + "/Main/config/json_files/config_main_psnode.json"
+json_file = os.getenv("HOME") + os.getenv("PROJECT_NAME") + "/Main/config/json_files/config_main_psnode.json"
 with open(json_file) as f:
     data = json.load(f)
 
@@ -24,12 +24,14 @@ for property in data["psnodes"]:
     label_psnode = psnode["property-label"]
     data_property_psnode = psnode["data-property"]
     node_psnode = Node(label_psnode, **data_property_psnode)
+    node_psnode.add_label("PNode")
     global_graph.create(node_psnode)
 
     belonging_server_labal = psnode["relation-label"]["Server"]
     if belonging_server_labal == "S1":
         # Local GraphDB への登録
         dup_node_psnode = Node(label_psnode, **data_property_psnode)
+        dup_node_psnode.add_label("PNode")
         local_graph.create(dup_node_psnode)
     
     # VSNode Data Property
@@ -37,10 +39,12 @@ for property in data["psnodes"]:
     label_vsnode = vsnode["property-label"]
     data_property_vsnode = vsnode["data-property"]
     node_vsnode = Node(label_vsnode, **data_property_vsnode)
+    node_vsnode.add_label("VNode")
     global_graph.create(node_vsnode)
     if belonging_server_labal == "S1":
         # Local GraphDB への登録
         dup_node_vsnode = Node(label_vsnode, **data_property_vsnode)
+        dup_node_vsnode.add_label("VNode")
         local_graph.create(dup_node_vsnode)
     
     # PSNode Object Property

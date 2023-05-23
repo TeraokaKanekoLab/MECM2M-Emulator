@@ -32,8 +32,11 @@ const (
 
 	// Home MEC Server かどうかの判定
 	ServerID = "ServerID0001"
-	// vsnodePort = "8080"
 )
+
+// 自身のカバー領域情報をキャッシュ
+var covered_area = make(map[string][]float64)
+var mu sync.Mutex
 
 // 各種システムコンポーネントのソケットアドレスをグローバルに設定
 var m2mApiSockAddr string
@@ -186,35 +189,143 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			connDB, err := net.Dial(protocol, graphDBSockAddr)
-			if err != nil {
-				message.MyError(err, "m2mApi > Point > net.Dial")
+			// キャッシュ情報をもとに，ローカルかグローバルか判断する．キャッシュがない場合は，ローカルで検索する．
+			// キャッシュの検索はここで行う
+			if _, ok := covered_area["MINLAT"]; !ok {
+				local_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+
+				mu.Lock()
+				// エッジサーバのカバー領域を検索する
+				// MINLAT, MAXLAT, MINLON, MAXLONのそれぞれを持つレコードを検索
+				min_lat_payload := `{"statements": [{"statement": "MATCH (a: Area) WHERE size(a.SW) > 1 WITH min(a.SW[0]) as minLat MATCH (a:Area) WHERE a.SW[0] = minLat RETURN a ORDER BY a.SW[1] ASC LIMIT 1;"}]}`
+				min_lat_datas := listenServer(min_lat_payload, local_url)
+				for _, data := range min_lat_datas {
+					dataArray := data.([]interface{})
+					dataArrayInterface := dataArray[0]
+					min_lat_record := dataArrayInterface.(map[string]interface{})
+					min_lat_interface := min_lat_record["SW"].([]interface{})
+					var min_lat []float64
+					for _, v := range min_lat_interface {
+						min_lat = append(min_lat, v.(float64))
+					}
+					covered_area["MINLAT"] = min_lat
+				}
+
+				min_lon_payload := `{"statements": [{"statement": "MATCH (a: Area) WHERE size(a.SW) > 1 WITH min(a.SW[1]) as minLon MATCH (a:Area) WHERE a.SW[1] = minLon RETURN a ORDER BY a.SW[0] ASC LIMIT 1;"}]}`
+				min_lon_datas := listenServer(min_lon_payload, local_url)
+				for _, data := range min_lon_datas {
+					dataArray := data.([]interface{})
+					dataArrayInterface := dataArray[0]
+					min_lon_record := dataArrayInterface.(map[string]interface{})
+					min_lon_interface := min_lon_record["SW"].([]interface{})
+					var min_lon []float64
+					for _, v := range min_lon_interface {
+						min_lon = append(min_lon, v.(float64))
+					}
+					covered_area["MINLON"] = min_lon
+				}
+
+				max_lat_payload := `{"statements": [{"statement": "MATCH (a: Area) WHERE size(a.NE) > 1 WITH max(a.NE[0]) as maxLat MATCH (a:Area) WHERE a.NE[0] = maxLat RETURN a ORDER BY a.NE[1] DESC LIMIT 1;"}]}`
+				max_lat_datas := listenServer(max_lat_payload, local_url)
+				for _, data := range max_lat_datas {
+					dataArray := data.([]interface{})
+					dataArrayInterface := dataArray[0]
+					max_lat_record := dataArrayInterface.(map[string]interface{})
+					max_lat_interface := max_lat_record["SW"].([]interface{})
+					var max_lat []float64
+					for _, v := range max_lat_interface {
+						max_lat = append(max_lat, v.(float64))
+					}
+					covered_area["MAXLAT"] = max_lat
+				}
+
+				max_lon_payload := `{"statements": [{"statement": "MATCH (a: Area) WHERE size(a.NE) > 1 WITH max(a.NE[1]) as maxLon MATCH (a:Area) WHERE a.NE[1] = maxLon RETURN a ORDER BY a.NE[0] DESC LIMIT 1;"}]}`
+				max_lon_datas := listenServer(max_lon_payload, local_url)
+				for _, data := range max_lon_datas {
+					dataArray := data.([]interface{})
+					dataArrayInterface := dataArray[0]
+					max_lon_record := dataArrayInterface.(map[string]interface{})
+					max_lon_interface := max_lon_record["SW"].([]interface{})
+					var max_lon []float64
+					for _, v := range max_lon_interface {
+						max_lon = append(max_lon, v.(float64))
+					}
+					covered_area["MAXLON"] = max_lon
+				}
+
+				mu.Unlock()
+				// キャッシュ登録完了
 			}
-			decoderDB := gob.NewDecoder(connDB)
-			encoderDB := gob.NewEncoder(connDB)
+			fmt.Println("Cache covered area: ", covered_area)
 
-			syncFormatClient("Point", decoderDB, encoderDB)
+			// キャッシュのカバー領域情報をもとに，クラウドへリレーするかを判断する
+			// キャッシュ情報と入力情報の比較
+			// (SWLONがMINLATのLONより小さい and SWLATがMINLONのLATより小さい) or (NELONがMAXLATのLONより大きい and NELATがMAXLONのLATより大きい) -> Global GraphDB
+			if (format.SW.Lon < covered_area["MINLAT"][1] && format.SW.Lat < covered_area["MINLON"][0]) || (format.NE.Lon > covered_area["MAXLAT"][1] && format.NE.Lat > covered_area["MAXLON"][0]) {
+				// Global GraphDB へリクエスト
+				fmt.Println("resolve in global")
+				connCloud, err := net.Dial(protocol, "/tmp/mecm2m/svr_0_m2mapi.sock")
+				if err != nil {
+					message.MyError(err, "m2mApi > PointGlobal > net.Dial")
+				}
+				decoderCloud := gob.NewDecoder(connCloud)
+				encoderCloud := gob.NewEncoder(connCloud)
 
-			if err := encoderDB.Encode(format); err != nil {
-				message.MyError(err, "m2mApi > Point > encoderDB.Encode")
+				syncFormatClient("Point", decoderCloud, encoderCloud)
+
+				if err := encoderCloud.Encode(format); err != nil {
+					message.MyError(err, "m2mApi > PointGlobal > encoderCloud.Encode")
+				}
+				message.MyWriteMessage(*format)
+
+				// Cloud でのポイント解決
+
+				// 受信する型は[]ResolvePoint
+				ms := []m2mapi.ResolvePoint{}
+				if err := decoderCloud.Decode(&ms); err != nil {
+					message.MyError(err, "m2mApi > PointGlobal > decoderCloud.Decode")
+				}
+				message.MyReadMessage(ms)
+
+				// 最終的な結果をM2M Appに送信する
+				if err := encoder.Encode(&ms); err != nil {
+					message.MyError(err, "m2mApi > PointGlobal > encoder.Encode")
+					break
+				}
+				message.MyWriteMessage(ms)
+			} else {
+				// Local GraphDB へリクエスト
+				fmt.Println("resolve in local")
+				connDB, err := net.Dial(protocol, graphDBSockAddr)
+				if err != nil {
+					message.MyError(err, "m2mApi > PointLocal > net.Dial")
+				}
+				decoderDB := gob.NewDecoder(connDB)
+				encoderDB := gob.NewEncoder(connDB)
+
+				syncFormatClient("Point", decoderDB, encoderDB)
+
+				if err := encoderDB.Encode(format); err != nil {
+					message.MyError(err, "m2mApi > PointLocal > encoderDB.Encode")
+				}
+				message.MyWriteMessage(*format) //1. 同じ内容
+
+				// GraphDB()によるDB検索
+
+				// 受信する型は[]ResolvePoint
+				ms := []m2mapi.ResolvePoint{}
+				if err := decoderDB.Decode(&ms); err != nil {
+					message.MyError(err, "m2mApi > PointLocal > decoderDB.Decode")
+				}
+				message.MyReadMessage(ms)
+
+				// 最終的な結果をM2M Appに送信する
+				if err := encoder.Encode(&ms); err != nil {
+					message.MyError(err, "m2mApi > PointLocal > encoder.Encode")
+					break
+				}
+				message.MyWriteMessage(ms)
 			}
-			message.MyWriteMessage(*format) //1. 同じ内容
-
-			// GraphDB()によるDB検索
-
-			// 受信する型は[]ResolvePoint
-			ms := []m2mapi.ResolvePoint{}
-			if err := decoderDB.Decode(&ms); err != nil {
-				message.MyError(err, "m2mApi > Point > decoderDB.Decode")
-			}
-			message.MyReadMessage(ms)
-
-			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
-				message.MyError(err, "m2mApi > Point > encoder.Encode")
-				break
-			}
-			message.MyWriteMessage(ms)
 		case *m2mapi.ResolveNode:
 			format := m.(*m2mapi.ResolveNode)
 			if err := decoder.Decode(format); err != nil {
@@ -227,35 +338,78 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			connDB, err := net.Dial(protocol, graphDBSockAddr)
-			if err != nil {
-				message.MyError(err, "m2mApi > Node > net.Dial")
+			// ポイント解決の実行を前提とするので，カバー領域情報のキャッシュは登録済み
+			// クラウドへリレーするかの判断
+			vpointid_n := "\\\"" + format.VPointID_n + "\\\""
+			local_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			node_payload := `{"statements": [{"statement": "MATCH (vp: VPoint {VPointID: ` + vpointid_n + `}) RETURN COUNT(vp);"}]}`
+			node_datas := listenServer(node_payload, local_url)
+			flag := int(node_datas[0].([]interface{})[0].(float64))
+			if flag == 0 {
+				// Global GraphDB へリクエスト
+				fmt.Println("resolve in global")
+				connCloud, err := net.Dial(protocol, "/tmp/mecm2m/svr_0_m2mapi.sock")
+				if err != nil {
+					message.MyError(err, "m2mApi > NodeGlobal > net.Dial")
+				}
+				decoderCloud := gob.NewDecoder(connCloud)
+				encoderCloud := gob.NewEncoder(connCloud)
+
+				syncFormatClient("Node", decoderCloud, encoderCloud)
+
+				if err := encoderCloud.Encode(format); err != nil {
+					message.MyError(err, "m2mApi > NodeGlobal > encoderCloud.Encode")
+				}
+				message.MyWriteMessage(*format)
+
+				// Cloud でのノード解決
+
+				// 受信する型は[]ResolveNode
+				ms := []m2mapi.ResolveNode{}
+				if err := decoderCloud.Decode(&ms); err != nil {
+					message.MyError(err, "m2mApi > NodeGlobal > decoderCloud.Decode")
+				}
+				message.MyReadMessage(ms)
+
+				// 最終的な結果をM2M Appに送信する
+				if err := encoder.Encode(&ms); err != nil {
+					message.MyError(err, "m2mApi > NodeGlobal > encoder.Encode")
+					break
+				}
+				message.MyWriteMessage(ms)
+			} else {
+				// Local GraphDB へリクエスト
+				fmt.Println("resolve in local")
+				connDB, err := net.Dial(protocol, graphDBSockAddr)
+				if err != nil {
+					message.MyError(err, "m2mApi > Node > net.Dial")
+				}
+				decoderDB := gob.NewDecoder(connDB)
+				encoderDB := gob.NewEncoder(connDB)
+
+				syncFormatClient("Node", decoderDB, encoderDB)
+
+				if err := encoderDB.Encode(format); err != nil {
+					message.MyError(err, "m2mApi > Node > encoderDB.Encode")
+				}
+				message.MyWriteMessage((*format)) //1. 同じ内容
+
+				// GraphDB()によるDB検索
+
+				// 受信する型は[]ResolveNode
+				ms := []m2mapi.ResolveNode{}
+				if err := decoderDB.Decode(&ms); err != nil {
+					message.MyError(err, "m2mApi > Node > decoderDB.Decode")
+				}
+				message.MyReadMessage(ms)
+
+				// 最終的な結果をM2M Appに送信する
+				if err := encoder.Encode(&ms); err != nil {
+					message.MyError(err, "m2mApi > Node > encoder.Encode")
+					break
+				}
+				message.MyWriteMessage(ms)
 			}
-			decoderDB := gob.NewDecoder(connDB)
-			encoderDB := gob.NewEncoder(connDB)
-
-			syncFormatClient("Node", decoderDB, encoderDB)
-
-			if err := encoderDB.Encode(format); err != nil {
-				message.MyError(err, "m2mApi > Node > encoderDB.Encode")
-			}
-			message.MyWriteMessage((*format)) //1. 同じ内容
-
-			// GraphDB()によるDB検索
-
-			// 受信する型は[]ResolveNode
-			ms := []m2mapi.ResolveNode{}
-			if err := decoderDB.Decode(&ms); err != nil {
-				message.MyError(err, "m2mApi > Node > decoderDB.Decode")
-			}
-			message.MyReadMessage(ms)
-
-			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
-				message.MyError(err, "m2mApi > Node > encoder.Encode")
-				break
-			}
-			message.MyWriteMessage(ms)
 		case *m2mapi.ResolvePastNode:
 			format := m.(*m2mapi.ResolvePastNode)
 			if err := decoder.Decode(format); err != nil {
@@ -865,16 +1019,14 @@ func graphDB(conn net.Conn) {
 			nelat = format.NE.Lat
 			nelon = format.NE.Lon
 
-			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedWith]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] < ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] < ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
-			// 今後はクラウドサーバ用の分岐が必要
+			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
 			pss := []m2mapi.ResolvePoint{}
 			for _, data := range datas {
 				dataArray := data.([]interface{})
-				fmt.Println(dataArray)
 				ps := m2mapi.ResolvePoint{}
 				ps.VPointID_n = dataArray[0].(string)
 				flag := 0
@@ -902,7 +1054,7 @@ func graphDB(conn net.Conn) {
 				message.MyError(err, "GraphDB > Node > decoder.Decode")
 				break
 			}
-			message.MyReadMessage(&format)
+			message.MyReadMessage(format)
 
 			var vpointid_n string
 			vpointid_n = "\\\"" + format.VPointID_n + "\\\""
@@ -912,10 +1064,10 @@ func graphDB(conn net.Conn) {
 				cap = "\\\"" + cap + "\\\""
 				format_caps = append(format_caps, cap)
 			}
-			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:respondsViaPrimApi]->(vn:VNode)-[:isComposedOf]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
-			// 今後はクラウドサーバ用の分岐が必要
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
+
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_PORT_GOLANG") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
 			nds := []m2mapi.ResolveNode{}
