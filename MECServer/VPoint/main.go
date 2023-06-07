@@ -15,18 +15,22 @@ import (
 	"os/signal"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
-	"syscall"
 )
 
 const (
-	protocol          = "unix"
-	sensingDBSockAddr = "/tmp/mecm2m/svr_1_sensingdb.sock"
+	protocol            = "unix"
+	socket_address_root = "/tmp/mecm2m/"
 )
 
 type Format struct {
 	FormType string
 }
+
+var graphDBSockAddr string
+var sensingDBSockAddr string
+var server_num string
 
 func cleanup(socketFiles ...string) {
 	for _, sock := range socketFiles {
@@ -44,25 +48,32 @@ func main() {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
+	/*
+		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+		signals_from_main := make(chan os.Signal, 1)
 
-	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-	signals_from_main := make(chan os.Signal, 1)
+		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+		signal.Notify(signals_from_main, syscall.SIGCONT)
 
-	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-	signal.Notify(signals_from_main, syscall.SIGCONT)
+		// シグナルを待機
+		fmt.Println("Waiting for signal...")
+		sig := <-signals_from_main
 
-	// シグナルを待機
-	fmt.Println("Waiting for signal...")
-	sig := <-signals_from_main
-
-	// 受信したシグナルを表示
-	fmt.Printf("Received signal: %v\n", sig)
-
+		// 受信したシグナルを表示
+		fmt.Printf("Received signal: %v\n", sig)
+	*/
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {
 		message.MyError(err, "Failed to read socket file")
 	}
+
+	// このVPointが所属するサーバ番号をArgs[1]から取り出す
+	server_num_first_index := strings.LastIndex(socket_file_name, "_")
+	server_num_last_index := strings.LastIndex(socket_file_name, ".")
+	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
+	graphDBSockAddr = socket_address_root + "svr_" + server_num + "_graphdb.sock"
+	sensingDBSockAddr = socket_address_root + "svr_" + server_num + "_sensingdb.sock"
 
 	var socket_files vpoint.VPointSocketFiles
 
@@ -129,9 +140,9 @@ func vpoints(conn net.Conn, gid uint64) {
 LOOP:
 	for {
 		//型同期をして，型の種類に応じてスイッチ
-		switch m := syncFormatServer(decoder, encoder); m.(type) {
+		switch vpointsCommand := syncFormatServer(decoder, encoder); vpointsCommand.(type) {
 		case *m2mapi.ResolvePastPoint:
-			format := m.(*m2mapi.ResolvePastPoint)
+			format := vpointsCommand.(*m2mapi.ResolvePastPoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -160,20 +171,20 @@ LOOP:
 			//SensingDB()によるDB検索
 
 			//受信する型はResolvePastPoint
-			m := m2mapi.ResolvePastPoint{}
-			if err := decoderDB.Decode(&m); err != nil {
+			past_point_output := m2mapi.ResolvePastPoint{}
+			if err := decoderDB.Decode(&past_point_output); err != nil {
 				message.MyError(err, "vpoint > PastPoint > decoderDB.Decode")
 			}
-			message.MyReadMessage(m)
+			message.MyReadMessage(past_point_output)
 
 			//DB検索結果をM2M APIに送信する
-			if err := encoder.Encode(&m); err != nil {
+			if err := encoder.Encode(&past_point_output); err != nil {
 				message.MyError(err, "vpoint > PastPoint > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(m)
+			message.MyWriteMessage(past_point_output)
 		case *m2mapi.ResolveCurrentPoint:
-			format := m.(*m2mapi.ResolveCurrentPoint)
+			format := vpointsCommand.(*m2mapi.ResolveCurrentPoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -184,87 +195,87 @@ LOOP:
 			}
 			message.MyReadMessage(*format)
 
-			//複数のPSNodeに接続
-			//ここでは，psnode_1_1, psnode_1_2に接続するとする．
-			var connectedPSNode []string
-			connectedPSNode = append(connectedPSNode, "/tmp/mecm2m/psnode_1_0001.sock", "/tmp/mecm2m/psnode_1_0002.sock")
-			ch := make(chan *m2mapi.ResolveCurrentPoint)
+			// パケットフォーマット内のVPointIDを元に，そこに接続するVNodeをLocal GraphDBで検索する
+			connDB, err := net.Dial(protocol, graphDBSockAddr)
+			if err != nil {
+				message.MyError(err, "vpoint > CurrentPoint > ResolveVNode > net.Dial")
+			}
+			decoderDB := gob.NewDecoder(connDB)
+			encoderDB := gob.NewEncoder(connDB)
+
+			syncFormatClient("CurrentPointVNode", decoderDB, encoderDB)
+
+			vpoint_id := vpoint.CurrentPointVNode{
+				VPointID:   format.VPointID_n,
+				Capability: format.Capability,
+			}
+			if err := encoderDB.Encode(&vpoint_id); err != nil {
+				message.MyError(err, "vpoint > CurrentPoint > encoderDB.Encode")
+			}
+
+			// Local GraphDB でのVNode検索
+
+			// 受信する型はCurrentPointVNode
+			vnode_socket_addresses := vpoint.CurrentPointVNode{}
+			if err := decoderDB.Decode(&vnode_socket_addresses); err != nil {
+				message.MyError(err, "vpoint > CurrentPoint > decoderDB.Decode")
+			}
+
+			//複数のVNodeに接続
+			var connectedVNodeSockAddr []string
+			var connectedVNodeID []string
+			connectedVNodeSockAddr = append(connectedVNodeSockAddr, vnode_socket_addresses.VNodeSockAddr...)
+			connectedVNodeID = append(connectedVNodeID, vnode_socket_addresses.VNodeID...)
+			current_point_ch := make(chan *m2mapi.ResolveCurrentPoint)
 			go func() {
-				ms := m2mapi.ResolveCurrentPoint{}
-				for _, psnodeSockAddr := range connectedPSNode {
-					connPS, err := net.Dial(protocol, psnodeSockAddr)
+				current_point_aggregate := m2mapi.ResolveCurrentPoint{}
+				for index, vnodeSockAddr := range connectedVNodeSockAddr {
+					connVS, err := net.Dial(protocol, vnodeSockAddr)
 					if err != nil {
 						message.MyError(err, "vpoint > CurrentPoint > net.Dial")
 					}
-					decoderPS := gob.NewDecoder(connPS)
-					encoderPS := gob.NewEncoder(connPS)
+					decoderVS := gob.NewDecoder(connVS)
+					encoderVS := gob.NewEncoder(connVS)
 
-					syncFormatClient("CurrentPoint", decoderPS, encoderPS)
+					syncFormatClient("CurrentNode", decoderVS, encoderVS)
 
-					m := m2mapi.ResolveCurrentNode{
+					vpoint_info_to_vnode := m2mapi.ResolveCurrentNode{
+						VNodeID_n:  connectedVNodeID[index],
 						Capability: format.Capability,
 					}
-					if err := encoderPS.Encode(&m); err != nil {
-						message.MyError(err, "vpoint > CurrentPoint > encoderPS.Encode")
+					if err := encoderVS.Encode(&vpoint_info_to_vnode); err != nil {
+						message.MyError(err, "vpoint > CurrentPoint > encoderVS.Encode")
 					}
-					message.MyWriteMessage(m)
+					message.MyWriteMessage(vpoint_info_to_vnode)
 
-					//PSNodeのセンサデータ送信を受ける
+					// VSNodeからセンサデータを受ける
 
-					//受信する型はResolveCurrentNode
-					if err := decoderPS.Decode(&m); err != nil {
-						message.MyError(err, "vpoint > CurrentPoint > decoderPS.Decode")
+					// 受信する型はResolveCurrentNode
+					sensing_data_from_vnode := m2mapi.ResolveCurrentNode{}
+					if err := decoderVS.Decode(&sensing_data_from_vnode); err != nil {
+						message.MyError(err, "vpoint > CurrentPoint > decoderVS.Decode")
 					}
-					message.MyReadMessage(m)
+					message.MyReadMessage(sensing_data_from_vnode)
 					data := m2mapi.SensorData{
-						VNodeID_n: m.VNodeID_n,
+						VNodeID_n: sensing_data_from_vnode.VNodeID_n,
 					}
 					value := m2mapi.Value{
-						Capability: m.Values.Capability,
-						Time:       m.Values.Time,
-						Value:      m.Values.Value,
+						Capability: sensing_data_from_vnode.Values.Capability,
+						Time:       sensing_data_from_vnode.Values.Time,
+						Value:      sensing_data_from_vnode.Values.Value,
 					}
 					data.Values = append(data.Values, value)
-					ms.Datas = append(ms.Datas, data)
+					current_point_aggregate.Datas = append(current_point_aggregate.Datas, data)
 				}
-				ch <- &ms
+				current_point_ch <- &current_point_aggregate
 			}()
 			//結果をM2M APIに送信する
-			msRec := <-ch
-			if err := encoder.Encode(msRec); err != nil {
+			current_point_output := <-current_point_ch
+			if err := encoder.Encode(current_point_output); err != nil {
 				message.MyError(err, "vpoint > CurrentPoint > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(msRec)
-		case *m2mapi.DataForRegist:
-			format := m.(*m2mapi.DataForRegist)
-			if err := decoder.Decode(format); err != nil {
-				if err == io.EOF {
-					message.MyMessage("=== closed by client")
-					break
-				}
-				message.MyError(err, "vpoint > RegisterSensingData > decoder.Decode")
-				break
-			}
-			message.MyMessage("Notification for Data Register")
-			//message.MyReadMessage(*format)
-
-			//VSNodeへ接続
-			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
-			if err != nil {
-				message.MyError(err, "vpoint > RegisterSensingData > net.Dial")
-			}
-			decoderVS := gob.NewDecoder(connVS)
-			encoderVS := gob.NewEncoder(connVS)
-
-			//VSNodeとの型同期
-			syncFormatClient("RegisterSensingData", decoderVS, encoderVS)
-
-			//VSNodeへのデータ通知
-			if err := encoderVS.Encode(format); err != nil {
-				message.MyError(err, "vpoint > RegisterSensingData > encoderVS.Encode")
-			}
-			//message.MyWriteMessage(*format)
+			message.MyWriteMessage(*current_point_output)
 		default:
 			fmt.Println("no match. GID: ", gid)
 			break LOOP
@@ -274,8 +285,8 @@ LOOP:
 
 // M2M APIと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
-	m := &Format{}
-	if err := decoder.Decode(m); err != nil {
+	format := &Format{}
+	if err := decoder.Decode(format); err != nil {
 		if err == io.EOF {
 			typeM := "exit"
 			return typeM
@@ -283,7 +294,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 			message.MyError(err, "syncFormatServer > decoder.Decode")
 		}
 	}
-	typeResult := m.FormType
+	typeResult := format.FormType
 
 	var typeM any
 	switch typeResult {
@@ -291,24 +302,24 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &m2mapi.ResolvePastPoint{}
 	case "CurrentPoint":
 		typeM = &m2mapi.ResolveCurrentPoint{}
-	case "RegisterSensingData":
-		typeM = &m2mapi.DataForRegist{}
 	}
 	return typeM
 }
 
 // SensingDB, PSNode, PMNodeと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
-	m := &Format{}
+	format := &Format{}
 	switch command {
 	case "PastPoint":
-		m.FormType = "PastPoint"
+		format.FormType = "PastPoint"
 	case "CurrentPoint":
-		m.FormType = "CurrentPoint"
-	case "RegisterSensingData":
-		m.FormType = "RegisterSensingData"
+		format.FormType = "CurrentPoint"
+	case "CurrentNode":
+		format.FormType = "CurrentNode"
+	case "CurrentPointVNode":
+		format.FormType = "CurrentPointVNode"
 	}
-	if err := encoder.Encode(m); err != nil {
+	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
 	}
 }

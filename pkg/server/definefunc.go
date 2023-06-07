@@ -21,3 +21,12 @@ type ServerSocketFiles struct {
 	GraphDB   string `json:"graphDB"`
 	SensingDB string `json:"sensingDB"`
 }
+
+// SessionKey 用のパケットフォーマット
+type RequestSessionKey struct {
+	// input
+	PNodeID string
+
+	// output
+	SessionKey string
+}

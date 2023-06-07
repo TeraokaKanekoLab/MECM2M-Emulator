@@ -1,0 +1,7 @@
+{
+    "psnodes": [
+        "/tmp/mecm2m/psnode_1_0.sock",
+        "/tmp/mecm2m/psnode_1_1.sock",
+        "/tmp/mecm2m/psnode_1_2.sock"
+    ]
+}

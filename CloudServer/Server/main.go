@@ -985,7 +985,7 @@ func sensingDB(conn net.Conn) {
 
 			// SensingDBを開く
 			// "root:password@tcp(127.0.0.1:3306)/testdb"
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_GLOBAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > PastNode > sql.Open")
@@ -1043,7 +1043,7 @@ func sensingDB(conn net.Conn) {
 			end = format.Period.End
 
 			// SensingDBを開く
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_GLOBAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > PastNode > sql.Open")
@@ -1125,20 +1125,18 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			var PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID string
+			var PNodeID, Capability, Timestamp, PSinkID string
+			var Value, Lat, Lon float64
 			PNodeID = format.PNodeID
 			Capability = format.Capability
 			Timestamp = format.Timestamp
 			Value = format.Value
 			PSinkID = format.PSinkID
-			ServerID = format.ServerID
 			Lat = format.Lat
 			Lon = format.Lon
-			VNodeID = format.VNodeID
-			VPointID = format.VPointID
 
 			// SensingDBを開く
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_GLOBAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > sql.Open")
@@ -1150,15 +1148,15 @@ func sensingDB(conn net.Conn) {
 				message.MyMessage("DB Connection Success")
 			}
 
-			// PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
+			// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
 			var cmd string
-			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,ServerID,Lat,Lon,VNodeID,VPointID) VALUES(?,?,?,?,?,?,?,?,?,?);"
+			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,Lat,Lon) VALUES(?,?,?,?,?,?,?);"
 
 			in, err := DBConnection.Prepare(cmd)
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > DBConnection.Prepare")
 			}
-			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID); errExec == nil {
+			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon); errExec == nil {
 				message.MyMessage("Complete Data Registration!")
 			} else {
 				fmt.Println("Faild to register data", errExec)

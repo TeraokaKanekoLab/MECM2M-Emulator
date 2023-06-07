@@ -3,7 +3,6 @@
         "psnode": [
             {
                 "data-property": {
-                    "PNType": "Temp_Sensor",
                     "Position": [
                         35.5304,
                         139.531

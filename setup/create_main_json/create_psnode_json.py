@@ -4,6 +4,7 @@ import os
 import math
 import random
 import string
+import glob
 
 # PSNode
 # ---------------
@@ -100,6 +101,50 @@ vsnode_psnode_relation = {}
 for i in range(len(pn_types)):
     vsnode_psnode_relation[pn_types[i]] = []
 
+# PSNodeのソケットファイル群ファイルのリセット
+psnode_socket_files_dir_path = os.getenv("PROJECT_PATH") + "/PSNode/socket_files"
+if not os.path.exists(psnode_socket_files_dir_path):
+    os.makedirs(psnode_socket_files_dir_path)
+else:
+    files = glob.glob(f"{psnode_socket_files_dir_path}/*")
+    for file in files:
+        if os.path.isfile(file):
+            os.remove(file)
+
+# エッジサーバ分だけソケットファイルを作成
+for i in range(EDGE_SERVER_NUM):
+    full_path = psnode_socket_files_dir_path + "/psnode_" + str(i+1) + ".json"
+    socket_format_json = {
+        "psnodes": []
+    }
+    with open(full_path, 'w') as f:
+        json.dump(socket_format_json, f, indent=4)
+
+# VSNodeのソケットファイル群ファイルのリセット
+vsnode_socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/socket_files"
+if not os.path.exists(vsnode_socket_files_dir_path):
+    os.makedirs(vsnode_socket_files_dir_path)
+else:
+    files = glob.glob(f"{vsnode_socket_files_dir_path}/*")
+    for file in files:
+        if os.path.isfile(file):
+            os.remove(file)
+
+# エッジサーバ分だけソケットファイルを作成
+for i in range(EDGE_SERVER_NUM):
+    full_path = vsnode_socket_files_dir_path + "/vsnode_" + str(i+1) + ".json"
+    socket_format_json = {
+        "vsnodes": []
+    }
+    with open(full_path, 'w') as f:
+        json.dump(socket_format_json, f, indent=4)
+
+# エッジサーバ数を長さとする，作成するソケットファイル数を数える配列
+vsnode_socket_file_num = [0] * EDGE_SERVER_NUM
+VSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
+PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
+psnode_sock_num = 0
+
 # 左下からスタートし，右へ進んでいく
 # 端まで到達したら一段上へ
 while neLat <= MAX_LAT:
@@ -128,9 +173,10 @@ while neLat <= MAX_LAT:
                 # PSNode情報の追加
                 label_psnode = "PSN" + str(server_num) + ":" + str(psink_num) + ":" + str(psnode_num)
                 psnode_id = str(int(0b0000 << 60) + id_index)
+                vsnode_id = str(int(0b1000 << 60) + id_index)
                 pnode_type = pn_types[j]
                 vnode_module_id = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
-                socket_address = "/tmp/mecm2m/vsnode_" + str(server_num) + "_" + str(psink_num) + "_" + str(psnode_num) +".sock"
+                socket_address = "/tmp/mecm2m/vsnode_" + str(server_num) + "_" + str(vsnode_id) +".sock"
                 psnode_lat = random.uniform(swLat, neLat)
                 psnode_lon = random.uniform(swLon, neLon)
                 capability = capabilities[pnode_type]
@@ -185,12 +231,22 @@ while neLat <= MAX_LAT:
                 }
                 data["psnodes"][-1]["psnode"] = psnode_dict
 
+                # PSNodeのソケットファイル群ファイルをここで作成
+                if server_num == 1 and psnode_sock_num < PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
+                    full_path = psnode_socket_files_dir_path + "/psnode_" + str(server_num) + ".json"
+                    with open(full_path, 'r') as f:
+                        socket_file_data = json.load(f)
+                    new_socket_file_path = "/tmp/mecm2m/psnode_" + str(server_num) + "_" + str(psnode_id) + ".sock"
+                    socket_file_data["psnodes"].append(new_socket_file_path)
+                    with open(full_path, 'w') as f:
+                        json.dump(socket_file_data, f, indent=4)
+                    psnode_sock_num += 1
+
                 # VSNode情報の追加
                 label_vsnode = "VSN" + str(server_num) + ":" + str(psink_num) + ":" + str(psnode_num)
-                vsnode_id = str(int(0b1000 << 60) + id_index)
                 port = VSNODE_BASE_PORT + port_num
                 vsnode_description = "VSNode" + label_vsnode
-                vpoint_dict = {
+                vsnode_dict = {
                     "property-label": "VSNode",
                     "data-property": {
                         "Label": label_vsnode,
@@ -228,7 +284,18 @@ while neLat <= MAX_LAT:
                         }
                     ]
                 }
-                data["psnodes"][-1]["vsnode"] = vpoint_dict
+                data["psnodes"][-1]["vsnode"] = vsnode_dict
+
+                # VSNodeのソケットファイル群ファイルをここで作成
+                if vsnode_socket_file_num[server_num-1] < VSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
+                    full_path = vsnode_socket_files_dir_path + "/vsnode_" + str(server_num) + ".json"
+                    with open(full_path, 'r') as f:
+                        socket_file_data = json.load(f)
+                    socket_file_data["vsnodes"].append(socket_address)
+                    with open(full_path, 'w') as f:
+                        json.dump(socket_file_data, f, indent=4)
+                    
+                    vsnode_socket_file_num[server_num-1] += 1
 
                 port_num += 1
                 psnode_num += 1

@@ -12,11 +12,11 @@
                     "PSinkID": "2305843009213693952",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_0.sock",
-                    "ServingIPv6Prefix": "cbd6:4ced:3f00:bd0e::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469760.sock",
+                    "ServingIPv6Prefix": "4d6c:cd56:975c:b9b0::/64",
                     "Position": [
-                        35.5304,
-                        139.5303
+                        35.5305,
+                        139.5304
                     ],
                     "Description": "PSinkPS1:0"
                 },
@@ -54,7 +54,7 @@
                 "data-property": {
                     "Label": "VP1:0",
                     "VPointID": "11529215046068469760",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_0.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469760.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:0"
                 },
@@ -100,11 +100,11 @@
                     "PSinkID": "2305843009213693953",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_1.sock",
-                    "ServingIPv6Prefix": "244a:297d:e950:2bbf::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469761.sock",
+                    "ServingIPv6Prefix": "8bde:ea29:b94d:ebb1::/64",
                     "Position": [
-                        35.5306,
-                        139.5319
+                        35.5302,
+                        139.5318
                     ],
                     "Description": "PSinkPS1:1"
                 },
@@ -142,7 +142,7 @@
                 "data-property": {
                     "Label": "VP1:1",
                     "VPointID": "11529215046068469761",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_1.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469761.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:1"
                 },
@@ -188,11 +188,11 @@
                     "PSinkID": "2305843009213693954",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_2.sock",
-                    "ServingIPv6Prefix": "a940:592e:eb52:2e58::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469762.sock",
+                    "ServingIPv6Prefix": "a56c:e887:60b2:a9a0::/64",
                     "Position": [
-                        35.5302,
-                        139.5329
+                        35.5301,
+                        139.5325
                     ],
                     "Description": "PSinkPS1:2"
                 },
@@ -230,7 +230,7 @@
                 "data-property": {
                     "Label": "VP1:2",
                     "VPointID": "11529215046068469762",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_2.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469762.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:2"
                 },
@@ -276,10 +276,10 @@
                     "PSinkID": "2305843009213693955",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_3.sock",
-                    "ServingIPv6Prefix": "8abc:b807:13a6:8ca3::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469763.sock",
+                    "ServingIPv6Prefix": "8534:34e9:9c5a:4883::/64",
                     "Position": [
-                        35.5304,
+                        35.5307,
                         139.5335
                     ],
                     "Description": "PSinkPS1:3"
@@ -318,7 +318,7 @@
                 "data-property": {
                     "Label": "VP1:3",
                     "VPointID": "11529215046068469763",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_3.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469763.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:3"
                 },
@@ -364,11 +364,11 @@
                     "PSinkID": "2305843009213693956",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_4.sock",
-                    "ServingIPv6Prefix": "23a4:3248:c362:21fb::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469764.sock",
+                    "ServingIPv6Prefix": "cc5c:ceb2:7b3:1fac::/64",
                     "Position": [
-                        35.531,
-                        139.5346
+                        35.5304,
+                        139.535
                     ],
                     "Description": "PSinkPS1:4"
                 },
@@ -406,7 +406,7 @@
                 "data-property": {
                     "Label": "VP1:4",
                     "VPointID": "11529215046068469764",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_4.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469764.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:4"
                 },
@@ -452,11 +452,11 @@
                     "PSinkID": "2305843009213693957",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_5.sock",
-                    "ServingIPv6Prefix": "2db5:3e7:e7d5:6418::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469765.sock",
+                    "ServingIPv6Prefix": "139a:1530:bfc5:3708::/64",
                     "Position": [
-                        35.5308,
-                        139.5352
+                        35.5307,
+                        139.5354
                     ],
                     "Description": "PSinkPS1:5"
                 },
@@ -494,7 +494,7 @@
                 "data-property": {
                     "Label": "VP1:5",
                     "VPointID": "11529215046068469765",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_5.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469765.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:5"
                 },
@@ -540,11 +540,11 @@
                     "PSinkID": "2305843009213693958",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_6.sock",
-                    "ServingIPv6Prefix": "a2a:fd24:4611:2acc::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469766.sock",
+                    "ServingIPv6Prefix": "1686:465f:3389:8b76::/64",
                     "Position": [
-                        35.5302,
-                        139.5363
+                        35.531,
+                        139.5365
                     ],
                     "Description": "PSinkPS1:6"
                 },
@@ -582,7 +582,7 @@
                 "data-property": {
                     "Label": "VP1:6",
                     "VPointID": "11529215046068469766",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_6.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469766.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:6"
                 },
@@ -628,11 +628,11 @@
                     "PSinkID": "2305843009213693959",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_7.sock",
-                    "ServingIPv6Prefix": "1fe0:8a17:3aa4:2802::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469767.sock",
+                    "ServingIPv6Prefix": "b8a4:8fc4:74f7:ef9::/64",
                     "Position": [
-                        35.5301,
-                        139.5379
+                        35.5305,
+                        139.5375
                     ],
                     "Description": "PSinkPS1:7"
                 },
@@ -670,7 +670,7 @@
                 "data-property": {
                     "Label": "VP1:7",
                     "VPointID": "11529215046068469767",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_7.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469767.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:7"
                 },
@@ -716,11 +716,11 @@
                     "PSinkID": "2305843009213693960",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_8.sock",
-                    "ServingIPv6Prefix": "3d4c:ded:139c:72d3::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469768.sock",
+                    "ServingIPv6Prefix": "cd54:d675:40b6:9f6a::/64",
                     "Position": [
-                        35.5308,
-                        139.5384
+                        35.5302,
+                        139.5381
                     ],
                     "Description": "PSinkPS1:8"
                 },
@@ -758,7 +758,7 @@
                 "data-property": {
                     "Label": "VP1:8",
                     "VPointID": "11529215046068469768",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_8.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469768.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:8"
                 },
@@ -804,11 +804,11 @@
                     "PSinkID": "2305843009213693961",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_9.sock",
-                    "ServingIPv6Prefix": "fac1:afa6:74ed:bc45::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469769.sock",
+                    "ServingIPv6Prefix": "e5e9:25:8770:82ea::/64",
                     "Position": [
-                        35.5309,
-                        139.5395
+                        35.5305,
+                        139.54
                     ],
                     "Description": "PSinkPS1:9"
                 },
@@ -846,7 +846,7 @@
                 "data-property": {
                     "Label": "VP1:9",
                     "VPointID": "11529215046068469769",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_9.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469769.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:9"
                 },
@@ -892,11 +892,11 @@
                     "PSinkID": "2305843009213693962",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_10.sock",
-                    "ServingIPv6Prefix": "1752:fbb6:f63b:f844::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469770.sock",
+                    "ServingIPv6Prefix": "511c:38ba:dceb:83a8::/64",
                     "Position": [
                         35.5315,
-                        139.5308
+                        139.5309
                     ],
                     "Description": "PSinkPS1:10"
                 },
@@ -934,7 +934,7 @@
                 "data-property": {
                     "Label": "VP1:10",
                     "VPointID": "11529215046068469770",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_10.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469770.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:10"
                 },
@@ -980,11 +980,11 @@
                     "PSinkID": "2305843009213693963",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11.sock",
-                    "ServingIPv6Prefix": "aa1c:ab56:6052:f567::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469771.sock",
+                    "ServingIPv6Prefix": "91a7:7bdd:2fed:2eaf::/64",
                     "Position": [
-                        35.5311,
-                        139.5318
+                        35.5316,
+                        139.5311
                     ],
                     "Description": "PSinkPS1:11"
                 },
@@ -1022,7 +1022,7 @@
                 "data-property": {
                     "Label": "VP1:11",
                     "VPointID": "11529215046068469771",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469771.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:11"
                 },
@@ -1068,11 +1068,11 @@
                     "PSinkID": "2305843009213693964",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_12.sock",
-                    "ServingIPv6Prefix": "9a61:78ec:4e13:1ce9::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469772.sock",
+                    "ServingIPv6Prefix": "47a1:450b:3217:5e66::/64",
                     "Position": [
-                        35.5318,
-                        139.5323
+                        35.532,
+                        139.5328
                     ],
                     "Description": "PSinkPS1:12"
                 },
@@ -1110,7 +1110,7 @@
                 "data-property": {
                     "Label": "VP1:12",
                     "VPointID": "11529215046068469772",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_12.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469772.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:12"
                 },
@@ -1156,11 +1156,11 @@
                     "PSinkID": "2305843009213693965",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_13.sock",
-                    "ServingIPv6Prefix": "42db:de71:b33f:a677::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469773.sock",
+                    "ServingIPv6Prefix": "a126:28c4:e995:34e5::/64",
                     "Position": [
-                        35.532,
-                        139.5338
+                        35.5317,
+                        139.5339
                     ],
                     "Description": "PSinkPS1:13"
                 },
@@ -1198,7 +1198,7 @@
                 "data-property": {
                     "Label": "VP1:13",
                     "VPointID": "11529215046068469773",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_13.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469773.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:13"
                 },
@@ -1244,11 +1244,11 @@
                     "PSinkID": "2305843009213693966",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_14.sock",
-                    "ServingIPv6Prefix": "8f56:a776:8d2d:a3a1::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469774.sock",
+                    "ServingIPv6Prefix": "28fe:36fc:8cbe:b134::/64",
                     "Position": [
-                        35.5316,
-                        139.5345
+                        35.5318,
+                        139.5344
                     ],
                     "Description": "PSinkPS1:14"
                 },
@@ -1286,7 +1286,7 @@
                 "data-property": {
                     "Label": "VP1:14",
                     "VPointID": "11529215046068469774",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_14.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469774.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:14"
                 },
@@ -1332,11 +1332,11 @@
                     "PSinkID": "2305843009213693967",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_15.sock",
-                    "ServingIPv6Prefix": "f57a:10c6:b0ff:b04b::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469775.sock",
+                    "ServingIPv6Prefix": "bdb4:6d66:dddd:c7af::/64",
                     "Position": [
-                        35.5311,
-                        139.5352
+                        35.5315,
+                        139.5357
                     ],
                     "Description": "PSinkPS1:15"
                 },
@@ -1374,7 +1374,7 @@
                 "data-property": {
                     "Label": "VP1:15",
                     "VPointID": "11529215046068469775",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_15.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469775.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:15"
                 },
@@ -1420,11 +1420,11 @@
                     "PSinkID": "2305843009213693968",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_16.sock",
-                    "ServingIPv6Prefix": "3584:e04e:4905:90d9::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469776.sock",
+                    "ServingIPv6Prefix": "41a3:e314:7b93:90b::/64",
                     "Position": [
-                        35.5316,
-                        139.536
+                        35.5313,
+                        139.5363
                     ],
                     "Description": "PSinkPS1:16"
                 },
@@ -1462,7 +1462,7 @@
                 "data-property": {
                     "Label": "VP1:16",
                     "VPointID": "11529215046068469776",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_16.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469776.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:16"
                 },
@@ -1508,11 +1508,11 @@
                     "PSinkID": "2305843009213693969",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_17.sock",
-                    "ServingIPv6Prefix": "7d35:deca:4a39:ba05::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469777.sock",
+                    "ServingIPv6Prefix": "6e60:fc52:b259:68e5::/64",
                     "Position": [
-                        35.5314,
-                        139.5372
+                        35.5319,
+                        139.5376
                     ],
                     "Description": "PSinkPS1:17"
                 },
@@ -1550,7 +1550,7 @@
                 "data-property": {
                     "Label": "VP1:17",
                     "VPointID": "11529215046068469777",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_17.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469777.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:17"
                 },
@@ -1596,11 +1596,11 @@
                     "PSinkID": "2305843009213693970",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_18.sock",
-                    "ServingIPv6Prefix": "54a8:aac8:e98b:5fb3::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469778.sock",
+                    "ServingIPv6Prefix": "dda2:a99c:2da7:6021::/64",
                     "Position": [
-                        35.5317,
-                        139.5388
+                        35.5318,
+                        139.5383
                     ],
                     "Description": "PSinkPS1:18"
                 },
@@ -1638,7 +1638,7 @@
                 "data-property": {
                     "Label": "VP1:18",
                     "VPointID": "11529215046068469778",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_18.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469778.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:18"
                 },
@@ -1684,11 +1684,11 @@
                     "PSinkID": "2305843009213693971",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_19.sock",
-                    "ServingIPv6Prefix": "50ac:68c2:f58:8cee::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469779.sock",
+                    "ServingIPv6Prefix": "2255:d834:75c6:a59d::/64",
                     "Position": [
-                        35.531,
-                        139.5392
+                        35.5315,
+                        139.5394
                     ],
                     "Description": "PSinkPS1:19"
                 },
@@ -1726,7 +1726,7 @@
                 "data-property": {
                     "Label": "VP1:19",
                     "VPointID": "11529215046068469779",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_19.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469779.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:19"
                 },
@@ -1772,11 +1772,11 @@
                     "PSinkID": "2305843009213693972",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_20.sock",
-                    "ServingIPv6Prefix": "7ce:80e:4663:7a39::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469780.sock",
+                    "ServingIPv6Prefix": "561d:289c:7954:7dd5::/64",
                     "Position": [
                         35.5326,
-                        139.53
+                        139.5306
                     ],
                     "Description": "PSinkPS1:20"
                 },
@@ -1814,7 +1814,7 @@
                 "data-property": {
                     "Label": "VP1:20",
                     "VPointID": "11529215046068469780",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_20.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469780.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:20"
                 },
@@ -1860,11 +1860,11 @@
                     "PSinkID": "2305843009213693973",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_21.sock",
-                    "ServingIPv6Prefix": "a7b0:89b4:c115:ebf1::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469781.sock",
+                    "ServingIPv6Prefix": "8e4e:6601:9924:991f::/64",
                     "Position": [
                         35.5326,
-                        139.5314
+                        139.5318
                     ],
                     "Description": "PSinkPS1:21"
                 },
@@ -1902,7 +1902,7 @@
                 "data-property": {
                     "Label": "VP1:21",
                     "VPointID": "11529215046068469781",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_21.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469781.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:21"
                 },
@@ -1948,11 +1948,11 @@
                     "PSinkID": "2305843009213693974",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_22.sock",
-                    "ServingIPv6Prefix": "d277:f467:ffab:dc70::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469782.sock",
+                    "ServingIPv6Prefix": "aefa:cb05:93c7:c272::/64",
                     "Position": [
-                        35.533,
-                        139.532
+                        35.5328,
+                        139.5321
                     ],
                     "Description": "PSinkPS1:22"
                 },
@@ -1990,7 +1990,7 @@
                 "data-property": {
                     "Label": "VP1:22",
                     "VPointID": "11529215046068469782",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_22.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469782.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:22"
                 },
@@ -2036,11 +2036,11 @@
                     "PSinkID": "2305843009213693975",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_23.sock",
-                    "ServingIPv6Prefix": "6636:688f:de61:81c2::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469783.sock",
+                    "ServingIPv6Prefix": "62d0:718e:12fb:bd36::/64",
                     "Position": [
-                        35.5324,
-                        139.5335
+                        35.5328,
+                        139.534
                     ],
                     "Description": "PSinkPS1:23"
                 },
@@ -2078,7 +2078,7 @@
                 "data-property": {
                     "Label": "VP1:23",
                     "VPointID": "11529215046068469783",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_23.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469783.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:23"
                 },
@@ -2124,11 +2124,11 @@
                     "PSinkID": "2305843009213693976",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_24.sock",
-                    "ServingIPv6Prefix": "6f7e:691:d1e7:a7ac::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469784.sock",
+                    "ServingIPv6Prefix": "1b8a:efa5:f88f:35ca::/64",
                     "Position": [
-                        35.5323,
-                        139.5345
+                        35.5324,
+                        139.5349
                     ],
                     "Description": "PSinkPS1:24"
                 },
@@ -2166,7 +2166,7 @@
                 "data-property": {
                     "Label": "VP1:24",
                     "VPointID": "11529215046068469784",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_24.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469784.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:24"
                 },
@@ -2212,11 +2212,11 @@
                     "PSinkID": "2305843009213693977",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_25.sock",
-                    "ServingIPv6Prefix": "da91:88c3:23f5:a289::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469785.sock",
+                    "ServingIPv6Prefix": "535:cd52:800b:7f77::/64",
                     "Position": [
-                        35.5323,
-                        139.5354
+                        35.5321,
+                        139.5352
                     ],
                     "Description": "PSinkPS1:25"
                 },
@@ -2254,7 +2254,7 @@
                 "data-property": {
                     "Label": "VP1:25",
                     "VPointID": "11529215046068469785",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_25.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469785.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:25"
                 },
@@ -2300,11 +2300,11 @@
                     "PSinkID": "2305843009213693978",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_26.sock",
-                    "ServingIPv6Prefix": "2f3a:c250:3c5e:3558::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469786.sock",
+                    "ServingIPv6Prefix": "828e:d96:45a9:95a0::/64",
                     "Position": [
-                        35.532,
-                        139.5369
+                        35.5322,
+                        139.5367
                     ],
                     "Description": "PSinkPS1:26"
                 },
@@ -2342,7 +2342,7 @@
                 "data-property": {
                     "Label": "VP1:26",
                     "VPointID": "11529215046068469786",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_26.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469786.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:26"
                 },
@@ -2388,11 +2388,11 @@
                     "PSinkID": "2305843009213693979",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_27.sock",
-                    "ServingIPv6Prefix": "699b:4e2f:895:97cf::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469787.sock",
+                    "ServingIPv6Prefix": "ed79:bbda:b8ce:bef2::/64",
                     "Position": [
                         35.5328,
-                        139.5374
+                        139.5375
                     ],
                     "Description": "PSinkPS1:27"
                 },
@@ -2430,7 +2430,7 @@
                 "data-property": {
                     "Label": "VP1:27",
                     "VPointID": "11529215046068469787",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_27.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469787.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:27"
                 },
@@ -2476,11 +2476,11 @@
                     "PSinkID": "2305843009213693980",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_28.sock",
-                    "ServingIPv6Prefix": "8635:1e36:1162:261e::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469788.sock",
+                    "ServingIPv6Prefix": "c48d:4e0f:4a08:bf5::/64",
                     "Position": [
-                        35.5329,
-                        139.5383
+                        35.5327,
+                        139.5388
                     ],
                     "Description": "PSinkPS1:28"
                 },
@@ -2518,7 +2518,7 @@
                 "data-property": {
                     "Label": "VP1:28",
                     "VPointID": "11529215046068469788",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_28.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469788.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:28"
                 },
@@ -2564,11 +2564,11 @@
                     "PSinkID": "2305843009213693981",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_29.sock",
-                    "ServingIPv6Prefix": "21cb:94af:3d1:d011::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469789.sock",
+                    "ServingIPv6Prefix": "977e:9358:8b5b:6400::/64",
                     "Position": [
-                        35.533,
-                        139.5393
+                        35.5321,
+                        139.5397
                     ],
                     "Description": "PSinkPS1:29"
                 },
@@ -2606,7 +2606,7 @@
                 "data-property": {
                     "Label": "VP1:29",
                     "VPointID": "11529215046068469789",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_29.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469789.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:29"
                 },
@@ -2652,11 +2652,11 @@
                     "PSinkID": "2305843009213693982",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_30.sock",
-                    "ServingIPv6Prefix": "8828:fd49:d94:820::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469790.sock",
+                    "ServingIPv6Prefix": "7954:f727:5177:c279::/64",
                     "Position": [
-                        35.5338,
-                        139.531
+                        35.5335,
+                        139.5306
                     ],
                     "Description": "PSinkPS1:30"
                 },
@@ -2694,7 +2694,7 @@
                 "data-property": {
                     "Label": "VP1:30",
                     "VPointID": "11529215046068469790",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_30.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469790.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:30"
                 },
@@ -2740,11 +2740,11 @@
                     "PSinkID": "2305843009213693983",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_31.sock",
-                    "ServingIPv6Prefix": "173d:b976:a6c3:3da6::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469791.sock",
+                    "ServingIPv6Prefix": "3661:9ee3:f81e:7af2::/64",
                     "Position": [
-                        35.5335,
-                        139.5319
+                        35.5334,
+                        139.5315
                     ],
                     "Description": "PSinkPS1:31"
                 },
@@ -2782,7 +2782,7 @@
                 "data-property": {
                     "Label": "VP1:31",
                     "VPointID": "11529215046068469791",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_31.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469791.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:31"
                 },
@@ -2828,10 +2828,10 @@
                     "PSinkID": "2305843009213693984",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_32.sock",
-                    "ServingIPv6Prefix": "242f:79f8:9e32:a333::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469792.sock",
+                    "ServingIPv6Prefix": "5b22:e6d3:7f60:7007::/64",
                     "Position": [
-                        35.5335,
+                        35.5332,
                         139.5323
                     ],
                     "Description": "PSinkPS1:32"
@@ -2870,7 +2870,7 @@
                 "data-property": {
                     "Label": "VP1:32",
                     "VPointID": "11529215046068469792",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_1_32.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_1_11529215046068469792.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP1:32"
                 },
@@ -2916,10 +2916,10 @@
                     "PSinkID": "2305843009213693985",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_0.sock",
-                    "ServingIPv6Prefix": "8fe7:93d1:5da7:c5d1::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469793.sock",
+                    "ServingIPv6Prefix": "8da7:36b0:850c:7a5b::/64",
                     "Position": [
-                        35.5333,
+                        35.5336,
                         139.5339
                     ],
                     "Description": "PSinkPS2:0"
@@ -2958,7 +2958,7 @@
                 "data-property": {
                     "Label": "VP2:0",
                     "VPointID": "11529215046068469793",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_0.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469793.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:0"
                 },
@@ -3004,10 +3004,10 @@
                     "PSinkID": "2305843009213693986",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_1.sock",
-                    "ServingIPv6Prefix": "c373:8e36:ae59:a16d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469794.sock",
+                    "ServingIPv6Prefix": "ddf4:673d:6022:8316::/64",
                     "Position": [
-                        35.5339,
+                        35.5335,
                         139.5343
                     ],
                     "Description": "PSinkPS2:1"
@@ -3046,7 +3046,7 @@
                 "data-property": {
                     "Label": "VP2:1",
                     "VPointID": "11529215046068469794",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_1.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469794.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:1"
                 },
@@ -3092,11 +3092,11 @@
                     "PSinkID": "2305843009213693987",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_2.sock",
-                    "ServingIPv6Prefix": "2a57:593d:b79f:9901::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469795.sock",
+                    "ServingIPv6Prefix": "69c3:7cdd:4f97:e5cc::/64",
                     "Position": [
-                        35.5334,
-                        139.536
+                        35.533,
+                        139.5351
                     ],
                     "Description": "PSinkPS2:2"
                 },
@@ -3134,7 +3134,7 @@
                 "data-property": {
                     "Label": "VP2:2",
                     "VPointID": "11529215046068469795",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_2.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469795.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:2"
                 },
@@ -3180,11 +3180,11 @@
                     "PSinkID": "2305843009213693988",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_3.sock",
-                    "ServingIPv6Prefix": "b6c3:90d5:5133:dca::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469796.sock",
+                    "ServingIPv6Prefix": "423d:433b:ab:6f1c::/64",
                     "Position": [
-                        35.5335,
-                        139.5362
+                        35.5331,
+                        139.5364
                     ],
                     "Description": "PSinkPS2:3"
                 },
@@ -3222,7 +3222,7 @@
                 "data-property": {
                     "Label": "VP2:3",
                     "VPointID": "11529215046068469796",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_3.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469796.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:3"
                 },
@@ -3268,11 +3268,11 @@
                     "PSinkID": "2305843009213693989",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_4.sock",
-                    "ServingIPv6Prefix": "c5c9:d309:3075:7c8d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469797.sock",
+                    "ServingIPv6Prefix": "2b17:3bd3:3272:46a5::/64",
                     "Position": [
-                        35.5332,
-                        139.5374
+                        35.5337,
+                        139.5378
                     ],
                     "Description": "PSinkPS2:4"
                 },
@@ -3310,7 +3310,7 @@
                 "data-property": {
                     "Label": "VP2:4",
                     "VPointID": "11529215046068469797",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_4.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469797.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:4"
                 },
@@ -3356,8 +3356,8 @@
                     "PSinkID": "2305843009213693990",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_5.sock",
-                    "ServingIPv6Prefix": "f75e:883f:b5d:7c2f::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469798.sock",
+                    "ServingIPv6Prefix": "b76d:e32:630a:2e7e::/64",
                     "Position": [
                         35.534,
                         139.5388
@@ -3398,7 +3398,7 @@
                 "data-property": {
                     "Label": "VP2:5",
                     "VPointID": "11529215046068469798",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_5.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469798.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:5"
                 },
@@ -3444,11 +3444,11 @@
                     "PSinkID": "2305843009213693991",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_6.sock",
-                    "ServingIPv6Prefix": "170f:977d:6148:8353::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469799.sock",
+                    "ServingIPv6Prefix": "6871:86b:e4eb:8e03::/64",
                     "Position": [
-                        35.5331,
-                        139.5393
+                        35.534,
+                        139.5399
                     ],
                     "Description": "PSinkPS2:6"
                 },
@@ -3486,7 +3486,7 @@
                 "data-property": {
                     "Label": "VP2:6",
                     "VPointID": "11529215046068469799",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_6.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469799.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:6"
                 },
@@ -3532,11 +3532,11 @@
                     "PSinkID": "2305843009213693992",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_7.sock",
-                    "ServingIPv6Prefix": "4db6:282c:ac92:6b35::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469800.sock",
+                    "ServingIPv6Prefix": "d02a:8d41:ceae:1921::/64",
                     "Position": [
-                        35.5342,
-                        139.5301
+                        35.5347,
+                        139.5305
                     ],
                     "Description": "PSinkPS2:7"
                 },
@@ -3574,7 +3574,7 @@
                 "data-property": {
                     "Label": "VP2:7",
                     "VPointID": "11529215046068469800",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_7.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469800.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:7"
                 },
@@ -3620,11 +3620,11 @@
                     "PSinkID": "2305843009213693993",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_8.sock",
-                    "ServingIPv6Prefix": "f0b7:f65a:2311:6647::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469801.sock",
+                    "ServingIPv6Prefix": "597:4f64:6547:2452::/64",
                     "Position": [
-                        35.5342,
-                        139.5316
+                        35.5343,
+                        139.5318
                     ],
                     "Description": "PSinkPS2:8"
                 },
@@ -3662,7 +3662,7 @@
                 "data-property": {
                     "Label": "VP2:8",
                     "VPointID": "11529215046068469801",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_8.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469801.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:8"
                 },
@@ -3708,11 +3708,11 @@
                     "PSinkID": "2305843009213693994",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_9.sock",
-                    "ServingIPv6Prefix": "3af1:2424:21eb:c156::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469802.sock",
+                    "ServingIPv6Prefix": "d628:32a1:514e:3a0d::/64",
                     "Position": [
-                        35.5347,
-                        139.5327
+                        35.5342,
+                        139.533
                     ],
                     "Description": "PSinkPS2:9"
                 },
@@ -3750,7 +3750,7 @@
                 "data-property": {
                     "Label": "VP2:9",
                     "VPointID": "11529215046068469802",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_9.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469802.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:9"
                 },
@@ -3796,11 +3796,11 @@
                     "PSinkID": "2305843009213693995",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_10.sock",
-                    "ServingIPv6Prefix": "186:e515:6d16:b79::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469803.sock",
+                    "ServingIPv6Prefix": "4523:4107:cb7e:662d::/64",
                     "Position": [
-                        35.5348,
-                        139.5333
+                        35.5347,
+                        139.5337
                     ],
                     "Description": "PSinkPS2:10"
                 },
@@ -3838,7 +3838,7 @@
                 "data-property": {
                     "Label": "VP2:10",
                     "VPointID": "11529215046068469803",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_10.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469803.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:10"
                 },
@@ -3884,11 +3884,11 @@
                     "PSinkID": "2305843009213693996",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11.sock",
-                    "ServingIPv6Prefix": "7061:5ce4:3022:761c::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469804.sock",
+                    "ServingIPv6Prefix": "961c:2e6f:181f:b7b0::/64",
                     "Position": [
-                        35.5349,
-                        139.5348
+                        35.5342,
+                        139.535
                     ],
                     "Description": "PSinkPS2:11"
                 },
@@ -3926,7 +3926,7 @@
                 "data-property": {
                     "Label": "VP2:11",
                     "VPointID": "11529215046068469804",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469804.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:11"
                 },
@@ -3972,11 +3972,11 @@
                     "PSinkID": "2305843009213693997",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_12.sock",
-                    "ServingIPv6Prefix": "7b71:6d5b:981:f543::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469805.sock",
+                    "ServingIPv6Prefix": "cf20:4368:4f1b:8471::/64",
                     "Position": [
-                        35.5344,
-                        139.5354
+                        35.5342,
+                        139.5355
                     ],
                     "Description": "PSinkPS2:12"
                 },
@@ -4014,7 +4014,7 @@
                 "data-property": {
                     "Label": "VP2:12",
                     "VPointID": "11529215046068469805",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_12.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469805.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:12"
                 },
@@ -4060,11 +4060,11 @@
                     "PSinkID": "2305843009213693998",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_13.sock",
-                    "ServingIPv6Prefix": "338d:d19c:a8d6:4a1::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469806.sock",
+                    "ServingIPv6Prefix": "89fa:6112:e239:b235::/64",
                     "Position": [
-                        35.5346,
-                        139.537
+                        35.5348,
+                        139.5364
                     ],
                     "Description": "PSinkPS2:13"
                 },
@@ -4102,7 +4102,7 @@
                 "data-property": {
                     "Label": "VP2:13",
                     "VPointID": "11529215046068469806",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_13.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469806.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:13"
                 },
@@ -4148,11 +4148,11 @@
                     "PSinkID": "2305843009213693999",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_14.sock",
-                    "ServingIPv6Prefix": "24d4:6369:d8a9:4f17::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469807.sock",
+                    "ServingIPv6Prefix": "4b4b:5d72:6223:7cc1::/64",
                     "Position": [
-                        35.534,
-                        139.5378
+                        35.5341,
+                        139.5373
                     ],
                     "Description": "PSinkPS2:14"
                 },
@@ -4190,7 +4190,7 @@
                 "data-property": {
                     "Label": "VP2:14",
                     "VPointID": "11529215046068469807",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_14.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469807.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:14"
                 },
@@ -4236,11 +4236,11 @@
                     "PSinkID": "2305843009213694000",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_15.sock",
-                    "ServingIPv6Prefix": "8df6:15f6:22c8:ba65::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469808.sock",
+                    "ServingIPv6Prefix": "e94d:119e:64a7:163::/64",
                     "Position": [
-                        35.5345,
-                        139.5382
+                        35.5343,
+                        139.5389
                     ],
                     "Description": "PSinkPS2:15"
                 },
@@ -4278,7 +4278,7 @@
                 "data-property": {
                     "Label": "VP2:15",
                     "VPointID": "11529215046068469808",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_15.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469808.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:15"
                 },
@@ -4324,11 +4324,11 @@
                     "PSinkID": "2305843009213694001",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_16.sock",
-                    "ServingIPv6Prefix": "3d9c:3f3c:2f9f:fd39::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469809.sock",
+                    "ServingIPv6Prefix": "f41e:661a:498d:6978::/64",
                     "Position": [
-                        35.5348,
-                        139.5397
+                        35.5344,
+                        139.5395
                     ],
                     "Description": "PSinkPS2:16"
                 },
@@ -4366,7 +4366,7 @@
                 "data-property": {
                     "Label": "VP2:16",
                     "VPointID": "11529215046068469809",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_16.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469809.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:16"
                 },
@@ -4412,11 +4412,11 @@
                     "PSinkID": "2305843009213694002",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_17.sock",
-                    "ServingIPv6Prefix": "f2ea:de2f:8856:bbf3::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469810.sock",
+                    "ServingIPv6Prefix": "9302:bd12:44fa:d14a::/64",
                     "Position": [
-                        35.5356,
-                        139.5303
+                        35.536,
+                        139.5309
                     ],
                     "Description": "PSinkPS2:17"
                 },
@@ -4454,7 +4454,7 @@
                 "data-property": {
                     "Label": "VP2:17",
                     "VPointID": "11529215046068469810",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_17.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469810.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:17"
                 },
@@ -4500,11 +4500,11 @@
                     "PSinkID": "2305843009213694003",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_18.sock",
-                    "ServingIPv6Prefix": "e21e:85d6:c89a:5c84::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469811.sock",
+                    "ServingIPv6Prefix": "115b:df86:4b41:3cd0::/64",
                     "Position": [
-                        35.5353,
-                        139.532
+                        35.5354,
+                        139.5312
                     ],
                     "Description": "PSinkPS2:18"
                 },
@@ -4542,7 +4542,7 @@
                 "data-property": {
                     "Label": "VP2:18",
                     "VPointID": "11529215046068469811",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_18.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469811.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:18"
                 },
@@ -4588,10 +4588,10 @@
                     "PSinkID": "2305843009213694004",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_19.sock",
-                    "ServingIPv6Prefix": "381e:a91:a015:b296::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469812.sock",
+                    "ServingIPv6Prefix": "31b0:44db:b07b:f6b5::/64",
                     "Position": [
-                        35.5351,
+                        35.5355,
                         139.5324
                     ],
                     "Description": "PSinkPS2:19"
@@ -4630,7 +4630,7 @@
                 "data-property": {
                     "Label": "VP2:19",
                     "VPointID": "11529215046068469812",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_19.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469812.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:19"
                 },
@@ -4676,11 +4676,11 @@
                     "PSinkID": "2305843009213694005",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_20.sock",
-                    "ServingIPv6Prefix": "2309:5ecd:9ef4:cf86::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469813.sock",
+                    "ServingIPv6Prefix": "a1c7:ce70:c576:8a5d::/64",
                     "Position": [
-                        35.5351,
-                        139.5338
+                        35.5355,
+                        139.5337
                     ],
                     "Description": "PSinkPS2:20"
                 },
@@ -4718,7 +4718,7 @@
                 "data-property": {
                     "Label": "VP2:20",
                     "VPointID": "11529215046068469813",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_20.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469813.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:20"
                 },
@@ -4764,11 +4764,11 @@
                     "PSinkID": "2305843009213694006",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_21.sock",
-                    "ServingIPv6Prefix": "813a:2dc1:8f62:c4af::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469814.sock",
+                    "ServingIPv6Prefix": "b7b6:629e:d043:ab81::/64",
                     "Position": [
-                        35.5357,
-                        139.5344
+                        35.535,
+                        139.5346
                     ],
                     "Description": "PSinkPS2:21"
                 },
@@ -4806,7 +4806,7 @@
                 "data-property": {
                     "Label": "VP2:21",
                     "VPointID": "11529215046068469814",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_21.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469814.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:21"
                 },
@@ -4852,10 +4852,10 @@
                     "PSinkID": "2305843009213694007",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_22.sock",
-                    "ServingIPv6Prefix": "b673:ecdf:b1a3:468e::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469815.sock",
+                    "ServingIPv6Prefix": "90b9:3ea3:27a6:1545::/64",
                     "Position": [
-                        35.5358,
+                        35.5351,
                         139.5351
                     ],
                     "Description": "PSinkPS2:22"
@@ -4894,7 +4894,7 @@
                 "data-property": {
                     "Label": "VP2:22",
                     "VPointID": "11529215046068469815",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_22.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469815.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:22"
                 },
@@ -4940,11 +4940,11 @@
                     "PSinkID": "2305843009213694008",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_23.sock",
-                    "ServingIPv6Prefix": "6756:7fd1:2ff2:242a::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469816.sock",
+                    "ServingIPv6Prefix": "afd8:3521:13ab:fd38::/64",
                     "Position": [
-                        35.5355,
-                        139.5366
+                        35.5358,
+                        139.5368
                     ],
                     "Description": "PSinkPS2:23"
                 },
@@ -4982,7 +4982,7 @@
                 "data-property": {
                     "Label": "VP2:23",
                     "VPointID": "11529215046068469816",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_23.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469816.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:23"
                 },
@@ -5028,11 +5028,11 @@
                     "PSinkID": "2305843009213694009",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_24.sock",
-                    "ServingIPv6Prefix": "d39e:ae7b:4ae9:c0af::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469817.sock",
+                    "ServingIPv6Prefix": "9981:ace6:3ab6:7bc6::/64",
                     "Position": [
-                        35.5352,
-                        139.5373
+                        35.5359,
+                        139.538
                     ],
                     "Description": "PSinkPS2:24"
                 },
@@ -5070,7 +5070,7 @@
                 "data-property": {
                     "Label": "VP2:24",
                     "VPointID": "11529215046068469817",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_24.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469817.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:24"
                 },
@@ -5116,11 +5116,11 @@
                     "PSinkID": "2305843009213694010",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_25.sock",
-                    "ServingIPv6Prefix": "f142:30ea:b960:37c2::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469818.sock",
+                    "ServingIPv6Prefix": "6ac0:7214:68db:989c::/64",
                     "Position": [
-                        35.5352,
-                        139.5381
+                        35.5354,
+                        139.5385
                     ],
                     "Description": "PSinkPS2:25"
                 },
@@ -5158,7 +5158,7 @@
                 "data-property": {
                     "Label": "VP2:25",
                     "VPointID": "11529215046068469818",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_25.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469818.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:25"
                 },
@@ -5204,11 +5204,11 @@
                     "PSinkID": "2305843009213694011",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_26.sock",
-                    "ServingIPv6Prefix": "a0cb:ce94:b17:4c0::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469819.sock",
+                    "ServingIPv6Prefix": "d368:5f13:c3da:4cd4::/64",
                     "Position": [
                         35.5355,
-                        139.5394
+                        139.54
                     ],
                     "Description": "PSinkPS2:26"
                 },
@@ -5246,7 +5246,7 @@
                 "data-property": {
                     "Label": "VP2:26",
                     "VPointID": "11529215046068469819",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_26.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469819.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:26"
                 },
@@ -5292,11 +5292,11 @@
                     "PSinkID": "2305843009213694012",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_27.sock",
-                    "ServingIPv6Prefix": "1097:ccbf:3997:551f::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469820.sock",
+                    "ServingIPv6Prefix": "d5b8:e6bc:4c8c:dd04::/64",
                     "Position": [
-                        35.5361,
-                        139.5302
+                        35.536,
+                        139.5306
                     ],
                     "Description": "PSinkPS2:27"
                 },
@@ -5334,7 +5334,7 @@
                 "data-property": {
                     "Label": "VP2:27",
                     "VPointID": "11529215046068469820",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_27.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469820.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:27"
                 },
@@ -5380,11 +5380,11 @@
                     "PSinkID": "2305843009213694013",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_28.sock",
-                    "ServingIPv6Prefix": "4cd3:23dc:7620:5ee::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469821.sock",
+                    "ServingIPv6Prefix": "13c7:24d1:ca4a:ccb2::/64",
                     "Position": [
-                        35.5367,
-                        139.531
+                        35.5363,
+                        139.5313
                     ],
                     "Description": "PSinkPS2:28"
                 },
@@ -5422,7 +5422,7 @@
                 "data-property": {
                     "Label": "VP2:28",
                     "VPointID": "11529215046068469821",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_28.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469821.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:28"
                 },
@@ -5468,11 +5468,11 @@
                     "PSinkID": "2305843009213694014",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_29.sock",
-                    "ServingIPv6Prefix": "a2c4:d2db:899d:9691::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469822.sock",
+                    "ServingIPv6Prefix": "31a7:8b7e:8c5a:ca31::/64",
                     "Position": [
-                        35.5362,
-                        139.5329
+                        35.5367,
+                        139.5328
                     ],
                     "Description": "PSinkPS2:29"
                 },
@@ -5510,7 +5510,7 @@
                 "data-property": {
                     "Label": "VP2:29",
                     "VPointID": "11529215046068469822",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_29.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469822.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:29"
                 },
@@ -5556,11 +5556,11 @@
                     "PSinkID": "2305843009213694015",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_30.sock",
-                    "ServingIPv6Prefix": "59a:19d7:886e:d800::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469823.sock",
+                    "ServingIPv6Prefix": "826d:c65a:7f47:45c8::/64",
                     "Position": [
-                        35.5368,
-                        139.534
+                        35.5363,
+                        139.5334
                     ],
                     "Description": "PSinkPS2:30"
                 },
@@ -5598,7 +5598,7 @@
                 "data-property": {
                     "Label": "VP2:30",
                     "VPointID": "11529215046068469823",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_30.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469823.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:30"
                 },
@@ -5644,11 +5644,11 @@
                     "PSinkID": "2305843009213694016",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_31.sock",
-                    "ServingIPv6Prefix": "86ce:76e:aaef:5a11::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469824.sock",
+                    "ServingIPv6Prefix": "585:85ff:6716:437a::/64",
                     "Position": [
-                        35.5366,
-                        139.5344
+                        35.5361,
+                        139.5349
                     ],
                     "Description": "PSinkPS2:31"
                 },
@@ -5686,7 +5686,7 @@
                 "data-property": {
                     "Label": "VP2:31",
                     "VPointID": "11529215046068469824",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_31.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469824.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:31"
                 },
@@ -5732,11 +5732,11 @@
                     "PSinkID": "2305843009213694017",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_32.sock",
-                    "ServingIPv6Prefix": "e414:eb6f:1389:d107::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469825.sock",
+                    "ServingIPv6Prefix": "8ba3:976f:2417:f94e::/64",
                     "Position": [
                         35.5362,
-                        139.5358
+                        139.536
                     ],
                     "Description": "PSinkPS2:32"
                 },
@@ -5774,7 +5774,7 @@
                 "data-property": {
                     "Label": "VP2:32",
                     "VPointID": "11529215046068469825",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_2_32.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_2_11529215046068469825.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP2:32"
                 },
@@ -5820,11 +5820,11 @@
                     "PSinkID": "2305843009213694018",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_0.sock",
-                    "ServingIPv6Prefix": "b741:1405:a0bd:8f97::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469826.sock",
+                    "ServingIPv6Prefix": "b51a:21fe:e656:a09c::/64",
                     "Position": [
-                        35.536,
-                        139.5363
+                        35.5366,
+                        139.5365
                     ],
                     "Description": "PSinkPS3:0"
                 },
@@ -5862,7 +5862,7 @@
                 "data-property": {
                     "Label": "VP3:0",
                     "VPointID": "11529215046068469826",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_0.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469826.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:0"
                 },
@@ -5908,11 +5908,11 @@
                     "PSinkID": "2305843009213694019",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_1.sock",
-                    "ServingIPv6Prefix": "2c31:7bf3:eabf:395f::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469827.sock",
+                    "ServingIPv6Prefix": "408a:6b80:1455:4343::/64",
                     "Position": [
-                        35.537,
-                        139.5374
+                        35.5362,
+                        139.5379
                     ],
                     "Description": "PSinkPS3:1"
                 },
@@ -5950,7 +5950,7 @@
                 "data-property": {
                     "Label": "VP3:1",
                     "VPointID": "11529215046068469827",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_1.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469827.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:1"
                 },
@@ -5996,11 +5996,11 @@
                     "PSinkID": "2305843009213694020",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_2.sock",
-                    "ServingIPv6Prefix": "3fe1:7085:d45e:e3fc::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469828.sock",
+                    "ServingIPv6Prefix": "638e:9ded:cbbf:bad4::/64",
                     "Position": [
-                        35.5361,
-                        139.5385
+                        35.5369,
+                        139.5383
                     ],
                     "Description": "PSinkPS3:2"
                 },
@@ -6038,7 +6038,7 @@
                 "data-property": {
                     "Label": "VP3:2",
                     "VPointID": "11529215046068469828",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_2.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469828.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:2"
                 },
@@ -6084,11 +6084,11 @@
                     "PSinkID": "2305843009213694021",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_3.sock",
-                    "ServingIPv6Prefix": "750a:87ae:6b36:8859::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469829.sock",
+                    "ServingIPv6Prefix": "7c82:9dff:a1ea:5de5::/64",
                     "Position": [
-                        35.5365,
-                        139.5393
+                        35.5367,
+                        139.5397
                     ],
                     "Description": "PSinkPS3:3"
                 },
@@ -6126,7 +6126,7 @@
                 "data-property": {
                     "Label": "VP3:3",
                     "VPointID": "11529215046068469829",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_3.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469829.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:3"
                 },
@@ -6172,11 +6172,11 @@
                     "PSinkID": "2305843009213694022",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_4.sock",
-                    "ServingIPv6Prefix": "cad7:55e8:3e58:76c6::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469830.sock",
+                    "ServingIPv6Prefix": "60dc:1e32:27f:a1ba::/64",
                     "Position": [
-                        35.5379,
-                        139.531
+                        35.5375,
+                        139.5305
                     ],
                     "Description": "PSinkPS3:4"
                 },
@@ -6214,7 +6214,7 @@
                 "data-property": {
                     "Label": "VP3:4",
                     "VPointID": "11529215046068469830",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_4.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469830.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:4"
                 },
@@ -6260,11 +6260,11 @@
                     "PSinkID": "2305843009213694023",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_5.sock",
-                    "ServingIPv6Prefix": "a53d:c45e:29d:99ed::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469831.sock",
+                    "ServingIPv6Prefix": "e6b7:e92f:3301:3a72::/64",
                     "Position": [
-                        35.5377,
-                        139.5319
+                        35.5379,
+                        139.5313
                     ],
                     "Description": "PSinkPS3:5"
                 },
@@ -6302,7 +6302,7 @@
                 "data-property": {
                     "Label": "VP3:5",
                     "VPointID": "11529215046068469831",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_5.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469831.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:5"
                 },
@@ -6348,11 +6348,11 @@
                     "PSinkID": "2305843009213694024",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_6.sock",
-                    "ServingIPv6Prefix": "b6f8:5633:b159:c07b::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469832.sock",
+                    "ServingIPv6Prefix": "1cc:23c5:94f2:9f58::/64",
                     "Position": [
-                        35.5377,
-                        139.5323
+                        35.5376,
+                        139.5326
                     ],
                     "Description": "PSinkPS3:6"
                 },
@@ -6390,7 +6390,7 @@
                 "data-property": {
                     "Label": "VP3:6",
                     "VPointID": "11529215046068469832",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_6.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469832.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:6"
                 },
@@ -6436,11 +6436,11 @@
                     "PSinkID": "2305843009213694025",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_7.sock",
-                    "ServingIPv6Prefix": "9278:af09:9dbc:5979::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469833.sock",
+                    "ServingIPv6Prefix": "e4db:1980:2af1:cc8d::/64",
                     "Position": [
-                        35.5378,
-                        139.5337
+                        35.5371,
+                        139.5339
                     ],
                     "Description": "PSinkPS3:7"
                 },
@@ -6478,7 +6478,7 @@
                 "data-property": {
                     "Label": "VP3:7",
                     "VPointID": "11529215046068469833",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_7.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469833.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:7"
                 },
@@ -6524,11 +6524,11 @@
                     "PSinkID": "2305843009213694026",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_8.sock",
-                    "ServingIPv6Prefix": "5862:31e4:6ef8:3911::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469834.sock",
+                    "ServingIPv6Prefix": "c297:66a6:7542:88a9::/64",
                     "Position": [
-                        35.5372,
-                        139.5342
+                        35.5377,
+                        139.5348
                     ],
                     "Description": "PSinkPS3:8"
                 },
@@ -6566,7 +6566,7 @@
                 "data-property": {
                     "Label": "VP3:8",
                     "VPointID": "11529215046068469834",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_8.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469834.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:8"
                 },
@@ -6612,11 +6612,11 @@
                     "PSinkID": "2305843009213694027",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_9.sock",
-                    "ServingIPv6Prefix": "8ddc:d1e7:cb8c:e06b::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469835.sock",
+                    "ServingIPv6Prefix": "5805:c5ea:35b9:5319::/64",
                     "Position": [
-                        35.5374,
-                        139.5359
+                        35.5376,
+                        139.535
                     ],
                     "Description": "PSinkPS3:9"
                 },
@@ -6654,7 +6654,7 @@
                 "data-property": {
                     "Label": "VP3:9",
                     "VPointID": "11529215046068469835",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_9.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469835.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:9"
                 },
@@ -6700,11 +6700,11 @@
                     "PSinkID": "2305843009213694028",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_10.sock",
-                    "ServingIPv6Prefix": "51f2:e89:4ebe:6d1d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469836.sock",
+                    "ServingIPv6Prefix": "e5ea:238a:3666:ec84::/64",
                     "Position": [
-                        35.5372,
-                        139.5364
+                        35.5374,
+                        139.5362
                     ],
                     "Description": "PSinkPS3:10"
                 },
@@ -6742,7 +6742,7 @@
                 "data-property": {
                     "Label": "VP3:10",
                     "VPointID": "11529215046068469836",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_10.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469836.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:10"
                 },
@@ -6788,10 +6788,10 @@
                     "PSinkID": "2305843009213694029",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11.sock",
-                    "ServingIPv6Prefix": "eb92:2848:b35a:6103::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469837.sock",
+                    "ServingIPv6Prefix": "58b3:e37d:f883:e5be::/64",
                     "Position": [
-                        35.5372,
+                        35.5375,
                         139.5371
                     ],
                     "Description": "PSinkPS3:11"
@@ -6830,7 +6830,7 @@
                 "data-property": {
                     "Label": "VP3:11",
                     "VPointID": "11529215046068469837",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469837.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:11"
                 },
@@ -6876,11 +6876,11 @@
                     "PSinkID": "2305843009213694030",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_12.sock",
-                    "ServingIPv6Prefix": "48fd:2910:f5b5:cdd6::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469838.sock",
+                    "ServingIPv6Prefix": "ffeb:256e:c7df:e9c6::/64",
                     "Position": [
-                        35.5374,
-                        139.5381
+                        35.5379,
+                        139.5386
                     ],
                     "Description": "PSinkPS3:12"
                 },
@@ -6918,7 +6918,7 @@
                 "data-property": {
                     "Label": "VP3:12",
                     "VPointID": "11529215046068469838",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_12.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469838.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:12"
                 },
@@ -6964,11 +6964,11 @@
                     "PSinkID": "2305843009213694031",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_13.sock",
-                    "ServingIPv6Prefix": "1e6f:3f16:c432:40f6::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469839.sock",
+                    "ServingIPv6Prefix": "566d:b48e:11b4:14a0::/64",
                     "Position": [
-                        35.5378,
-                        139.5393
+                        35.537,
+                        139.5396
                     ],
                     "Description": "PSinkPS3:13"
                 },
@@ -7006,7 +7006,7 @@
                 "data-property": {
                     "Label": "VP3:13",
                     "VPointID": "11529215046068469839",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_13.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469839.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:13"
                 },
@@ -7052,11 +7052,11 @@
                     "PSinkID": "2305843009213694032",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_14.sock",
-                    "ServingIPv6Prefix": "36b4:5464:a628:ccb9::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469840.sock",
+                    "ServingIPv6Prefix": "2e06:8a66:75f9:3b90::/64",
                     "Position": [
-                        35.5385,
-                        139.5308
+                        35.5384,
+                        139.53
                     ],
                     "Description": "PSinkPS3:14"
                 },
@@ -7094,7 +7094,7 @@
                 "data-property": {
                     "Label": "VP3:14",
                     "VPointID": "11529215046068469840",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_14.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469840.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:14"
                 },
@@ -7140,11 +7140,11 @@
                     "PSinkID": "2305843009213694033",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_15.sock",
-                    "ServingIPv6Prefix": "50d3:c71f:217a:e4ca::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469841.sock",
+                    "ServingIPv6Prefix": "2fe2:ef5e:66d2:26ae::/64",
                     "Position": [
-                        35.538,
-                        139.5314
+                        35.5389,
+                        139.5319
                     ],
                     "Description": "PSinkPS3:15"
                 },
@@ -7182,7 +7182,7 @@
                 "data-property": {
                     "Label": "VP3:15",
                     "VPointID": "11529215046068469841",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_15.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469841.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:15"
                 },
@@ -7228,11 +7228,11 @@
                     "PSinkID": "2305843009213694034",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_16.sock",
-                    "ServingIPv6Prefix": "870a:8d00:e99c:9982::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469842.sock",
+                    "ServingIPv6Prefix": "f4d5:8de3:e8c4:530b::/64",
                     "Position": [
-                        35.538,
-                        139.5326
+                        35.5389,
+                        139.5321
                     ],
                     "Description": "PSinkPS3:16"
                 },
@@ -7270,7 +7270,7 @@
                 "data-property": {
                     "Label": "VP3:16",
                     "VPointID": "11529215046068469842",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_16.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469842.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:16"
                 },
@@ -7316,11 +7316,11 @@
                     "PSinkID": "2305843009213694035",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_17.sock",
-                    "ServingIPv6Prefix": "fbc:6b77:c22:bfd0::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469843.sock",
+                    "ServingIPv6Prefix": "359b:ab7:a8be:f946::/64",
                     "Position": [
-                        35.5388,
-                        139.5333
+                        35.538,
+                        139.5337
                     ],
                     "Description": "PSinkPS3:17"
                 },
@@ -7358,7 +7358,7 @@
                 "data-property": {
                     "Label": "VP3:17",
                     "VPointID": "11529215046068469843",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_17.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469843.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:17"
                 },
@@ -7404,10 +7404,10 @@
                     "PSinkID": "2305843009213694036",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_18.sock",
-                    "ServingIPv6Prefix": "a785:2318:3b49:eb8d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469844.sock",
+                    "ServingIPv6Prefix": "caf2:20a5:a74e:f2eb::/64",
                     "Position": [
-                        35.5386,
+                        35.5389,
                         139.5348
                     ],
                     "Description": "PSinkPS3:18"
@@ -7446,7 +7446,7 @@
                 "data-property": {
                     "Label": "VP3:18",
                     "VPointID": "11529215046068469844",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_18.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469844.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:18"
                 },
@@ -7492,10 +7492,10 @@
                     "PSinkID": "2305843009213694037",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_19.sock",
-                    "ServingIPv6Prefix": "b786:6d16:8bf0:d9c0::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469845.sock",
+                    "ServingIPv6Prefix": "229:37ac:5767:ec77::/64",
                     "Position": [
-                        35.5382,
+                        35.5383,
                         139.5359
                     ],
                     "Description": "PSinkPS3:19"
@@ -7534,7 +7534,7 @@
                 "data-property": {
                     "Label": "VP3:19",
                     "VPointID": "11529215046068469845",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_19.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469845.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:19"
                 },
@@ -7580,11 +7580,11 @@
                     "PSinkID": "2305843009213694038",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_20.sock",
-                    "ServingIPv6Prefix": "2486:1088:eecd:cadc::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469846.sock",
+                    "ServingIPv6Prefix": "f21e:9e46:dcc8:5944::/64",
                     "Position": [
-                        35.5385,
-                        139.5362
+                        35.5383,
+                        139.536
                     ],
                     "Description": "PSinkPS3:20"
                 },
@@ -7622,7 +7622,7 @@
                 "data-property": {
                     "Label": "VP3:20",
                     "VPointID": "11529215046068469846",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_20.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469846.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:20"
                 },
@@ -7668,11 +7668,11 @@
                     "PSinkID": "2305843009213694039",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_21.sock",
-                    "ServingIPv6Prefix": "9154:7873:4259:2073::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469847.sock",
+                    "ServingIPv6Prefix": "d1d6:35e9:74af:66da::/64",
                     "Position": [
-                        35.5385,
-                        139.5378
+                        35.5386,
+                        139.5375
                     ],
                     "Description": "PSinkPS3:21"
                 },
@@ -7710,7 +7710,7 @@
                 "data-property": {
                     "Label": "VP3:21",
                     "VPointID": "11529215046068469847",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_21.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469847.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:21"
                 },
@@ -7756,11 +7756,11 @@
                     "PSinkID": "2305843009213694040",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_22.sock",
-                    "ServingIPv6Prefix": "8f13:aa4a:f376:d74f::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469848.sock",
+                    "ServingIPv6Prefix": "80f2:312:a216:43e4::/64",
                     "Position": [
-                        35.5381,
-                        139.5388
+                        35.5388,
+                        139.5387
                     ],
                     "Description": "PSinkPS3:22"
                 },
@@ -7798,7 +7798,7 @@
                 "data-property": {
                     "Label": "VP3:22",
                     "VPointID": "11529215046068469848",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_22.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469848.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:22"
                 },
@@ -7844,11 +7844,11 @@
                     "PSinkID": "2305843009213694041",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_23.sock",
-                    "ServingIPv6Prefix": "fe36:b6e8:1560:bcd6::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469849.sock",
+                    "ServingIPv6Prefix": "e3c6:8aeb:2c54:78cf::/64",
                     "Position": [
-                        35.5381,
-                        139.5397
+                        35.5385,
+                        139.5398
                     ],
                     "Description": "PSinkPS3:23"
                 },
@@ -7886,7 +7886,7 @@
                 "data-property": {
                     "Label": "VP3:23",
                     "VPointID": "11529215046068469849",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_23.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469849.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:23"
                 },
@@ -7932,11 +7932,11 @@
                     "PSinkID": "2305843009213694042",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_24.sock",
-                    "ServingIPv6Prefix": "2173:cbcb:d502:2fdf::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469850.sock",
+                    "ServingIPv6Prefix": "8494:7e6e:ce3:b2a5::/64",
                     "Position": [
-                        35.5393,
-                        139.5301
+                        35.5392,
+                        139.5303
                     ],
                     "Description": "PSinkPS3:24"
                 },
@@ -7974,7 +7974,7 @@
                 "data-property": {
                     "Label": "VP3:24",
                     "VPointID": "11529215046068469850",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_24.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469850.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:24"
                 },
@@ -8020,8 +8020,8 @@
                     "PSinkID": "2305843009213694043",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_25.sock",
-                    "ServingIPv6Prefix": "4e63:530d:b982:3e28::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469851.sock",
+                    "ServingIPv6Prefix": "7a3c:e632:6ae2:2be8::/64",
                     "Position": [
                         35.5395,
                         139.5316
@@ -8062,7 +8062,7 @@
                 "data-property": {
                     "Label": "VP3:25",
                     "VPointID": "11529215046068469851",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_25.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469851.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:25"
                 },
@@ -8108,11 +8108,11 @@
                     "PSinkID": "2305843009213694044",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_26.sock",
-                    "ServingIPv6Prefix": "7618:e595:1bb3:1446::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469852.sock",
+                    "ServingIPv6Prefix": "93bb:9e8:37b2:6d17::/64",
                     "Position": [
-                        35.5391,
-                        139.5324
+                        35.5398,
+                        139.5327
                     ],
                     "Description": "PSinkPS3:26"
                 },
@@ -8150,7 +8150,7 @@
                 "data-property": {
                     "Label": "VP3:26",
                     "VPointID": "11529215046068469852",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_26.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469852.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:26"
                 },
@@ -8196,10 +8196,10 @@
                     "PSinkID": "2305843009213694045",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_27.sock",
-                    "ServingIPv6Prefix": "a20:d149:e897:a402::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469853.sock",
+                    "ServingIPv6Prefix": "87e3:a09a:9848:499b::/64",
                     "Position": [
-                        35.5399,
+                        35.5398,
                         139.5336
                     ],
                     "Description": "PSinkPS3:27"
@@ -8238,7 +8238,7 @@
                 "data-property": {
                     "Label": "VP3:27",
                     "VPointID": "11529215046068469853",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_27.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469853.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:27"
                 },
@@ -8284,11 +8284,11 @@
                     "PSinkID": "2305843009213694046",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_28.sock",
-                    "ServingIPv6Prefix": "fc3c:d046:f6df:6257::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469854.sock",
+                    "ServingIPv6Prefix": "6a21:9400:29fe:869d::/64",
                     "Position": [
-                        35.5395,
-                        139.5344
+                        35.5398,
+                        139.5343
                     ],
                     "Description": "PSinkPS3:28"
                 },
@@ -8326,7 +8326,7 @@
                 "data-property": {
                     "Label": "VP3:28",
                     "VPointID": "11529215046068469854",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_28.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469854.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:28"
                 },
@@ -8372,11 +8372,11 @@
                     "PSinkID": "2305843009213694047",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_29.sock",
-                    "ServingIPv6Prefix": "b9db:22d0:8beb:250d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469855.sock",
+                    "ServingIPv6Prefix": "1519:a8ca:f246:a80a::/64",
                     "Position": [
-                        35.5393,
-                        139.5357
+                        35.5396,
+                        139.5352
                     ],
                     "Description": "PSinkPS3:29"
                 },
@@ -8414,7 +8414,7 @@
                 "data-property": {
                     "Label": "VP3:29",
                     "VPointID": "11529215046068469855",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_29.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469855.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:29"
                 },
@@ -8460,11 +8460,11 @@
                     "PSinkID": "2305843009213694048",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_30.sock",
-                    "ServingIPv6Prefix": "fd7:11bf:3d78:3d19::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469856.sock",
+                    "ServingIPv6Prefix": "13d1:8914:97b8:941::/64",
                     "Position": [
-                        35.5396,
-                        139.5361
+                        35.5391,
+                        139.5369
                     ],
                     "Description": "PSinkPS3:30"
                 },
@@ -8502,7 +8502,7 @@
                 "data-property": {
                     "Label": "VP3:30",
                     "VPointID": "11529215046068469856",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_30.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469856.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:30"
                 },
@@ -8548,11 +8548,11 @@
                     "PSinkID": "2305843009213694049",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_31.sock",
-                    "ServingIPv6Prefix": "97ce:d55c:1cb7:260a::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469857.sock",
+                    "ServingIPv6Prefix": "bcbf:8604:3458:9180::/64",
                     "Position": [
-                        35.5396,
-                        139.5372
+                        35.539,
+                        139.5379
                     ],
                     "Description": "PSinkPS3:31"
                 },
@@ -8590,7 +8590,7 @@
                 "data-property": {
                     "Label": "VP3:31",
                     "VPointID": "11529215046068469857",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_31.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469857.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:31"
                 },
@@ -8636,11 +8636,11 @@
                     "PSinkID": "2305843009213694050",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_32.sock",
-                    "ServingIPv6Prefix": "316a:2070:fec0:dcf8::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469858.sock",
+                    "ServingIPv6Prefix": "c76d:ea3b:a5eb:71e::/64",
                     "Position": [
-                        35.5393,
-                        139.5382
+                        35.5391,
+                        139.5384
                     ],
                     "Description": "PSinkPS3:32"
                 },
@@ -8678,7 +8678,7 @@
                 "data-property": {
                     "Label": "VP3:32",
                     "VPointID": "11529215046068469858",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_32.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469858.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:32"
                 },
@@ -8724,11 +8724,11 @@
                     "PSinkID": "2305843009213694051",
                     "PSinkType": "",
                     "VPointModuleID": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_33.sock",
-                    "ServingIPv6Prefix": "a7a2:87a9:e27c:ff4d::/64",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469859.sock",
+                    "ServingIPv6Prefix": "ddbe:6e96:d6f0:d62b::/64",
                     "Position": [
-                        35.5396,
-                        139.5391
+                        35.5398,
+                        139.5396
                     ],
                     "Description": "PSinkPS3:33"
                 },
@@ -8766,7 +8766,7 @@
                 "data-property": {
                     "Label": "VP3:33",
                     "VPointID": "11529215046068469859",
-                    "SocketAddress": "/tmp/mecm2m/vpoint_3_33.sock",
+                    "SocketAddress": "/tmp/mecm2m/vpoint_3_11529215046068469859.sock",
                     "SoftwareModule": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
                     "Description": "VPointVP3:33"
                 },

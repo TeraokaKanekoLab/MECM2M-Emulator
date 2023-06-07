@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/big"
 	"net"
 	"net/http"
 	"os"
@@ -21,6 +22,7 @@ import (
 	"mecm2m-Simulator/pkg/message"
 	"mecm2m-Simulator/pkg/mserver"
 	"mecm2m-Simulator/pkg/server"
+	"mecm2m-Simulator/pkg/vpoint"
 
 	"github.com/joho/godotenv"
 
@@ -28,7 +30,9 @@ import (
 )
 
 const (
-	protocol = "unix"
+	protocol              = "unix"
+	globalGraphDBSockAddr = "/tmp/mecm2m/svr_0_m2mapi.sock"
+	socket_address_root   = "/tmp/mecm2m/"
 
 	// Home MEC Server かどうかの判定
 	ServerID = "ServerID0001"
@@ -39,6 +43,7 @@ var covered_area = make(map[string][]float64)
 var mu sync.Mutex
 
 // 各種システムコンポーネントのソケットアドレスをグローバルに設定
+// ----------------------------------------------------
 var m2mApiSockAddr string
 
 // var localMgrSockAddr string
@@ -48,6 +53,11 @@ var aaaSockAddr string
 // var localRepoSockAddr string
 var graphDBSockAddr string
 var sensingDBSockAddr string
+
+// ----------------------------------------------------
+
+// このプロセスが動いているMEC Serverの番号をグローバルに設定
+var server_num string
 
 type Format struct {
 	FormType string
@@ -70,25 +80,30 @@ func main() {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
+	/*
+		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+		signals_from_main := make(chan os.Signal, 1)
 
-	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-	signals_from_main := make(chan os.Signal, 1)
+		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+		signal.Notify(signals_from_main, syscall.SIGCONT)
 
-	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-	signal.Notify(signals_from_main, syscall.SIGCONT)
+		// シグナルを待機
+		fmt.Println("Waiting for signal...")
+		sig := <-signals_from_main
 
-	// シグナルを待機
-	fmt.Println("Waiting for signal...")
-	sig := <-signals_from_main
-
-	// 受信したシグナルを表示
-	fmt.Printf("Received signal: %v\n", sig)
-
+		// 受信したシグナルを表示
+		fmt.Printf("Received signal: %v\n", sig)
+	*/
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {
 		message.MyError(err, "Failed to read socket file")
 	}
+
+	// サーバ番号の読み出し
+	server_num_first_index := strings.LastIndex(socket_file_name, "_")
+	server_num_last_index := strings.LastIndex(socket_file_name, ".")
+	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
 
 	var socket_files server.ServerSocketFiles
 
@@ -176,9 +191,9 @@ func m2mApi(conn net.Conn) {
 
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
-		switch m := syncFormatServer(decoder, encoder); m.(type) {
+		switch m2mApiCommand := syncFormatServer(decoder, encoder); m2mApiCommand.(type) {
 		case *m2mapi.ResolvePoint:
-			format := m.(*m2mapi.ResolvePoint)
+			format := m2mApiCommand.(*m2mapi.ResolvePoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -254,17 +269,16 @@ func m2mApi(conn net.Conn) {
 				}
 
 				mu.Unlock()
+				fmt.Println("Cache covered area: ", covered_area)
 				// キャッシュ登録完了
 			}
-			fmt.Println("Cache covered area: ", covered_area)
 
 			// キャッシュのカバー領域情報をもとに，クラウドへリレーするかを判断する
-			// キャッシュ情報と入力情報の比較
 			// (SWLONがMINLATのLONより小さい and SWLATがMINLONのLATより小さい) or (NELONがMAXLATのLONより大きい and NELATがMAXLONのLATより大きい) -> Global GraphDB
 			if (format.SW.Lon < covered_area["MINLAT"][1] && format.SW.Lat < covered_area["MINLON"][0]) || (format.NE.Lon > covered_area["MAXLAT"][1] && format.NE.Lat > covered_area["MAXLON"][0]) {
 				// Global GraphDB へリクエスト
 				fmt.Println("resolve in global")
-				connCloud, err := net.Dial(protocol, "/tmp/mecm2m/svr_0_m2mapi.sock")
+				connCloud, err := net.Dial(protocol, globalGraphDBSockAddr)
 				if err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > net.Dial")
 				}
@@ -281,18 +295,18 @@ func m2mApi(conn net.Conn) {
 				// Cloud でのポイント解決
 
 				// 受信する型は[]ResolvePoint
-				ms := []m2mapi.ResolvePoint{}
-				if err := decoderCloud.Decode(&ms); err != nil {
+				point_output := []m2mapi.ResolvePoint{}
+				if err := decoderCloud.Decode(&point_output); err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > decoderCloud.Decode")
 				}
-				message.MyReadMessage(ms)
+				message.MyReadMessage(point_output)
 
 				// 最終的な結果をM2M Appに送信する
-				if err := encoder.Encode(&ms); err != nil {
+				if err := encoder.Encode(&point_output); err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > encoder.Encode")
 					break
 				}
-				message.MyWriteMessage(ms)
+				message.MyWriteMessage(point_output)
 			} else {
 				// Local GraphDB へリクエスト
 				fmt.Println("resolve in local")
@@ -308,26 +322,26 @@ func m2mApi(conn net.Conn) {
 				if err := encoderDB.Encode(format); err != nil {
 					message.MyError(err, "m2mApi > PointLocal > encoderDB.Encode")
 				}
-				message.MyWriteMessage(*format) //1. 同じ内容
+				message.MyWriteMessage(*format)
 
 				// GraphDB()によるDB検索
 
 				// 受信する型は[]ResolvePoint
-				ms := []m2mapi.ResolvePoint{}
-				if err := decoderDB.Decode(&ms); err != nil {
+				point_output := []m2mapi.ResolvePoint{}
+				if err := decoderDB.Decode(&point_output); err != nil {
 					message.MyError(err, "m2mApi > PointLocal > decoderDB.Decode")
 				}
-				message.MyReadMessage(ms)
+				message.MyReadMessage(point_output)
 
 				// 最終的な結果をM2M Appに送信する
-				if err := encoder.Encode(&ms); err != nil {
+				if err := encoder.Encode(&point_output); err != nil {
 					message.MyError(err, "m2mApi > PointLocal > encoder.Encode")
 					break
 				}
-				message.MyWriteMessage(ms)
+				message.MyWriteMessage(point_output)
 			}
 		case *m2mapi.ResolveNode:
-			format := m.(*m2mapi.ResolveNode)
+			format := m2mApiCommand.(*m2mapi.ResolveNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -348,7 +362,7 @@ func m2mApi(conn net.Conn) {
 			if flag == 0 {
 				// Global GraphDB へリクエスト
 				fmt.Println("resolve in global")
-				connCloud, err := net.Dial(protocol, "/tmp/mecm2m/svr_0_m2mapi.sock")
+				connCloud, err := net.Dial(protocol, globalGraphDBSockAddr)
 				if err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > net.Dial")
 				}
@@ -365,24 +379,24 @@ func m2mApi(conn net.Conn) {
 				// Cloud でのノード解決
 
 				// 受信する型は[]ResolveNode
-				ms := []m2mapi.ResolveNode{}
-				if err := decoderCloud.Decode(&ms); err != nil {
+				node_output := []m2mapi.ResolveNode{}
+				if err := decoderCloud.Decode(&node_output); err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > decoderCloud.Decode")
 				}
-				message.MyReadMessage(ms)
+				message.MyReadMessage(node_output)
 
 				// 最終的な結果をM2M Appに送信する
-				if err := encoder.Encode(&ms); err != nil {
+				if err := encoder.Encode(&node_output); err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > encoder.Encode")
 					break
 				}
-				message.MyWriteMessage(ms)
+				message.MyWriteMessage(node_output)
 			} else {
 				// Local GraphDB へリクエスト
 				fmt.Println("resolve in local")
 				connDB, err := net.Dial(protocol, graphDBSockAddr)
 				if err != nil {
-					message.MyError(err, "m2mApi > Node > net.Dial")
+					message.MyError(err, "m2mApi > NodeLocal > net.Dial")
 				}
 				decoderDB := gob.NewDecoder(connDB)
 				encoderDB := gob.NewEncoder(connDB)
@@ -390,28 +404,28 @@ func m2mApi(conn net.Conn) {
 				syncFormatClient("Node", decoderDB, encoderDB)
 
 				if err := encoderDB.Encode(format); err != nil {
-					message.MyError(err, "m2mApi > Node > encoderDB.Encode")
+					message.MyError(err, "m2mApi > NodeLocal > encoderDB.Encode")
 				}
-				message.MyWriteMessage((*format)) //1. 同じ内容
+				message.MyWriteMessage(*format) //1. 同じ内容
 
 				// GraphDB()によるDB検索
 
 				// 受信する型は[]ResolveNode
-				ms := []m2mapi.ResolveNode{}
-				if err := decoderDB.Decode(&ms); err != nil {
-					message.MyError(err, "m2mApi > Node > decoderDB.Decode")
+				node_output := []m2mapi.ResolveNode{}
+				if err := decoderDB.Decode(&node_output); err != nil {
+					message.MyError(err, "m2mApi > NodeLocal > decoderDB.Decode")
 				}
-				message.MyReadMessage(ms)
+				message.MyReadMessage(node_output)
 
 				// 最終的な結果をM2M Appに送信する
-				if err := encoder.Encode(&ms); err != nil {
-					message.MyError(err, "m2mApi > Node > encoder.Encode")
+				if err := encoder.Encode(&node_output); err != nil {
+					message.MyError(err, "m2mApi > NodeLocal > encoder.Encode")
 					break
 				}
-				message.MyWriteMessage(ms)
+				message.MyWriteMessage(node_output)
 			}
 		case *m2mapi.ResolvePastNode:
-			format := m.(*m2mapi.ResolvePastNode)
+			format := m2mApiCommand.(*m2mapi.ResolvePastNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -422,8 +436,10 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
-			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
+			// VSNodeスレッドのソケットアドレス
+			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+
+			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > PastNode > net.Dial")
 			}
@@ -435,25 +451,25 @@ func m2mApi(conn net.Conn) {
 			if err := encoderVS.Encode(format); err != nil {
 				message.MyError(err, "m2mApi > PastNode > encoderVS.Encode")
 			}
-			message.MyWriteMessage(*format) //1. 同じ内容
+			message.MyWriteMessage(*format)
 
 			// VSNodeとのやりとり
 
 			// 受信する型はResolvePastNode
-			ms := m2mapi.ResolvePastNode{}
-			if err := decoderVS.Decode(&ms); err != nil {
+			past_node_output := m2mapi.ResolvePastNode{}
+			if err := decoderVS.Decode(&past_node_output); err != nil {
 				message.MyError(err, "m2mApi > PastNode > decoderVS.Decode")
 			}
-			message.MyReadMessage(ms)
+			message.MyReadMessage(past_node_output)
 
 			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
+			if err := encoder.Encode(&past_node_output); err != nil {
 				message.MyError(err, "m2mApi > PastNode > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(ms)
+			message.MyWriteMessage(past_node_output)
 		case *m2mapi.ResolvePastPoint:
-			format := m.(*m2mapi.ResolvePastPoint)
+			format := m2mApiCommand.(*m2mapi.ResolvePastPoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -464,8 +480,10 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
-			connVP, err := net.Dial(protocol, "/tmp/mecm2m/vpoint_1_0001.sock")
+			// VPointスレッドのソケットアドレス
+			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+
+			connVP, err := net.Dial(protocol, vpoint_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > PastPoint > net.Dial")
 			}
@@ -477,25 +495,25 @@ func m2mApi(conn net.Conn) {
 			if err := encoderVP.Encode(format); err != nil {
 				message.MyError(err, "m2mApi > PastPoint > encoderVP.Encode")
 			}
-			message.MyWriteMessage(*format) //1. 同じ内容
+			message.MyWriteMessage(*format)
 
 			// VPointとのやりとり
 
 			// 受信する型はResolvePastPoint
-			ms := m2mapi.ResolvePastPoint{}
-			if err := decoderVP.Decode(&ms); err != nil {
+			past_point_output := m2mapi.ResolvePastPoint{}
+			if err := decoderVP.Decode(&past_point_output); err != nil {
 				message.MyError(err, "m2mApi > PastPoint > decoderVP.Decode")
 			}
-			message.MyReadMessage(ms)
+			message.MyReadMessage(past_point_output)
 
 			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
+			if err := encoder.Encode(&past_point_output); err != nil {
 				message.MyError(err, "m2mApi > PastPoint > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(ms)
+			message.MyWriteMessage(past_point_output)
 		case *m2mapi.ResolveCurrentNode:
-			format := m.(*m2mapi.ResolveCurrentNode)
+			format := m2mApiCommand.(*m2mapi.ResolveCurrentNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -506,8 +524,10 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// どのVSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
-			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
+			// VSNodeスレッドのソケットアドレス
+			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+
+			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > net.Dial")
 			}
@@ -537,7 +557,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyWriteMessage(ms)
 		case *m2mapi.ResolveCurrentPoint:
-			format := m.(*m2mapi.ResolveCurrentPoint)
+			format := m2mApiCommand.(*m2mapi.ResolveCurrentPoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -548,8 +568,13 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// どのVPointスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はvpoint_1_1.sock
-			connVP, err := net.Dial(protocol, "/tmp/mecm2m/vpoint_1_0001.sock")
+			// 2023-05-26
+			// M2M API -> VPoint -> Local GraphDB (VNode検索) -> VPoint -> VNode -> PNode
+
+			// VPointスレッドのソケットアドレス
+			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+
+			connVP, err := net.Dial(protocol, vpoint_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > net.Dial")
 			}
@@ -566,20 +591,20 @@ func m2mApi(conn net.Conn) {
 			// VPointとのやりとり
 
 			// 受信する型はResolveCurrentPoint
-			ms := m2mapi.ResolveCurrentPoint{}
-			if err := decoderVP.Decode(&ms); err != nil {
+			current_point_output := m2mapi.ResolveCurrentPoint{}
+			if err := decoderVP.Decode(&current_point_output); err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > decoderVP.Decode")
 			}
-			message.MyReadMessage(ms)
+			message.MyReadMessage(current_point_output)
 
 			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
+			if err := encoder.Encode(&current_point_output); err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(ms)
+			message.MyWriteMessage(current_point_output)
 		case *m2mapi.ResolveConditionNode:
-			format := m.(*m2mapi.ResolveConditionNode)
+			format := m2mApiCommand.(*m2mapi.ResolveConditionNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -590,8 +615,10 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// どのVSNodeとやりとりするかを判別できるような仕組みが必要だが，現状はvsnode_1_1.sock
-			connVS, err := net.Dial(protocol, "/tmp/mecm2m/vsnode_1_0001.sock")
+			// VSNodeスレッドのソケットアドレス
+			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+
+			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > net.Dial")
 			}
@@ -608,20 +635,20 @@ func m2mApi(conn net.Conn) {
 
 			// VSNodeからのデータ通知を受ける
 			// 受信する型はDataForRegist
-			ms := m2mapi.DataForRegist{}
-			if err := decoderVS.Decode(&ms); err != nil {
+			condition_node_output := m2mapi.DataForRegist{}
+			if err := decoderVS.Decode(&condition_node_output); err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > decoderVS.Decode")
 			}
-			message.MyReadMessage(ms)
+			message.MyReadMessage(condition_node_output)
 
 			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
+			if err := encoder.Encode(&condition_node_output); err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(ms)
+			message.MyWriteMessage(condition_node_output)
 		case string:
-			if m == "exit" {
+			if m2mApiCommand == "exit" {
 				// M2MAppでexitが入力されたら，breakする
 				break
 			}
@@ -631,8 +658,8 @@ func m2mApi(conn net.Conn) {
 
 // M2M Appと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
-	m := &Format{}
-	if err := decoder.Decode(m); err != nil {
+	format := &Format{}
+	if err := decoder.Decode(format); err != nil {
 		if err == io.EOF {
 			typeM := "exit"
 			return typeM
@@ -640,7 +667,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 			message.MyError(err, "syncFormatServer > decoder.Decode")
 		}
 	}
-	typeResult := m.FormType
+	typeResult := format.FormType
 
 	var typeM any
 	switch typeResult {
@@ -668,40 +695,44 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &server.AAA{}
 	case "Disconn":
 		typeM = &mserver.Disconnect{}
+	case "SessionKey":
+		typeM = &server.RequestSessionKey{}
+	case "CurrentPointVNode":
+		typeM = &vpoint.CurrentPointVNode{}
 	}
 	return typeM
 }
 
 // 内部コンポーネント（DB，仮想モジュール）と型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
-	m := &Format{}
+	format := &Format{}
 	switch command {
 	case "Point":
-		m.FormType = "Point"
+		format.FormType = "Point"
 	case "Node":
-		m.FormType = "Node"
+		format.FormType = "Node"
 	case "PastNode":
-		m.FormType = "PastNode"
+		format.FormType = "PastNode"
 	case "PastPoint":
-		m.FormType = "PastPoint"
+		format.FormType = "PastPoint"
 	case "CurrentNode":
-		m.FormType = "CurrentNode"
+		format.FormType = "CurrentNode"
 	case "CurrentPoint":
-		m.FormType = "CurrentPoint"
+		format.FormType = "CurrentPoint"
 	case "ConditionNode":
-		m.FormType = "ConditionNode"
+		format.FormType = "ConditionNode"
 	case "RegisterSensingData":
-		m.FormType = "RegisterSensingData"
+		format.FormType = "RegisterSensingData"
 	case "ConnectNew":
-		m.FormType = "ConnectNew"
+		format.FormType = "ConnectNew"
 	case "ConnectForModule":
-		m.FormType = "ConnectForModule"
+		format.FormType = "ConnectForModule"
 	case "AAA":
-		m.FormType = "AAA"
+		format.FormType = "AAA"
 	case "Disconn":
-		m.FormType = "Disconn"
+		format.FormType = "Disconn"
 	}
-	if err := encoder.Encode(m); err != nil {
+	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
 	}
 }
@@ -1000,9 +1031,9 @@ func graphDB(conn net.Conn) {
 
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
-		switch m := syncFormatServer(decoder, encoder); m.(type) {
+		switch graphDBCommand := syncFormatServer(decoder, encoder); graphDBCommand.(type) {
 		case *m2mapi.ResolvePoint:
-			format := m.(*m2mapi.ResolvePoint)
+			format := graphDBCommand.(*m2mapi.ResolvePoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -1021,31 +1052,31 @@ func graphDB(conn net.Conn) {
 
 			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
-			pss := []m2mapi.ResolvePoint{}
+			point_output := []m2mapi.ResolvePoint{}
 			for _, data := range datas {
 				dataArray := data.([]interface{})
-				ps := m2mapi.ResolvePoint{}
-				ps.VPointID_n = dataArray[0].(string)
+				point := m2mapi.ResolvePoint{}
+				point.VPointID_n = dataArray[0].(string)
 				flag := 0
-				for _, p := range pss {
-					if p.VPointID_n == ps.VPointID_n {
+				for _, p := range point_output {
+					if p.VPointID_n == point.VPointID_n {
 						flag = 1
 					}
 				}
 				if flag == 0 {
-					pss = append(pss, ps)
+					point_output = append(point_output, point)
 				}
 			}
 
-			if err := encoder.Encode(&pss); err != nil {
+			if err := encoder.Encode(&point_output); err != nil {
 				message.MyError(err, "GraphDB > Point > encoder.Encode")
 			}
-			message.MyWriteMessage(pss)
+			message.MyWriteMessage(point_output)
 		case *m2mapi.ResolveNode:
-			format := m.(*m2mapi.ResolveNode)
+			format := graphDBCommand.(*m2mapi.ResolveNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -1058,31 +1089,31 @@ func graphDB(conn net.Conn) {
 
 			var vpointid_n string
 			vpointid_n = "\\\"" + format.VPointID_n + "\\\""
-			caps := format.CapsInput
-			var format_caps []string
-			for _, cap := range caps {
-				cap = "\\\"" + cap + "\\\""
-				format_caps = append(format_caps, cap)
+			capabilities := format.CapsInput
+			var format_capabilities []string
+			for _, capability := range capabilities {
+				capability = "\\\"" + capability + "\\\""
+				format_capabilities = append(format_capabilities, capability)
 			}
-			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
 
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
-			nds := []m2mapi.ResolveNode{}
+			node_output := []m2mapi.ResolveNode{}
 			for _, data := range datas {
 				dataArray := data.([]interface{})
 				fmt.Println(dataArray)
-				pn := m2mapi.ResolveNode{}
-				capability := dataArray[0].(string)
+				node := m2mapi.ResolveNode{}
+				capability := dataArray[1].(string)
 				// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
 				//pn.CapOutput = append(pn.CapOutput, capability)
-				pn.CapOutput = capability
-				pn.VNodeID_n = dataArray[1].(string)
+				node.CapOutput = capability
+				node.VNodeID_n = dataArray[0].(string)
 				flag := 0
-				for _, p := range nds {
-					if p.VNodeID_n == pn.VNodeID_n {
+				for _, p := range node_output {
+					if p.VNodeID_n == node.VNodeID_n {
 						flag = 1
 					} /*else {
 						// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
@@ -1090,14 +1121,76 @@ func graphDB(conn net.Conn) {
 					}*/
 				}
 				if flag == 0 {
-					nds = append(nds, pn)
+					node_output = append(node_output, node)
 				}
 			}
 
-			if err := encoder.Encode(&nds); err != nil {
+			if err := encoder.Encode(&node_output); err != nil {
 				message.MyError(err, "GraphDB > Node > encoder.Encode")
 			}
-			message.MyWriteMessage(nds)
+			message.MyWriteMessage(node_output)
+		case *server.RequestSessionKey:
+			format := graphDBCommand.(*server.RequestSessionKey)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "GraphDB > SessionKey > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(format)
+
+			var pnode_id string
+			pnode_id = "\\\"" + format.PNodeID + "\\\""
+			payload := `{"statements": [{"statement": "MATCH (pn:PNode {PNodeID: ` + pnode_id + `}) return pn.SessionKey;"}]}`
+
+			var url string
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			datas := listenServer(payload, url)
+
+			session_key := server.RequestSessionKey{}
+			session_key_interface := datas[0].([]interface{})
+			session_key.SessionKey = session_key_interface[0].(string)
+
+			if err := encoder.Encode(&session_key); err != nil {
+				message.MyError(err, "GraphDB > SessionKey > encoder.Encode")
+			}
+			message.MyWriteMessage(session_key)
+		case *vpoint.CurrentPointVNode:
+			// 地点指定型現在データ取得における検索
+			format := graphDBCommand.(*vpoint.CurrentPointVNode)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "GraphDB > CurrentPointVNode > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(format)
+
+			var vpoint_id, capability string
+			vpoint_id = "\\\"" + format.VPointID + "\\\""
+			capability = "\\\"" + format.Capability + "\\\""
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpoint_id + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode {Capability: ` + capability + `}) return vn.SocketAddress, vn.VNodeID;"}]}`
+
+			var url string
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			datas := listenServer(payload, url)
+
+			vnode_socket_addresses := vpoint.CurrentPointVNode{}
+			for _, v := range datas {
+				vnode_interface := v.([]interface{})
+				vnode_sock_addr := vnode_interface[0].(string)
+				vnode_id := vnode_interface[1].(string)
+				vnode_socket_addresses.VNodeSockAddr = append(vnode_socket_addresses.VNodeSockAddr, vnode_sock_addr)
+				vnode_socket_addresses.VNodeID = append(vnode_socket_addresses.VNodeID, vnode_id)
+			}
+			if err := encoder.Encode(&vnode_socket_addresses); err != nil {
+				message.MyError(err, "GraphDB > CurrentPointVNode > encoder.Encode")
+			}
+			message.MyWriteMessage(vnode_socket_addresses)
 		}
 	}
 }
@@ -1113,9 +1206,9 @@ func sensingDB(conn net.Conn) {
 
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
-		switch m := syncFormatServer(decoder, encoder); m.(type) {
+		switch sensingDBCommand := syncFormatServer(decoder, encoder); sensingDBCommand.(type) {
 		case *m2mapi.ResolvePastNode:
-			format := m.(*m2mapi.ResolvePastNode)
+			format := sensingDBCommand.(*m2mapi.ResolvePastNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -1126,15 +1219,16 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			var vnodeid_n, cap, start, end string
-			vnodeid_n = format.VNodeID_n
+			var pnode_id, cap, start, end string
+			// 入力のVNodeIDをPNodeIDに変換
+			pnode_id = convertID(format.VNodeID_n, 63)
 			cap = format.Capability
 			start = format.Period.Start
 			end = format.Period.End
 
 			// SensingDBを開く
 			// "root:password@tcp(127.0.0.1:3306)/testdb"
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_LOCAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > PastNode > sql.Open")
@@ -1147,7 +1241,7 @@ func sensingDB(conn net.Conn) {
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PNodeID = \"" + vnodeid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
+			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PNodeID = \"" + pnode_id + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
@@ -1157,13 +1251,14 @@ func sensingDB(conn net.Conn) {
 
 			sd := m2mapi.ResolvePastNode{}
 			for rows.Next() {
-				field := []string{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0"}
-				// PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
-				err := rows.Scan(&field[0], &field[1], &field[2], &field[3], &field[4], &field[5], &field[6], &field[7], &field[8], &field[9])
+				field := []string{"0", "0", "0", "0", "0", "0", "0"}
+				// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
+				err := rows.Scan(&field[0], &field[1], &field[2], &field[3], &field[4], &field[5], &field[6])
 				if err != nil {
 					message.MyError(err, "SensingDB > PastNode > rows.Scan")
 				}
-				sd.VNodeID_n = field[0]
+				vnode_id := convertID(field[0], 63)
+				sd.VNodeID_n = vnode_id
 				valFloat, _ := strconv.ParseFloat(field[3], 64)
 				val := m2mapi.Value{Capability: field[1], Time: field[2], Value: valFloat}
 				sd.Values = append(sd.Values, val)
@@ -1174,7 +1269,7 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyWriteMessage(sd)
 		case *m2mapi.ResolvePastPoint:
-			format := m.(*m2mapi.ResolvePastPoint)
+			format := sensingDBCommand.(*m2mapi.ResolvePastPoint)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -1185,45 +1280,47 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			var vpointid_n, cap, start, end string
-			vpointid_n = format.VPointID_n
-			cap = format.Capability
+			var psink_id, capability, start, end string
+			// VPointID_nをPSinkIDに変換
+			psink_id = convertID(format.VPointID_n, 63)
+			capability = format.Capability
 			start = format.Period.Start
 			end = format.Period.End
 
 			// SensingDBを開く
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_LOCAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
-				message.MyError(err, "SensingDB > PastNode > sql.Open")
+				message.MyError(err, "SensingDB > PastPoint > sql.Open")
 			}
 			defer DBConnection.Close()
 			if err := DBConnection.Ping(); err != nil {
-				message.MyError(err, "SensingDB > PastNode > DBConnection.Ping")
+				message.MyError(err, "SensingDB > PastPoint > DBConnection.Ping")
 			} else {
 				message.MyMessage("DB Connection Success")
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PSinkID = \"" + vpointid_n + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp < \"" + end + "\";"
+			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PSinkID = \"" + psink_id + "\" AND Capability = \"" + capability + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
-				message.MyError(err, "SensingDB > PastNode > DBConnection.Query")
+				message.MyError(err, "SensingDB > PastPoint > DBConnection.Query")
 			}
 			defer rows.Close()
 
 			sd := m2mapi.ResolvePastPoint{}
 			for rows.Next() {
-				field := []string{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0"}
-				// PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
-				err := rows.Scan(&field[0], &field[1], &field[2], &field[3], &field[4], &field[5], &field[6], &field[7], &field[8], &field[9])
+				field := []string{"0", "0", "0", "0", "0", "0", "0"}
+				// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
+				err := rows.Scan(&field[0], &field[1], &field[2], &field[3], &field[4], &field[5], &field[6])
 				if err != nil {
-					message.MyError(err, "SensingDB > PastNode > rows.Scan")
+					message.MyError(err, "SensingDB > PastPoint > rows.Scan")
 				}
 				if len(sd.Datas) < 1 {
+					vnode_id := convertID(field[0], 63)
 					sensordata := m2mapi.SensorData{
-						VNodeID_n: field[0],
+						VNodeID_n: vnode_id,
 					}
 					valFloat, _ := strconv.ParseFloat(field[3], 64)
 					val := m2mapi.Value{
@@ -1234,7 +1331,8 @@ func sensingDB(conn net.Conn) {
 				} else {
 					flag := 0
 					for i, data := range sd.Datas {
-						if field[0] == data.VNodeID_n {
+						vnode_id := convertID(field[0], 63)
+						if vnode_id == data.VNodeID_n {
 							valFloat, _ := strconv.ParseFloat(field[3], 64)
 							val := m2mapi.Value{
 								Capability: field[1], Time: field[2], Value: valFloat,
@@ -1245,8 +1343,9 @@ func sensingDB(conn net.Conn) {
 						}
 					}
 					if flag == 0 {
+						vnode_id := convertID(field[0], 63)
 						sensordata := m2mapi.SensorData{
-							VNodeID_n: field[0],
+							VNodeID_n: vnode_id,
 						}
 						valFloat, _ := strconv.ParseFloat(field[3], 64)
 						val := m2mapi.Value{
@@ -1263,7 +1362,7 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyWriteMessage(sd)
 		case *m2mapi.DataForRegist:
-			format := m.(*m2mapi.DataForRegist)
+			format := sensingDBCommand.(*m2mapi.DataForRegist)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -1274,20 +1373,18 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			var PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID string
+			var PNodeID, Capability, Timestamp, PSinkID string
+			var Value, Lat, Lon float64
 			PNodeID = format.PNodeID
 			Capability = format.Capability
 			Timestamp = format.Timestamp
 			Value = format.Value
 			PSinkID = format.PSinkID
-			ServerID = format.ServerID
 			Lat = format.Lat
 			Lon = format.Lon
-			VNodeID = format.VNodeID
-			VPointID = format.VPointID
 
 			// SensingDBを開く
-			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_DB")
+			mysql_path := os.Getenv("MYSQL_USERNAME") + ":" + os.Getenv("MYSQL_PASSWORD") + "@tcp(127.0.0.1:" + os.Getenv("MYSQL_PORT") + ")/" + os.Getenv("MYSQL_LOCAL_DB")
 			DBConnection, err := sql.Open("mysql", mysql_path)
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > sql.Open")
@@ -1299,15 +1396,15 @@ func sensingDB(conn net.Conn) {
 				message.MyMessage("DB Connection Success")
 			}
 
-			// PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID
+			// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
 			var cmd string
-			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,ServerID,Lat,Lon,VNodeID,VPointID) VALUES(?,?,?,?,?,?,?,?,?,?);"
+			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,Lat,Lon) VALUES(?,?,?,?,?,?,?);"
 
 			in, err := DBConnection.Prepare(cmd)
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > DBConnection.Prepare")
 			}
-			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID); errExec == nil {
+			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon); errExec == nil {
 				message.MyMessage("Complete Data Registration!")
 			} else {
 				fmt.Println("Faild to register data", errExec)
@@ -1392,12 +1489,22 @@ func bodyGraphQL(byteArray []byte) []interface{} {
 	return values
 }
 
+func convertID(id string, pos int) string {
+	id_int := new(big.Int)
+
+	_, ok := id_int.SetString(id, 10)
+	if !ok {
+		message.MyMessage("Failed to convert string to big.Int")
+	}
+
+	mask := new(big.Int).Lsh(big.NewInt(1), uint(pos))
+	id_int.Xor(id_int, mask)
+	return id_int.String()
+}
+
 func loadEnv() {
 	// .envファイルの読み込み
 	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
 		message.MyError(err, "loadEnv > godotenv.Load")
 	}
-	mes := os.Getenv("SAMPLE_MESSAGE")
-	// fmt.Printf("\x1b[32m%v\x1b[0m\n", message)
-	message.MyMessage(mes)
 }

@@ -23,8 +23,9 @@ import (
 )
 
 const (
-	protocol = "unix"
-	timeSock = "/tmp/mecm2m/time.sock"
+	protocol           = "unix"
+	timeSock           = "/tmp/mecm2m/time.sock"
+	data_send_interval = 10
 )
 
 type Format struct {
@@ -127,58 +128,60 @@ func main() {
 
 	// MEC Serverフレームワークの実行
 	//mec_server_num := config.MecServers.Environment.Num
+	/*
+		server_num := 1
+		for _, mec_server := range config.MecServers.MecServer {
+			server_exec_file := mec_server.Server
+			vpoint_exec_file := mec_server.VPoint
+			vsnode_exec_file := mec_server.VSNode
+			//vmnode_exec_file := mec_server.VMNode
+			fmt.Println("----------")
 
-	server_num := 1
-	for _, mec_server := range config.MecServers.MecServer {
-		server_exec_file := mec_server.Server
-		vpoint_exec_file := mec_server.VPoint
-		vsnode_exec_file := mec_server.VSNode
-		//vmnode_exec_file := mec_server.VMNode
-		fmt.Println("----------")
-
-		server_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
-		cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-		errCmdServer := cmdServer.Start()
-		if errCmdServer != nil {
-			message.MyError(err, "exec.Command > MEC Server > Start")
-		} else {
-			fmt.Println(server_exec_file, " is running")
-		}
-
-		cmdVPoint := exec.Command(vpoint_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/VPoint/socket_files/vpoint.json") // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-		errCmdVPoint := cmdVPoint.Start()
-		if errCmdVPoint != nil {
-			message.MyError(err, "exec.Command > MEC VPoint > Start")
-		} else {
-			fmt.Println(vpoint_exec_file, " is running")
-		}
-
-		cmdVSNode := exec.Command(vsnode_exec_file, os.Getenv("HOME")+os.Getenv("PROJECT_PATH")+"/MECServer/VSNode/socket_files/vsnode.json") // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-		errCmdVSNode := cmdVSNode.Start()
-		if errCmdVSNode != nil {
-			message.MyError(err, "exec.Command > MEC VSNode > Start")
-		} else {
-			fmt.Println(vsnode_exec_file, " is running")
-		}
-
-		/*
-			cmdVMNode := exec.Command(vmnode_exec_file)
-			errCmdVMNode := cmdVMNode.Start()
-			if errCmdVMNode != nil {
-				message.MyError(err, "exec.Command > MEC VMNode > Start")
+			server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
+			cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
+			errCmdServer := cmdServer.Start()
+			if errCmdServer != nil {
+				message.MyError(err, "exec.Command > MEC Server > Start")
 			} else {
-				fmt.Println(vmnode_exec_file, " is running")
+				fmt.Println(server_exec_file, " is running")
 			}
-		*/
+			vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VPoint/socket_files/vpoint_" + strconv.Itoa(server_num) + ".json"
+			cmdVPoint := exec.Command(vpoint_exec_file, vpoint_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
+			errCmdVPoint := cmdVPoint.Start()
+			if errCmdVPoint != nil {
+				message.MyError(err, "exec.Command > MEC VPoint > Start")
+			} else {
+				fmt.Println(vpoint_exec_file, " is running")
+			}
 
-		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
-		server_num++
-	}
+			vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VSNode/socket_files/vsnode_" + strconv.Itoa(server_num) + ".json"
+			cmdVSNode := exec.Command(vsnode_exec_file, vsnode_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
+			errCmdVSNode := cmdVSNode.Start()
+			if errCmdVSNode != nil {
+				message.MyError(err, "exec.Command > MEC VSNode > Start")
+			} else {
+				fmt.Println(vsnode_exec_file, " is running")
+			}
+
+			/*
+				cmdVMNode := exec.Command(vmnode_exec_file)
+				errCmdVMNode := cmdVMNode.Start()
+				if errCmdVMNode != nil {
+					message.MyError(err, "exec.Command > MEC VMNode > Start")
+				} else {
+					fmt.Println(vmnode_exec_file, " is running")
+				}
+
+
+			processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
+			server_num++
+		}
+	*/
 
 	// Cloud Serverの実行
 	fmt.Println("----------")
-	cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/CloudServer/Server/socket_files/server_0.json"
-	cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/CloudServer/Server/main"
+	cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/socket_files/server_0.json"
+	cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/main"
 	cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
 	errCmdCloudServer := cmdCloudServer.Start()
 	if errCmdCloudServer != nil {
@@ -238,14 +241,15 @@ func main() {
 	*/
 
 	// PSNodeフレームワークの実行
-	//psnode_num := config.PsNodes.Environment.Num
 
+	psnode_num := 1
 	for _, psnode := range config.PsNodes.PsNode {
 		psnode_exec_file := psnode.PSNode
 		config_file := psnode.ConfigFile
 		fmt.Println("----------")
 
-		cmdPSNode := exec.Command(psnode_exec_file)
+		psnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/PSNode/socket_files/psnode_" + strconv.Itoa(psnode_num) + ".json"
+		cmdPSNode := exec.Command(psnode_exec_file, psnode_path)
 		errCmdPSNode := cmdPSNode.Start()
 		if errCmdPSNode != nil {
 			message.MyError(err, "exec.Command > PSNode > Start")
@@ -256,6 +260,7 @@ func main() {
 		fmt.Println("PSNode Config File: ", config_file)
 
 		processIds = append(processIds, cmdPSNode.Process.Pid)
+		psnode_num++
 	}
 	fmt.Println("Process IDs: ", processIds)
 
@@ -328,7 +333,7 @@ func main() {
 func ticker(inputChan chan string) {
 	<-inputChan
 	// 時間間隔指定
-	t := time.NewTicker(10 * time.Second)
+	t := time.NewTicker(data_send_interval * time.Second)
 	defer t.Stop()
 
 	// シグナル受信用チャネル
@@ -349,15 +354,15 @@ func ticker(inputChan chan string) {
 			decoder := gob.NewDecoder(conn)
 			encoder := gob.NewEncoder(conn)
 
-			m := &message.MyTime{
+			myTime := &message.MyTime{
 				CurrentTime: now,
 			}
-			if err := encoder.Encode(m); err != nil {
+			if err := encoder.Encode(myTime); err != nil {
 				message.MyError(err, "ticker > encoder.Encode")
 			}
 
 			// 現在時刻を受信できたかどうかを受信
-			if err := decoder.Decode(m); err != nil {
+			if err := decoder.Decode(myTime); err != nil {
 				message.MyError(err, "ticker > decoder.Decode")
 			}
 		// シグナルを受信した場合
@@ -434,24 +439,24 @@ func selectSocketFile(command string) string {
 }
 
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
-	m := &Format{}
+	format := &Format{}
 	switch command {
 	case "point":
-		m.FormType = "Point"
+		format.FormType = "Point"
 	case "node":
-		m.FormType = "Node"
+		format.FormType = "Node"
 	case "past_node":
-		m.FormType = "PastNode"
+		format.FormType = "PastNode"
 	case "past_point":
-		m.FormType = "PastPoint"
+		format.FormType = "PastPoint"
 	case "current_node":
-		m.FormType = "CurrentNode"
+		format.FormType = "CurrentNode"
 	case "current_point":
-		m.FormType = "CurrentPoint"
+		format.FormType = "CurrentPoint"
 	case "condition_node":
-		m.FormType = "ConditionNode"
+		format.FormType = "ConditionNode"
 	}
-	if err := encoder.Encode(m); err != nil {
+	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
 	}
 }
@@ -600,6 +605,7 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 		// あらかじめ，登録するデバイスの情報をconfigファイルとして用意しておく
 		// ./option_file/register/register_psnode.py を実行
 		// 2023-05-10 一旦PSNodeの登録のみ
+		// 本来はこの場所ではない．APIExecutionに入れる (2023-05-25)
 		register_psnode_script := "./option_file/register/register_psnode.py"
 		register_psnode_file := "./option_file/register/register_psnode.json"
 		cmdGraphDB := exec.Command("python3", register_psnode_script, register_psnode_file)
@@ -634,21 +640,21 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		swlon, _ = strconv.ParseFloat(options[1], 64)
 		nelat, _ = strconv.ParseFloat(options[2], 64)
 		nelon, _ = strconv.ParseFloat(options[3], 64)
-		m := &m2mapi.ResolvePoint{
+		point_input := &m2mapi.ResolvePoint{
 			SW: m2mapi.SquarePoint{Lat: swlat, Lon: swlon},
 			NE: m2mapi.SquarePoint{Lat: nelat, Lon: nelon},
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > point > encoder.Encode")
 		}
-		message.MyWriteMessage(*m)
+		message.MyWriteMessage(*point_input)
 
 		// ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
-		ms := []m2mapi.ResolvePoint{}
-		if err := decoder.Decode(&ms); err != nil {
+		point_output := []m2mapi.ResolvePoint{}
+		if err := decoder.Decode(&point_output); err != nil {
 			message.MyError(err, "commandAPIExecution > point > decoder.Decode")
 		}
-		message.MyReadMessage(ms)
+		message.MyReadMessage(point_output)
 	case "node":
 		var VPointID_n string
 		Caps := make([]string, len(options)-1)
@@ -659,99 +665,103 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 				Caps[i-1] = option
 			}
 		}
-		m := &m2mapi.ResolveNode{
+		node_input := &m2mapi.ResolveNode{
 			VPointID_n: VPointID_n,
 			CapsInput:  Caps,
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > node > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(*node_input)
 
 		// ノード解決の結果を受信する（PNodeのVNodeID_n, Cap）
-		ms := []m2mapi.ResolveNode{}
-		if err := decoder.Decode(&ms); err != nil {
+		node_output := []m2mapi.ResolveNode{}
+		if err := decoder.Decode(&node_output); err != nil {
 			message.MyError(err, "commandAPIExecution > node > decoder.Decode")
 		}
-		message.MyReadMessage(ms)
+		message.MyReadMessage(node_output)
 	case "past_node":
 		var VNodeID_n, Capability, Start, End string
 		VNodeID_n = options[0]
 		Capability = options[1]
 		Start = options[2]
 		End = options[3]
-		m := &m2mapi.ResolvePastNode{
+		past_node_input := &m2mapi.ResolvePastNode{
 			VNodeID_n:  VNodeID_n,
 			Capability: Capability,
 			Period:     m2mapi.PeriodInput{Start: Start, End: End},
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(past_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > past_node > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(*past_node_input)
 
-		// ノードの過去データ解決を受信する（Value, Cap, Time）
-		if err := decoder.Decode(m); err != nil {
+		// ノードの過去データ解決を受信する（VNodeID_n, Value, Cap, Time）
+		past_node_output := m2mapi.ResolvePastNode{}
+		if err := decoder.Decode(&past_node_output); err != nil {
 			message.MyError(err, "commandAPIExecution > past_node > decoder.Decode")
 		}
-		message.MyReadMessage(m)
+		message.MyReadMessage(past_node_output)
 	case "past_point":
 		var VPointID_n, Capability, Start, End string
 		VPointID_n = options[0]
 		Capability = options[1]
 		Start = options[2]
 		End = options[3]
-		m := &m2mapi.ResolvePastPoint{
+		past_point_input := &m2mapi.ResolvePastPoint{
 			VPointID_n: VPointID_n,
 			Capability: Capability,
 			Period:     m2mapi.PeriodInput{Start: Start, End: End},
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(past_point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > past_point > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(*past_point_input)
 
 		// ポイントの過去データ解決を受信する（VNodeID_n, Value, Cap, Time）
-		if err := decoder.Decode(m); err != nil {
+		past_point_output := m2mapi.ResolvePastPoint{}
+		if err := decoder.Decode(&past_point_output); err != nil {
 			message.MyError(err, "commandAPIExecution > past_point > decoder.Decode")
 		}
-		message.MyReadMessage(m)
+		message.MyReadMessage(past_point_output)
 	case "current_node":
 		var VNodeID_n, Capability string
 		VNodeID_n = options[0]
 		Capability = options[1]
-		m := &m2mapi.ResolveCurrentNode{
+		current_node_input := &m2mapi.ResolveCurrentNode{
 			VNodeID_n:  VNodeID_n,
 			Capability: Capability,
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(current_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > current_node > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(current_node_input)
 
-		// ノードの現在データ解決を受信する（Value, Cap, Time）
-		if err := decoder.Decode(m); err != nil {
+		// ノードの現在データ解決を受信する（Value, Cap, Time)
+		current_node_output := m2mapi.ResolveCurrentNode{}
+		if err := decoder.Decode(&current_node_output); err != nil {
 			message.MyError(err, "commandAPIExecution > current_node > decoder.Decode")
 		}
-		message.MyReadMessage(m)
+		message.MyReadMessage(current_node_output)
 	case "current_point":
 		var VPointID_n, Capability string
 		VPointID_n = options[0]
 		Capability = options[1]
-		m := &m2mapi.ResolveCurrentPoint{
+		current_point_input := &m2mapi.ResolveCurrentPoint{
 			VPointID_n: VPointID_n,
 			Capability: Capability,
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(current_point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > current_point > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(current_point_input)
 
 		// ポイントの現在データ解決を受信する（VNodeID_n, Value, Cap, Time）
-		if err := decoder.Decode(m); err != nil {
+		current_point_output := m2mapi.ResolveCurrentPoint{}
+		if err := decoder.Decode(&current_point_output); err != nil {
 			message.MyError(err, "commandAPIExecution > current_point > decoder.Decode")
 		}
-		message.MyReadMessage(m)
+		message.MyReadMessage(current_point_output)
 	case "condition_node":
 		var VNodeID_n, Capability string
 		var LowerLimit, UpperLimit float64
@@ -761,23 +771,23 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		LowerLimit, _ = strconv.ParseFloat(options[2], 64)
 		UpperLimit, _ = strconv.ParseFloat(options[3], 64)
 		Timeout, _ = time.ParseDuration(options[4])
-		m := &m2mapi.ResolveConditionNode{
+		condition_node_input := &m2mapi.ResolveConditionNode{
 			VNodeID_n:  VNodeID_n,
 			Capability: Capability,
 			Limit:      m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
 			Timeout:    Timeout,
 		}
-		if err := encoder.Encode(m); err != nil {
+		if err := encoder.Encode(condition_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > condition_node > encoder.Encode")
 		}
-		message.MyWriteMessage(m)
+		message.MyWriteMessage(condition_node_input)
 
 		// ノードの現在データを受信する（Value, Cap, Time）
-		ms := m2mapi.DataForRegist{}
-		if err := decoder.Decode(&ms); err != nil {
+		condition_node_output := m2mapi.DataForRegist{}
+		if err := decoder.Decode(&condition_node_output); err != nil {
 			message.MyError(err, "commandAPIExecution > condition_node > decoder.Decode")
 		}
-		message.MyReadMessage(ms)
+		message.MyReadMessage(condition_node_output)
 	default:
 		// コマンドが見つからない
 		fmt.Println(command, ": command not found")

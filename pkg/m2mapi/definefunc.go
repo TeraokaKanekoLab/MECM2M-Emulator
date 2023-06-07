@@ -3,7 +3,7 @@ package m2mapi
 import "time"
 
 type Area struct {
-	//data property
+	// data property
 	AreaID      string
 	Address     string
 	NE          SquarePoint
@@ -12,12 +12,12 @@ type Area struct {
 	// Name string
 	// IoTSPIDs []string
 
-	//object property
+	// object property
 	//contains PSink
 }
 
 type PSink struct {
-	//data property
+	// data property
 	VPointID_n  string
 	Address     string
 	Lat         float64
@@ -25,78 +25,78 @@ type PSink struct {
 	Description string
 	VPointID    string //追加
 	ServerIP    string //追加
-	// Policy         string
-	// IoTSPID        string
+	//Policy         string
+	//IoTSPID        string
 }
 
 type ResolvePoint struct {
-	//input
+	// input
 	NE SquarePoint
 	SW SquarePoint
 
-	//output
+	// output
 	VPointID_n string
 	//Address    string
 }
 
 type ResolveNode struct {
-	//input
+	// input
 	VPointID_n string
 	CapsInput  []string
 
-	//output
+	// output
 	VNodeID_n string
 	CapOutput string
 }
 
 type ResolvePastNode struct {
-	//input
+	// input
 	VNodeID_n  string
 	Capability string
 	Period     PeriodInput
 
-	//output
+	// output
 	//VNodeID_n 	string (dup)
 	Values []Value
 }
 
 type ResolvePastPoint struct {
-	//input
+	// input
 	VPointID_n string
 	Capability string
 	Period     PeriodInput
 
-	//output
+	// output
 	Datas []SensorData
 }
 
 type ResolveCurrentNode struct {
-	//input
+	// input
 	VNodeID_n  string
 	Capability string
 
-	//output
+	// output
 	//VNodeID_n 	string (dup)
 	Values Value
 }
 
 type ResolveCurrentPoint struct {
-	//input
+	// input
 	VPointID_n string
 	Capability string
 
-	//output
+	// output
 	Datas []SensorData
 }
 
 type ResolveConditionNode struct {
-	//input
+	// input
 	VNodeID_n  string
 	Capability string
 	Limit      Range
 	Timeout    time.Duration
 
-	//output
+	// output
 	//DataForRegist
 }
 
@@ -130,11 +130,8 @@ type DataForRegist struct {
 	PNodeID    string
 	Capability string
 	Timestamp  string
-	Value      string
+	Value      float64
 	PSinkID    string
-	ServerID   string
-	Lat        string
-	Lon        string
-	VNodeID    string
-	VPointID   string
+	Lat        float64
+	Lon        float64
 }

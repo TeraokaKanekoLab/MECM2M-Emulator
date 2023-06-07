@@ -2,26 +2,31 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/gob"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/big"
 	"mecm2m-Simulator/pkg/m2mapi"
 	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Simulator/pkg/server"
 	"mecm2m-Simulator/pkg/vsnode"
 	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
-	"syscall"
 )
 
 const (
-	protocol          = "unix"
-	sensingDBSockAddr = "/tmp/mecm2m/svr_1_sensingdb.sock"
+	protocol            = "unix"
+	socket_address_root = "/tmp/mecm2m/"
+	dataResisterSock    = "/tmp/mecm2m/data_resister.sock"
 )
 
 type Format struct {
@@ -29,7 +34,14 @@ type Format struct {
 }
 
 // VPointからのデータ通知で来たデータを充足条件データ取得でも使うためにバッファを用意する
-var bufferSensorData m2mapi.DataForRegist
+var bufferSensorData = make(map[string]m2mapi.DataForRegist)
+
+// PSNode のセッションキーのキャッシュ群
+var psnode_session_keys = make([]string, 3)
+var mu sync.Mutex
+var graphDBSockAddr string
+var sensingDBSockAddr string
+var server_num string
 
 func cleanup(socketFiles ...string) {
 	for _, sock := range socketFiles {
@@ -47,25 +59,32 @@ func main() {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
+	/*
+		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+		signals_from_main := make(chan os.Signal, 1)
 
-	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-	signals_from_main := make(chan os.Signal, 1)
+		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+		signal.Notify(signals_from_main, syscall.SIGCONT)
 
-	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-	signal.Notify(signals_from_main, syscall.SIGCONT)
+		// シグナルを待機
+		fmt.Println("Waiting for signal...")
+		sig := <-signals_from_main
 
-	// シグナルを待機
-	fmt.Println("Waiting for signal...")
-	sig := <-signals_from_main
-
-	// 受信したシグナルを表示
-	fmt.Printf("Received signal: %v\n", sig)
-
+		// 受信したシグナルを表示
+		fmt.Printf("Received signal: %v\n", sig)
+	*/
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {
 		message.MyError(err, "Failed to read socket file")
 	}
+
+	// このVSNodeが所属するサーバ番号をArgs[1]から取り出す
+	server_num_first_index := strings.LastIndex(socket_file_name, "_")
+	server_num_last_index := strings.LastIndex(socket_file_name, ".")
+	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
+	graphDBSockAddr = socket_address_root + "svr_" + server_num + "_graphdb.sock"
+	sensingDBSockAddr = socket_address_root + "svr_" + server_num + "_sensingdb.sock"
 
 	var socket_files vsnode.VSNodeSocketFiles
 
@@ -73,9 +92,21 @@ func main() {
 		message.MyError(err, "Failed to unmarshal json")
 	}
 
-	//VSNodeをいくつか用意しておく
+	// VSNodeをいくつか用意しておく
 	var socketFiles []string
 	socketFiles = append(socketFiles, socket_files.VSNodes...)
+	for i := 0; i < len(socketFiles); i++ {
+		var newData m2mapi.DataForRegist
+		switch i {
+		case 0:
+			bufferSensorData["MaxTemp"] = newData
+		case 1:
+			bufferSensorData["MaxHumid"] = newData
+		case 2:
+			bufferSensorData["MaxWind"] = newData
+		}
+	}
+	socketFiles = append(socketFiles, dataResisterSock)
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
@@ -116,7 +147,11 @@ func initialize(file string, gids chan uint64, wg *sync.WaitGroup) {
 			message.MyError(err, "initialize > listener.Accept")
 			break
 		}
-		go vsnodes(conn, gid)
+		if file == dataResisterSock {
+			go resisterSensingData(conn)
+		} else {
+			go vsnodes(conn, gid)
+		}
 	}
 }
 
@@ -131,10 +166,12 @@ func vsnodes(conn net.Conn, gid uint64) {
 	message.MyMessage("[MESSAGE] Call VSNode thread(" + strconv.FormatUint(gid, 10) + ")")
 LOOP:
 	for {
-		//型同期をして，型の種類に応じてスイッチ
-		switch m := syncFormatServer(decoder, encoder); m.(type) {
+		// 型同期をして，型の種類に応じてスイッチ
+		//mu.Lock()
+		//defer mu.Unlock()
+		switch vsnodesCommand := syncFormatServer(decoder, encoder); vsnodesCommand.(type) {
 		case *m2mapi.ResolvePastNode:
-			format := m.(*m2mapi.ResolvePastNode)
+			format := vsnodesCommand.(*m2mapi.ResolvePastNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -145,7 +182,7 @@ LOOP:
 			}
 			message.MyReadMessage(*format)
 
-			//SensingDBへ接続
+			// SensingDBへ接続
 			connDB, err := net.Dial(protocol, sensingDBSockAddr)
 			if err != nil {
 				message.MyError(err, "vsnode > PastNode > net.Dial")
@@ -160,23 +197,23 @@ LOOP:
 			}
 			message.MyWriteMessage(*format)
 
-			//SensingDB()によるDB検索
+			// SensingDB()によるDB検索
 
-			//受信する型はResolvePastNode
-			m := m2mapi.ResolvePastNode{}
-			if err := decoderDB.Decode(&m); err != nil {
+			// 受信する型はResolvePastNode
+			past_node_output := m2mapi.ResolvePastNode{}
+			if err := decoderDB.Decode(&past_node_output); err != nil {
 				message.MyError(err, "vsnode > PastNode > decoderDB.Decode")
 			}
-			message.MyReadMessage(m)
+			message.MyReadMessage(past_node_output)
 
-			//DB検索結果をM2M APIに送信する
-			if err := encoder.Encode(&m); err != nil {
+			// DB検索結果をM2M APIに送信する
+			if err := encoder.Encode(&past_node_output); err != nil {
 				message.MyError(err, "vsnode > PastNode > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(m)
+			message.MyWriteMessage(past_node_output)
 		case *m2mapi.ResolveCurrentNode:
-			format := m.(*m2mapi.ResolveCurrentNode)
+			format := vsnodesCommand.(*m2mapi.ResolveCurrentNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -187,9 +224,11 @@ LOOP:
 			}
 			message.MyReadMessage(*format)
 
-			//PSNodeとのやりとり
-			//どのPSNodeスレッドとやりとりするかを判別できるような仕組みが必要だが，現状はpsnode_1_1.sock
-			connPS, err := net.Dial(protocol, "/tmp/mecm2m/psnode_1_0001.sock")
+			// PSNodeとのやりとり
+			psnode_id := convertID(format.VNodeID_n, 63)
+			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
+
+			connPS, err := net.Dial(protocol, psnode_socket)
 			if err != nil {
 				message.MyError(err, "vsnode > CurrentNode > net.Dial")
 			}
@@ -203,23 +242,23 @@ LOOP:
 			}
 			message.MyWriteMessage(*format)
 
-			//PSNodeのセンサデータ送信を受ける
+			// PSNodeのセンサデータ送信を受ける
 
-			//受信する型はResolveCurrentNode
-			m := m2mapi.ResolveCurrentNode{}
-			if err := decoderPS.Decode(&m); err != nil {
+			// 受信する型はResolveCurrentNode
+			current_node_output := m2mapi.ResolveCurrentNode{}
+			if err := decoderPS.Decode(&current_node_output); err != nil {
 				message.MyError(err, "vsnode > CurrentNode > decoderPS.Decode")
 			}
-			message.MyReadMessage(m)
+			message.MyReadMessage(current_node_output)
 
-			//結果をM2M APIに送信する
-			if err := encoder.Encode(&m); err != nil {
+			// 結果をVPointに送信する
+			if err := encoder.Encode(&current_node_output); err != nil {
 				message.MyError(err, "vsnode > CurrentNode > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(m)
+			message.MyWriteMessage(current_node_output)
 		case *m2mapi.ResolveConditionNode:
-			format := m.(*m2mapi.ResolveConditionNode)
+			format := vsnodesCommand.(*m2mapi.ResolveConditionNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -230,29 +269,74 @@ LOOP:
 			}
 			message.MyReadMessage(*format)
 
-			//VPointからのセンサデータ通知を受ける
-			fmt.Println("before")
-			//data := <-bufferSensorData
-			data := bufferSensorData
-			fmt.Println("after")
-			val, _ := strconv.ParseFloat(data.Value, 64)
+			inputCapability := format.Capability
+			data := bufferSensorData[inputCapability]
+			val := data.Value
 
-			//formatで受けた条件とdataを比較し，該当するデータであればM2M APIへ返す
+			// formatで受けた条件とdataを比較し，該当するデータであればM2M APIへ返す
 			lowerLimit := format.Limit.LowerLimit
 			upperLimit := format.Limit.UpperLimit
-			//timeout := format.Timeout
-			//確認
-			//timeoutContext, cancelFunc := context.WithTimeout(alarm, timeout)
-			if val >= lowerLimit && val < upperLimit {
-				//送信型はDataforRegist
-				if err := encoder.Encode(&data); err != nil {
-					message.MyError(err, "vsnode > ConditionNode > encoder.Encode")
-					break
+			timeout := format.Timeout
+
+			timeoutContext, cancelFunc := context.WithTimeout(context.Background(), timeout)
+			defer cancelFunc()
+
+			go func() {
+				<-timeoutContext.Done()
+				nullData := m2mapi.DataForRegist{PNodeID: "NULL"}
+				if err := encoder.Encode(&nullData); err != nil {
+					var opErr *net.OpError
+					if errors.As(err, &opErr) {
+						if opErr.Op == "write" && strings.Contains(opErr.Err.Error(), "use of closed network connection") {
+							fmt.Println("想定通り")
+						} else {
+							message.MyError(err, "vsnode > ConditionNodeTimeout > encoder.Encode")
+						}
+					}
 				}
-				message.MyWriteMessage(data)
+			}()
+			for {
+				mu.Lock()
+				if val != bufferSensorData[inputCapability].Value {
+					// バッファデータ更新
+					val = bufferSensorData[inputCapability].Value
+				}
+				mu.Unlock()
+
+				if val >= lowerLimit && val < upperLimit {
+					//送信型はDataforRegist
+					if err := encoder.Encode(&data); err != nil {
+						message.MyError(err, "vsnode > ConditionNode > encoder.Encode")
+						break LOOP
+					}
+					message.MyWriteMessage(data)
+					break LOOP
+				} else {
+					continue
+				}
 			}
+
+		default:
+			fmt.Println("no match. GID: ", gid)
+			break LOOP
+		}
+	}
+}
+
+// センサデータ登録用
+func resisterSensingData(conn net.Conn) {
+	defer conn.Close()
+
+	decoder := gob.NewDecoder(conn)
+	encoder := gob.NewEncoder(conn)
+
+	message.MyMessage("[MESSAGE] Call resister sensing data")
+
+LOOP:
+	for {
+		switch vsnodesCommand := syncFormatServer(decoder, encoder); vsnodesCommand.(type) {
 		case *m2mapi.DataForRegist:
-			format := m.(*m2mapi.DataForRegist)
+			format := vsnodesCommand.(*m2mapi.DataForRegist)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -264,28 +348,64 @@ LOOP:
 			message.MyMessage("Notification for Data Register")
 			//message.MyReadMessage(*format)
 
-			//バッファにデータ登録
-			bufferSensorData = *format
-			fmt.Println("data bufferd: ", bufferSensorData)
+			// バッファにデータ登録
+			mu.Lock()
+			registerCapability := format.Capability
+			bufferSensorData[registerCapability] = *format
+			mu.Unlock()
+			fmt.Println("data bufferd: ", bufferSensorData[registerCapability])
 
-			//SensingDBへ接続
-			connDB, err := net.Dial(protocol, sensingDBSockAddr)
+			// PSNodeのセッションキーをキャッシュしていない場合，Local GraphDB にセッションキーを聞きに行く
+			if psnode_session_keys[0] == "" {
+				connSessionKey, err := net.Dial(protocol, graphDBSockAddr)
+				if err != nil {
+					message.MyError(err, "vsnode > RegisterSensingData > SessionKey > net.Dial")
+				}
+				decoderSessionKey := gob.NewDecoder(connSessionKey)
+				encoderSessionKey := gob.NewEncoder(connSessionKey)
+
+				// GraphDBとの型同期
+				syncFormatClient("SessionKey", decoderSessionKey, encoderSessionKey)
+
+				// GraphDBへセッションキーリクエスト
+				session_key_request := &server.RequestSessionKey{
+					PNodeID: format.PNodeID,
+				}
+				if err := encoderSessionKey.Encode(session_key_request); err != nil {
+					message.MyError(err, "vsnode > RegisterSensingData > encoderSessionKey.Encode")
+				}
+
+				// Local GraphDBでのセッションキーの検索
+
+				// Local GraphDB からセッションキーを受け取る
+				ms := server.RequestSessionKey{}
+				if err := decoderSessionKey.Decode(&ms); err != nil {
+					message.MyError(err, "vsnode > RegisterSesingData > decoderSessionKey.Decode")
+				}
+
+				// キャッシュ情報に登録
+				mu.Lock()
+				psnode_session_keys[0] = ms.SessionKey
+				mu.Unlock()
+			}
+
+			// Local SensingDBへ接続
+			connDBLocal, err := net.Dial(protocol, sensingDBSockAddr)
 			if err != nil {
-				message.MyError(err, "vsnode > RegisterSensingData > net.Dial")
+				message.MyError(err, "vsnode > RegisterSensingData > ConnectionLocal > net.Dial")
 			}
-			decoderDB := gob.NewDecoder(connDB)
-			encoderDB := gob.NewEncoder(connDB)
+			decoderDBLocal := gob.NewDecoder(connDBLocal)
+			encoderDBLocal := gob.NewEncoder(connDBLocal)
 
-			//SensingDBとの型同期
-			syncFormatClient("RegisterSensingData", decoderDB, encoderDB)
+			// Local SensingDBとの型同期
+			syncFormatClient("RegisterSensingData", decoderDBLocal, encoderDBLocal)
 
-			//SensingDBへのデータ通知
-			if err := encoderDB.Encode(format); err != nil {
-				message.MyError(err, "vsnode > RegisterSensingData > encoderVS.Encode")
+			// Local SensingDBへのデータ通知
+			if err := encoderDBLocal.Encode(format); err != nil {
+				message.MyError(err, "vsnode > RegisterSensingData > encoderDBLocal.Encode")
 			}
-			//message.MyWriteMessage(*format)
 		default:
-			fmt.Println("no match. GID: ", gid)
+			fmt.Println("break LOOP")
 			break LOOP
 		}
 	}
@@ -293,8 +413,8 @@ LOOP:
 
 // M2M APIと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
-	m := &Format{}
-	if err := decoder.Decode(m); err != nil {
+	format := &Format{}
+	if err := decoder.Decode(format); err != nil {
 		if err == io.EOF {
 			typeM := "exit"
 			return typeM
@@ -302,7 +422,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 			message.MyError(err, "syncFormatServer > decoder.Decode")
 		}
 	}
-	typeResult := m.FormType
+	typeResult := format.FormType
 
 	var typeM any
 	switch typeResult {
@@ -330,10 +450,25 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		m.FormType = "ConditionNode"
 	case "RegisterSensingData":
 		m.FormType = "RegisterSensingData"
+	case "SessionKey":
+		m.FormType = "SessionKey"
 	}
 	if err := encoder.Encode(m); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
 	}
+}
+
+func convertID(id string, pos int) string {
+	id_int := new(big.Int)
+
+	_, ok := id_int.SetString(id, 10)
+	if !ok {
+		message.MyMessage("Failed to convert string to big.Int")
+	}
+
+	mask := new(big.Int).Lsh(big.NewInt(1), uint(pos))
+	id_int.Xor(id_int, mask)
+	return id_int.String()
 }
 
 func getGID() uint64 {
