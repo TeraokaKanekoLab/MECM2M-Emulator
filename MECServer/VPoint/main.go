@@ -28,6 +28,33 @@ type Format struct {
 	FormType string
 }
 
+// 地点指定型現在・充足条件データ取得の際にVPointに紐づくVNodeの検索結果のキャッシュ情報
+type VNodeCache struct {
+	mu     sync.RWMutex
+	vnodes map[string]vpoint.CurrentPointVNode
+}
+
+var vnodes_cache *VNodeCache
+
+func NewVNodeCache() *VNodeCache {
+	return &VNodeCache{
+		vnodes: make(map[string]vpoint.CurrentPointVNode),
+	}
+}
+
+func (vnodes_cache *VNodeCache) Get(key string) (vpoint.CurrentPointVNode, bool) {
+	vnodes_cache.mu.RLock()
+	defer vnodes_cache.mu.RUnlock()
+	vnode, ok := vnodes_cache.vnodes[key]
+	return vnode, ok
+}
+
+func (vnodes_cache *VNodeCache) Set(key string, value vpoint.CurrentPointVNode) {
+	vnodes_cache.mu.Lock()
+	defer vnodes_cache.mu.Unlock()
+	vnodes_cache.vnodes[key] = value
+}
+
 var graphDBSockAddr string
 var sensingDBSockAddr string
 var server_num string
@@ -86,6 +113,9 @@ func main() {
 	socketFiles = append(socketFiles, socket_files.VPoints...)
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
+
+	// VNodeのキャッシュデータの初期化
+	vnodes_cache = NewVNodeCache()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
@@ -276,6 +306,92 @@ LOOP:
 				break
 			}
 			message.MyWriteMessage(*current_point_output)
+		case *m2mapi.ResolveConditionPoint:
+			format := vpointsCommand.(*m2mapi.ResolveConditionPoint)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "vpoint > ConditionPoint > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(*format)
+
+			VPointID_n := format.VPointID_n
+			Capability := format.Capability
+			Limit := format.Limit
+			Timeout := format.Timeout
+
+			// パケットフォーマット内のVPointIDを元に，そこに接続するVNodeをLocal GraphDBで検索する
+			// なお，すでにキャッシュの情報がある場合はスルー
+			if _, ok := vnodes_cache.vnodes[VPointID_n]; !ok {
+				connDB, err := net.Dial(protocol, graphDBSockAddr)
+				if err != nil {
+					message.MyError(err, "vpoint > ConditionPoint > ResolveVNode > net.Dial")
+				}
+				decoderDB := gob.NewDecoder(connDB)
+				encoderDB := gob.NewEncoder(connDB)
+
+				syncFormatClient("ConditionPointVNode", decoderDB, encoderDB)
+
+				vpoint_id := vpoint.CurrentPointVNode{
+					VPointID:   format.VPointID_n,
+					Capability: format.Capability,
+				}
+				if err := encoderDB.Encode(&vpoint_id); err != nil {
+					message.MyError(err, "vpoint > ConditionPoint > encoderDB.Encode")
+				}
+
+				// Local GraphDB でのVNode検索
+
+				// 受信する型はCurrentPointVNode
+				vnode_socket_addresses := vpoint.CurrentPointVNode{}
+				if err := decoderDB.Decode(&vnode_socket_addresses); err != nil {
+					message.MyError(err, "vpoint > ConditionPoint > decoderDB.Decode")
+				}
+
+				// キャッシュデータに登録
+				vnodes_cache.Set(VPointID_n, vnode_socket_addresses)
+			}
+
+			// 各VNodeに対して並列して条件を送信
+			connectedVNodeID := vnodes_cache.vnodes[VPointID_n].VNodeID
+			connectedVNodeSockAddr := vnodes_cache.vnodes[VPointID_n].VNodeSockAddr
+
+			go func() {
+				for index, vnodeSockAddr := range connectedVNodeSockAddr {
+					connVS, err := net.Dial(protocol, vnodeSockAddr)
+					if err != nil {
+						message.MyError(err, "vpoint > ConditionPoint > net.Dial")
+					}
+					decoderVS := gob.NewDecoder(connVS)
+					encoderVS := gob.NewEncoder(connVS)
+
+					syncFormatClient("ConditionPoint", decoderVS, encoderVS)
+
+					vpoint_info_to_vnode := m2mapi.ResolveConditionNode{
+						VNodeID_n:  connectedVNodeID[index],
+						Capability: Capability,
+						Limit:      Limit,
+						Timeout:    Timeout,
+					}
+					if err := encoderVS.Encode(&vpoint_info_to_vnode); err != nil {
+						message.MyError(err, "vpoint > ConditionPoint > encoderVS.Encode")
+					}
+					message.MyWriteMessage(vpoint_info_to_vnode)
+
+					// VNodeからの通知待ち
+					fmt.Println("Waiting from VNode " + vpoint_info_to_vnode.VNodeID_n + " ...")
+
+					// 受信する型はDataforRegist
+					subscription_data_from_vnode := m2mapi.DataForRegist{}
+					if err := decoderVS.Decode(&subscription_data_from_vnode); err != nil {
+						message.MyError(err, "vpoint > ConditionPoint > decoderVS.Decode")
+					}
+					message.MyReadMessage(subscription_data_from_vnode)
+				}
+			}()
 		default:
 			fmt.Println("no match. GID: ", gid)
 			break LOOP

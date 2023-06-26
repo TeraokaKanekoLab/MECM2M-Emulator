@@ -100,6 +100,14 @@ type ResolveConditionNode struct {
 	//DataForRegist
 }
 
+type ResolveConditionPoint struct {
+	// input
+	VPointID_n string
+	Capability string
+	Limit      Range
+	Timeout    time.Duration
+}
+
 type SensorData struct {
 	VNodeID_n string
 	Values    []Value

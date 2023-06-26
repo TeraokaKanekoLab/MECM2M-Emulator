@@ -647,6 +647,50 @@ func m2mApi(conn net.Conn) {
 				break
 			}
 			message.MyWriteMessage(condition_node_output)
+		case *m2mapi.ResolveConditionPoint:
+			format := m2mApiCommand.(*m2mapi.ResolveConditionPoint)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "m2mApi > ConditionPoint > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(*format)
+
+			// VSNodeスレッドのソケットアドレス
+			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+
+			connVP, err := net.Dial(protocol, vpoint_socket)
+			if err != nil {
+				message.MyError(err, "m2mApi > ConditionPoint > net.Dial")
+			}
+			decoderVP := gob.NewDecoder(connVP)
+			encoderVP := gob.NewEncoder(connVP)
+
+			syncFormatClient("ConditionPoint", decoderVP, encoderVP)
+
+			if err := encoderVP.Encode(format); err != nil {
+				message.MyError(err, "m2mApi > ConditionPoint > encoderVP.Encode")
+			}
+			message.MyWriteMessage(*format)
+			fmt.Println("Wait for data notification...")
+
+			// VPointからのデータ通知を受ける
+			// 受信する型はDataForRegist
+			condition_point_output := m2mapi.DataForRegist{}
+			if err := decoderVP.Decode(&condition_point_output); err != nil {
+				message.MyError(err, "m2mApi > ConditionPoint > decoderVS.Decode")
+			}
+			message.MyReadMessage(condition_point_output)
+
+			// 最終的な結果をM2M Appに送信する
+			if err := encoder.Encode(&condition_point_output); err != nil {
+				message.MyError(err, "m2mApi > ConditionPoint > encoder.Encode")
+				break
+			}
+			message.MyWriteMessage(condition_point_output)
 		case string:
 			if m2mApiCommand == "exit" {
 				// M2MAppでexitが入力されたら，breakする
@@ -685,6 +729,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &m2mapi.ResolveCurrentPoint{}
 	case "ConditionNode":
 		typeM = &m2mapi.ResolveConditionNode{}
+	case "ConditionPoint":
+		typeM = &m2mapi.ResolveConditionPoint{}
 	case "RegisterSensingData":
 		typeM = &m2mapi.DataForRegist{}
 	case "ConnectNew":
@@ -721,6 +767,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		format.FormType = "CurrentPoint"
 	case "ConditionNode":
 		format.FormType = "ConditionNode"
+	case "ConditionPoint":
+		format.FormType = "ConditionPoint"
 	case "RegisterSensingData":
 		format.FormType = "RegisterSensingData"
 	case "ConnectNew":

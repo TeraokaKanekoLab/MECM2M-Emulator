@@ -402,6 +402,9 @@ func loadInput(command string) []string {
 	case "condition_node":
 		// VNodeID_n, Cap, LowerLimit, UpperLimit, Timeout(s)
 		file = "option_file/m2m_api/condition_node.csv"
+	case "condition_point":
+		// VPointID_n, Cap, LowerLimit, UpperLimit, Timeout(s)
+		file = "option_file/m2m_api/condition_point.csv"
 	case "exit", "register", "help":
 		options = append(options, "basic command")
 		return options
@@ -428,7 +431,7 @@ func selectSocketFile(command string) string {
 	defaultAddr := "/tmp/mecm2m"
 	defaultExt := ".sock"
 	switch command {
-	case "point", "node", "past_node", "past_point", "current_node", "current_point", "condition_node":
+	case "point", "node", "past_node", "past_point", "current_node", "current_point", "condition_node", "condition_point":
 		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
 	case "exit", "register", "help":
 		sockAddr = "basic command"
@@ -455,6 +458,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		format.FormType = "CurrentPoint"
 	case "condition_node":
 		format.FormType = "ConditionNode"
+	case "condition_point":
+		format.FormType = "ConditionPoint"
 	}
 	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
@@ -788,6 +793,32 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 			message.MyError(err, "commandAPIExecution > condition_node > decoder.Decode")
 		}
 		message.MyReadMessage(condition_node_output)
+	case "condition_point":
+		var VPointID_n, Capability string
+		var LowerLimit, UpperLimit float64
+		var Timeout time.Duration
+		VPointID_n = options[0]
+		Capability = options[1]
+		LowerLimit, _ = strconv.ParseFloat(options[2], 64)
+		UpperLimit, _ = strconv.ParseFloat(options[3], 64)
+		Timeout, _ = time.ParseDuration(options[4])
+		condition_point_input := &m2mapi.ResolveConditionPoint{
+			VPointID_n: VPointID_n,
+			Capability: Capability,
+			Limit:      m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
+			Timeout:    Timeout,
+		}
+		if err := encoder.Encode(condition_point_input); err != nil {
+			message.MyError(err, "commandAPIExecution > condition_point > encoder.Encode")
+		}
+		message.MyWriteMessage(condition_point_input)
+
+		// ノードの現在データを受信する（Value, Cap, Time）
+		condition_point_output := m2mapi.DataForRegist{}
+		if err := decoder.Decode(&condition_point_output); err != nil {
+			message.MyError(err, "commandAPIExecution > condition_point > decoder.Decode")
+		}
+		message.MyReadMessage(condition_point_output)
 	default:
 		// コマンドが見つからない
 		fmt.Println(command, ": command not found")

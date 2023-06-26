@@ -310,6 +310,7 @@ LOOP:
 						break LOOP
 					}
 					message.MyWriteMessage(data)
+					bufferSensorData[inputCapability] = m2mapi.DataForRegist{}
 					break LOOP
 				} else {
 					continue
