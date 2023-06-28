@@ -405,6 +405,9 @@ func loadInput(command string) []string {
 	case "condition_point":
 		// VPointID_n, Cap, LowerLimit, UpperLimit, Timeout(s)
 		file = "option_file/m2m_api/condition_point.csv"
+	case "actuate":
+		// VNodeID_n, Action, Parameter
+		file = "option_file/m2m_api/actuate.csv"
 	case "exit", "register", "help":
 		options = append(options, "basic command")
 		return options
@@ -431,7 +434,7 @@ func selectSocketFile(command string) string {
 	defaultAddr := "/tmp/mecm2m"
 	defaultExt := ".sock"
 	switch command {
-	case "point", "node", "past_node", "past_point", "current_node", "current_point", "condition_node", "condition_point":
+	case "point", "node", "past_node", "past_point", "current_node", "current_point", "condition_node", "condition_point", "actuate":
 		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
 	case "exit", "register", "help":
 		sockAddr = "basic command"
@@ -460,6 +463,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		format.FormType = "ConditionNode"
 	case "condition_point":
 		format.FormType = "ConditionPoint"
+	case "actuate":
+		format.FormType = "Actuate"
 	}
 	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
@@ -630,6 +635,7 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 		fmt.Println("[current_node]: 	Resolve Current Data By Node")
 		fmt.Println("[past_point]: 		Resolbe Past Data By Point")
 		fmt.Println("[current_point]: 	Resolve Current Data By Point")
+		fmt.Println("[actuate]:		Actuate a Node")
 	default:
 		// コマンドが見つからない
 		fmt.Println(command, ": command not found")
@@ -819,6 +825,27 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 			message.MyError(err, "commandAPIExecution > condition_point > decoder.Decode")
 		}
 		message.MyReadMessage(condition_point_output)
+	case "actuate":
+		var VNodeID_n, Action, Parameter string
+		VNodeID_n = options[0]
+		Action = options[1]
+		Parameter = options[2]
+		actuate_input := &m2mapi.Actuate{
+			VNodeID_n: VNodeID_n,
+			Action:    Action,
+			Parameter: Parameter,
+		}
+		if err := encoder.Encode(actuate_input); err != nil {
+			message.MyError(err, "commandAPIExecution > actuate > encoder.Encode")
+		}
+		message.MyWriteMessage(actuate_input)
+
+		// アクチュエートによる状態を受信する (Status)
+		actuate_output := m2mapi.Actuate{}
+		if err := decoder.Decode(&actuate_output); err != nil {
+			message.MyError(err, "commandAPIExecution > actuate > decoder.Decode")
+		}
+		message.MyReadMessage(actuate_output)
 	default:
 		// コマンドが見つからない
 		fmt.Println(command, ": command not found")

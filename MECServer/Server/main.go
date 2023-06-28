@@ -75,7 +75,7 @@ func cleanup(socketFiles ...string) {
 
 func main() {
 	loadEnv()
-	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
+	// コマンドライン引数にソケットファイル群をまとめたファイルを指定して，初めにそのファイルを読み込む
 	if len(os.Args) != 2 {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
@@ -659,7 +659,7 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// VSNodeスレッドのソケットアドレス
+			// VPointスレッドのソケットアドレス
 			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
 
 			connVP, err := net.Dial(protocol, vpoint_socket)
@@ -691,6 +691,49 @@ func m2mApi(conn net.Conn) {
 				break
 			}
 			message.MyWriteMessage(condition_point_output)
+		case *m2mapi.Actuate:
+			format := m2mApiCommand.(*m2mapi.Actuate)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "m2mApi > Actuate > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(*format)
+
+			// VSNodeスレッドのソケットアドレス
+			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+
+			connVS, err := net.Dial(protocol, vsnode_socket)
+			if err != nil {
+				message.MyError(err, "m2mApi > Actuate > net.Dial")
+			}
+			decoderVS := gob.NewDecoder(connVS)
+			encoderVS := gob.NewEncoder(connVS)
+
+			syncFormatClient("Actuate", decoderVS, encoderVS)
+
+			if err := encoderVS.Encode(format); err != nil {
+				message.MyError(err, "m2mApi > Actuate > encoderVS.Encode")
+			}
+			message.MyWriteMessage(*format)
+
+			// VSNodeからの状態結果を受信する
+			// 受信する型はActuate
+			actuate_output := m2mapi.Actuate{}
+			if err := decoderVS.Decode(&actuate_output); err != nil {
+				message.MyError(err, "m2mApi > Actuate > decoderVS.Decode")
+			}
+			message.MyReadMessage(actuate_output)
+
+			// 最終的な結果をM2M Appに送信する
+			if err := encoder.Encode(&actuate_output); err != nil {
+				message.MyError(err, "m2mApi > Actuate > encoder.Encode")
+				break
+			}
+			message.MyWriteMessage(actuate_output)
 		case string:
 			if m2mApiCommand == "exit" {
 				// M2MAppでexitが入力されたら，breakする
@@ -731,6 +774,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &m2mapi.ResolveConditionNode{}
 	case "ConditionPoint":
 		typeM = &m2mapi.ResolveConditionPoint{}
+	case "Actuate":
+		typeM = &m2mapi.Actuate{}
 	case "RegisterSensingData":
 		typeM = &m2mapi.DataForRegist{}
 	case "ConnectNew":
@@ -769,6 +814,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		format.FormType = "ConditionNode"
 	case "ConditionPoint":
 		format.FormType = "ConditionPoint"
+	case "Actuate":
+		format.FormType = "Actuate"
 	case "RegisterSensingData":
 		format.FormType = "RegisterSensingData"
 	case "ConnectNew":

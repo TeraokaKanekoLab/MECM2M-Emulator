@@ -1,0 +1,11 @@
+{
+	"AppName": "FrozenRoad",
+	"NE": { "Lat": 35.531, "Lon": 139.531 },
+	"SW": { "Lat": 35.53, "Lon": 139.53 },
+	"Capability": ["MaxTemp"],
+	"Period": { "Start": "", "End": "" },
+	"Limit": { "LowerLimit": 34, "UpperLimit": 38 },
+	"Timeout": 30,
+	"Action": "On",
+	"Parameter": 90.0
+}

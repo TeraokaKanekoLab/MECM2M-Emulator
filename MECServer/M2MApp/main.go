@@ -1,17 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/csv"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net"
 	"os"
-	"os/signal"
-	"runtime"
-	"strconv"
-	"sync"
+	"time"
 
 	"mecm2m-Simulator/pkg/m2mapi"
 	"mecm2m-Simulator/pkg/m2mapp"
@@ -19,306 +15,208 @@ import (
 )
 
 const (
-	protocol = "unix"
+	protocol                  = "unix"
+	m2mapi_server_socket_file = "/tmp/mecm2m/svr_1_m2mapi.sock"
 )
 
 type Format struct {
 	FormType string
 }
 
-// ソケットファイルの削除
-func cleanup(socketFiles ...string) {
-	for _, sock := range socketFiles {
-		if _, err := os.Stat(sock); err == nil {
-			if err := os.RemoveAll(sock); err != nil {
-				message.MyError(err, "cleanup > os.RemoveAll")
-			}
-		}
-	}
-}
-
 func main() {
-	var socketFiles []string
-	socketFiles = append(socketFiles, "/tmp/mecm2m/m2mapp_1.sock", "/tmp/sock1.sock")
-	gids := make(chan uint64, len(socketFiles))
-	cleanup(socketFiles...)
-
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	go func() {
-		<-quit
-		fmt.Println("ctrl-c pressed!")
-		close(quit)
-		cleanup(socketFiles...)
-		os.Exit(0)
-	}()
-
-	// goroutineの同期
-	var wg sync.WaitGroup
-	// wg.Done()が呼び出されるたびに()内の値がデクリメント
-	wg.Add(3)
-	for _, file := range socketFiles {
-		go initialize(file, gids, &wg)
-		data := <-gids
-		fmt.Printf("GOROUTINE ID (%s): %d\n", file, data)
+	// コマンドライン引数に App の入力内容をまとめたファイルを指定して，初めにそのファイルを読み込む
+	// App名を指定して，Appごとに実行する内容を分岐
+	if len(os.Args) != 2 {
+		fmt.Println("There is no input file")
+		os.Exit(1)
 	}
-	// wgが0になったら終了
-	wg.Wait()
-	defer close(gids)
-}
 
-func initialize(file string, gids chan uint64, wg *sync.WaitGroup) {
-	gids <- getGID()
-	gid := getGID()
-	listener, err := net.Listen(protocol, file)
+	app_input_data := os.Args[1]
+	data, err := ioutil.ReadFile(app_input_data)
 	if err != nil {
-		message.MyError(err, "initialize > net.Listen")
+		message.MyError(err, "Failed to read input data file")
 	}
-	s := "> [Initialize] Socket file launched: " + file
-	message.MyMessage(s)
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			message.MyError(err, "initialize > listener.Accept")
-			break
-		}
 
-		switch file {
-		case "/tmp/mecm2m/m2mapp_1.sock":
-			go m2mApp(conn, gid)
-			wg.Done()
-		}
+	var input_data m2mapp.AppInputData
+
+	if err := json.Unmarshal(data, &input_data); err != nil {
+		message.MyError(err, "Failed to unmarshal json")
+	}
+
+	// App名ごとに，実行する内容を分岐
+	switch input_data.AppName {
+	case "FrozenRoad":
+		output_data := frozenRoad(input_data)
+		fmt.Println(output_data)
 	}
 }
 
-// Appの起動をMainプロセスに示す
-func m2mApp(conn net.Conn, gid uint64) {
-	defer conn.Close()
-
-	decoder := gob.NewDecoder(conn)
-	encoder := gob.NewEncoder(conn)
-
-	message.MyMessage("[MESSAGE] Call M2M App thread")
-
-	for {
-		m := &m2mapp.App{}
-
-		if err := decoder.Decode(m); err != nil {
-			if err == io.EOF {
-				message.MyMessage("<=== Closed By Client")
-				break
-			}
-			message.MyError(err, "m2mApp > decoder.Decode")
-			break
-		}
-		message.MyReadMessage(m)
-
-		// AppIDが存在していれば，App起動を許可する
-		if m.AppID != "" {
-			m.Description = "OK"
-			m.GID = gid
-		} else {
-			m.Description = "NG"
-		}
-
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "m2mApp > encoder.Encode")
-			break
-		}
-		message.MyWriteMessage(m)
-
-		if string(m.Description) == "OK" {
-			ExecuteApp(gid)
-			break
-		}
-	}
-}
-
-// 実際にAppを動かす（センサデータ取得やアクチュエート）
-func ExecuteApp(gid uint64) {
-	for {
-		var command string
-		fmt.Printf("M2M App [GID:%d] > ", gid)
-		fmt.Scan(&command)
-		message.MyExit(command)
-		options := loadInput(command)
-
-		sockAddr := selectSocketFile(command)
-		//fmt.Println(sockAddr)
-		conn, err := net.Dial(protocol, sockAddr)
-		if err != nil {
-			message.MyError(err, "ExecuteApp > net.Dial")
-		}
-		//defer conn.Close()
-
-		decoder := gob.NewDecoder(conn)
-		encoder := gob.NewEncoder(conn)
-		// commandExecutionする前に，Server側と型の同期を取りたい
-		syncFormatClient(command, decoder, encoder)
-		commandExecution(command, decoder, encoder, options)
-	}
-}
-
-// 呼び出すAPIに応じて必要な入力をcsvファイルなどで用意しておき，それを読み込む
-func loadInput(command string) []string {
-	var file string
-	var options []string
-	switch command {
-	case "point":
-		// SWLat,SWLon,NELat,NELon
-		file = "option_file/point.csv"
-	case "node":
-		// VPointID_n, Caps
-		file = "option_file/node.csv"
-	case "past_node":
-		// VNodeID_n, Cap, Period{Start, End}
-		file = "option_file/past_node.csv"
-	}
-	fp, err := os.Open(file)
+func frozenRoad(input_data m2mapp.AppInputData) m2mapi.DataForRegist {
+	// ポイント解決
+	command := "point"
+	connRP, err := net.Dial(protocol, m2mapi_server_socket_file)
 	if err != nil {
-		message.MyError(err, "loadInput > os.Open")
+		message.MyError(err, "frozenRoad > connRP > net.Dial")
 	}
-	defer fp.Close()
-	r := csv.NewReader(fp)
-	rows, err := r.ReadAll()
+
+	decoderRP := gob.NewDecoder(connRP)
+	encoderRP := gob.NewEncoder(connRP)
+	// M2M API 実行前の同期
+	syncFormatClient(command, decoderRP, encoderRP)
+	// M2M API実行
+	point_output := m2mAPIPoint(decoderRP, encoderRP, input_data)
+	connRP.Close()
+
+	// ノード解決
+	command = "node"
+	connRN, err := net.Dial(protocol, m2mapi_server_socket_file)
 	if err != nil {
-		message.MyError(err, "loadInput > r.ReadAll")
+		message.MyError(err, "frozenRoad > connRN > net.Dial")
 	}
-	options = rows[0]
-	return options
+
+	decoderRN := gob.NewDecoder(connRN)
+	encoderRN := gob.NewEncoder(connRN)
+	// M2M API 実行前の同期
+	syncFormatClient(command, decoderRN, encoderRN)
+	// M2M API実行
+	node_output := m2mAPINode(decoderRN, encoderRN, point_output, input_data.Capability)
+	connRN.Close()
+
+	// ノード指定型充足条件データ取得
+	command = "condition_node"
+	connConN, err := net.Dial(protocol, m2mapi_server_socket_file)
+	if err != nil {
+		message.MyError(err, "frozenRoad > connConN > net.Dial")
+	}
+
+	decoderConN := gob.NewDecoder(connConN)
+	encoderConN := gob.NewEncoder(connConN)
+	// M2M API 実行前の同期
+	syncFormatClient(command, decoderConN, encoderConN)
+	// M2M API実行
+	condition_node_output := m2mAPIConditionNode(decoderConN, encoderConN, node_output, input_data.Limit, input_data.Timeout)
+
+	// アクチュエータ実行
+	command = "actuate"
+	connAct, err := net.Dial(protocol, m2mapi_server_socket_file)
+	if err != nil {
+		message.MyError(err, "frozenRoad > connAct > net.Dial")
+	}
+
+	decoderAct := gob.NewDecoder(connAct)
+	encoderAct := gob.NewEncoder(connAct)
+	// M2M API 実行前の同期
+	syncFormatClient(command, decoderAct, encoderAct)
+	// M2M API 実行
+	actuate_output := m2mAPIActuate(decoderAct, encoderAct, node_output, input_data.Action, input_data.Parameter)
+	fmt.Println(actuate_output)
+
+	return condition_node_output
 }
 
-// M2M Appを実行する際のサーバ側のソケットファイルの選択
-func selectSocketFile(command string) string {
-	var sockAddr string
-	defaultAddr := "/tmp/mecm2m"
-	defaultExt := ".sock"
-	switch command {
-	case "m2mapi":
-		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
-	case "point":
-		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
-	case "node":
-		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
-	case "past_node":
-		sockAddr = defaultAddr + "/svr_1_m2mapi" + defaultExt
-	default:
-		sockAddr = defaultAddr + defaultExt
+func m2mAPIPoint(decoderRP *gob.Decoder, encoderRP *gob.Encoder, input_data m2mapp.AppInputData) []m2mapi.ResolvePoint {
+	var swlat, swlon, nelat, nelon float64
+	swlat = input_data.SW.Lat
+	swlon = input_data.SW.Lon
+	nelat = input_data.NE.Lat
+	nelon = input_data.NE.Lon
+	point_input := &m2mapi.ResolvePoint{
+		SW: m2mapi.SquarePoint{Lat: swlat, Lon: swlon},
+		NE: m2mapi.SquarePoint{Lat: nelat, Lon: nelon},
 	}
-	return sockAddr
+	if err := encoderRP.Encode(point_input); err != nil {
+		message.MyError(err, "m2mAPIPoint > encoderRP.Encode")
+	}
+
+	point_output := []m2mapi.ResolvePoint{}
+	if err := decoderRP.Decode(&point_output); err != nil {
+		message.MyError(err, "m2mAPIPoint > decoderRP.Decode")
+	}
+	return point_output
+}
+
+func m2mAPINode(decoderRN *gob.Decoder, encoderRN *gob.Encoder, vpointid []m2mapi.ResolvePoint, capability []string) []m2mapi.ResolveNode {
+	VPointID_n := vpointid[0].VPointID_n
+	Caps := capability
+	node_input := &m2mapi.ResolveNode{
+		VPointID_n: VPointID_n,
+		CapsInput:  Caps,
+	}
+	if err := encoderRN.Encode(node_input); err != nil {
+		message.MyError(err, "m2mAPINode > encoderRN.Encode")
+	}
+
+	node_output := []m2mapi.ResolveNode{}
+	if err := decoderRN.Decode(&node_output); err != nil {
+		message.MyError(err, "m2mAPINode > decoderRN.Decode")
+	}
+	return node_output
+}
+
+func m2mAPIConditionNode(decoderConN *gob.Decoder, encoderConN *gob.Encoder, node_output []m2mapi.ResolveNode, limit m2mapp.Range, timeout int) m2mapi.DataForRegist {
+	VNodeID_n := node_output[0].VNodeID_n
+	Capability := node_output[0].CapOutput
+	LowerLimit := limit.LowerLimit
+	UpperLimit := limit.UpperLimit
+	Timeout := time.Duration(timeout * int(time.Second))
+	condition_node_input := &m2mapi.ResolveConditionNode{
+		VNodeID_n:  VNodeID_n,
+		Capability: Capability,
+		Limit:      m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
+		Timeout:    time.Duration(Timeout),
+	}
+	if err := encoderConN.Encode(condition_node_input); err != nil {
+		message.MyError(err, "m2mAPIConditionNode > encoderConN.Encode")
+	}
+
+	condition_node_output := m2mapi.DataForRegist{}
+	if err := decoderConN.Decode(&condition_node_output); err != nil {
+		message.MyError(err, "m2mAPIConditionNode > decoderConN.Decode")
+	}
+	return condition_node_output
+}
+
+func m2mAPIActuate(decoderAct *gob.Decoder, encoderAct *gob.Encoder, node_output []m2mapi.ResolveNode, action string, parameter float64) m2mapi.Actuate {
+	VNodeID_n := node_output[0].VNodeID_n
+	Action := action
+	Parameter := parameter
+	actuate_input := &m2mapi.Actuate{
+		VNodeID_n: VNodeID_n,
+		Action:    Action,
+		Parameter: Parameter,
+	}
+	if err := encoderAct.Encode(actuate_input); err != nil {
+		message.MyError(err, "m2mAPIActuate > encoderAct.Encode")
+	}
+
+	actuate_output := m2mapi.Actuate{}
+	if err := decoderAct.Decode(&actuate_output); err != nil {
+		message.MyError(err, "m2mAPIActuate > decoderAct.Decode")
+	}
+	return actuate_output
 }
 
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
+	format := &Format{}
 	switch command {
 	case "point":
-		m := &Format{FormType: "Point"}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "syncFormatClient > point > encoder.Encode")
-		}
-
-		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "syncFormatClient > point > decoder.Decode")
-		}
+		format.FormType = "Point"
 	case "node":
-		m := &Format{FormType: "Node"}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "syncFormatClient > node > encoder.Encode")
-		}
-
-		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "syncFormatClient > node > decoder.Decode")
-		}
+		format.FormType = "Node"
 	case "past_node":
-		m := &Format{FormType: "PastNode"}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "syncFormatClient > past_node > encoder.Encode")
-		}
-
-		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "syncFormatClient > past_node > decoder.Decode")
-		}
+		format.FormType = "PastNode"
+	case "past_point":
+		format.FormType = "PastPoint"
+	case "current_node":
+		format.FormType = "CurrentNode"
+	case "current_point":
+		format.FormType = "CurrentPoint"
+	case "condition_node":
+		format.FormType = "ConditionNode"
+	case "condition_point":
+		format.FormType = "ConditionPoint"
 	}
-}
-
-// M2M Appで入力されたコマンド (e.g., point, node) に応じて実行
-func commandExecution(command string, decoder *gob.Decoder, encoder *gob.Encoder, options []string) {
-	switch command {
-	case "point":
-		var swlat, swlon, nelat, nelon float64
-		swlat, _ = strconv.ParseFloat(options[0], 64)
-		swlon, _ = strconv.ParseFloat(options[1], 64)
-		nelat, _ = strconv.ParseFloat(options[2], 64)
-		nelon, _ = strconv.ParseFloat(options[3], 64)
-		m := &m2mapi.ResolvePoint{
-			SW: m2mapi.SquarePoint{Lat: swlat, Lon: swlon},
-			NE: m2mapi.SquarePoint{Lat: nelat, Lon: nelon},
-		}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > point > encoder.Encode")
-		}
-		message.MyWriteMessage(m)
-
-		//ポイント解決の結果を受信する (PsinkのVPointID_n，Address)
-		ms := []m2mapi.ResolvePoint{}
-		if err := decoder.Decode(&ms); err != nil {
-			message.MyError(err, "commandExecution > point > decoder.Decode")
-		}
-		message.MyReadMessage(ms)
-	case "node":
-		var VPointID_n string
-		Caps := make([]string, len(options)-1)
-		for i, option := range options {
-			if i == 0 {
-				VPointID_n = option
-			} else {
-				Caps[i-1] = option
-			}
-		}
-		m := &m2mapi.ResolveNode{
-			VPointID_n: VPointID_n,
-			CapsInput:  Caps,
-		}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > node > encoder.Encode")
-		}
-		message.MyWriteMessage(m)
-
-		//ノード解決の結果を受信する（PNodeのVNodeID_n, Cap）
-		ms := []m2mapi.ResolveNode{}
-		if err := decoder.Decode(&ms); err != nil {
-			message.MyError(err, "commandExecution > node > decoder.Decode")
-		}
-		message.MyReadMessage(ms)
-	case "past_node":
-		var VNodeID_n, Capability, Start, End string
-		VNodeID_n = options[0]
-		Capability = options[1]
-		Start = options[2]
-		End = options[3]
-		m := &m2mapi.ResolvePastNode{
-			VNodeID_n:  VNodeID_n,
-			Capability: Capability,
-			Period:     m2mapi.PeriodInput{Start: Start, End: End},
-		}
-		if err := encoder.Encode(m); err != nil {
-			message.MyError(err, "commandExecution > past_node > encoder.Encode")
-		}
-		message.MyWriteMessage(m)
-
-		//ノードの過去データ解決を受信する（Value, Cap, Time）
-		if err := decoder.Decode(m); err != nil {
-			message.MyError(err, "commandExecution > past_node > decoder.Decode")
-		}
-		message.MyReadMessage(m)
+	if err := encoder.Encode(format); err != nil {
+		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
 	}
-}
-
-func getGID() uint64 {
-	b := make([]byte, 64)
-	b = b[:runtime.Stack(b, false)]
-	//fmt.Println(string(b))
-	b = bytes.TrimPrefix(b, []byte("goroutine "))
-	b = b[:bytes.IndexByte(b, ' ')]
-	n, _ := strconv.ParseUint(string(b), 10, 64)
-	return n
 }

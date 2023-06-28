@@ -251,7 +251,7 @@ LOOP:
 			}
 			message.MyReadMessage(current_node_output)
 
-			// 結果をVPointに送信する
+			// 結果を送信する
 			if err := encoder.Encode(&current_node_output); err != nil {
 				message.MyError(err, "vsnode > CurrentNode > encoder.Encode")
 				break
@@ -282,41 +282,91 @@ LOOP:
 			defer cancelFunc()
 
 			go func() {
-				<-timeoutContext.Done()
-				nullData := m2mapi.DataForRegist{PNodeID: "NULL"}
-				if err := encoder.Encode(&nullData); err != nil {
-					var opErr *net.OpError
-					if errors.As(err, &opErr) {
-						if opErr.Op == "write" && strings.Contains(opErr.Err.Error(), "use of closed network connection") {
-							fmt.Println("想定通り")
+				for {
+					select {
+					case <-timeoutContext.Done():
+						fmt.Println("タイムアウト期限")
+						nullData := m2mapi.DataForRegist{PNodeID: "NULL"}
+						if err := encoder.Encode(&nullData); err != nil {
+							var opErr *net.OpError
+							if errors.As(err, &opErr) {
+								if opErr.Op == "write" && strings.Contains(opErr.Err.Error(), "use of closed network connection") {
+									fmt.Println("想定通り")
+								} else {
+									message.MyError(err, "vsnode > ConditionNodeTimeout > encoder.Encode")
+								}
+							}
+						}
+						return
+					default:
+						mu.Lock()
+						if val != bufferSensorData[inputCapability].Value {
+							// バッファデータ更新
+							val = bufferSensorData[inputCapability].Value
+						}
+						mu.Unlock()
+						//fmt.Println("2023-06-26: ", val)
+
+						if val >= lowerLimit && val < upperLimit {
+							//送信型はDataforRegist
+							data = bufferSensorData[inputCapability]
+							if err := encoder.Encode(&data); err != nil {
+								message.MyError(err, "vsnode > ConditionNode > encoder.Encode")
+								break
+							}
+							message.MyWriteMessage(data)
+							bufferSensorData[inputCapability] = m2mapi.DataForRegist{}
 						} else {
-							message.MyError(err, "vsnode > ConditionNodeTimeout > encoder.Encode")
+							continue
 						}
 					}
 				}
 			}()
-			for {
-				mu.Lock()
-				if val != bufferSensorData[inputCapability].Value {
-					// バッファデータ更新
-					val = bufferSensorData[inputCapability].Value
+		case *m2mapi.Actuate:
+			format := vsnodesCommand.(*m2mapi.Actuate)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
 				}
-				mu.Unlock()
-
-				if val >= lowerLimit && val < upperLimit {
-					//送信型はDataforRegist
-					if err := encoder.Encode(&data); err != nil {
-						message.MyError(err, "vsnode > ConditionNode > encoder.Encode")
-						break LOOP
-					}
-					message.MyWriteMessage(data)
-					bufferSensorData[inputCapability] = m2mapi.DataForRegist{}
-					break LOOP
-				} else {
-					continue
-				}
+				message.MyError(err, "vsnode > Actuate > decoder.Decode")
+				break
 			}
+			message.MyReadMessage(*format)
 
+			// PSNodeとのやりとり
+			psnode_id := convertID(format.VNodeID_n, 63)
+			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
+
+			connPS, err := net.Dial(protocol, psnode_socket)
+			if err != nil {
+				message.MyError(err, "vsnode > Actuate > net.Dial")
+			}
+			decoderPS := gob.NewDecoder(connPS)
+			encoderPS := gob.NewEncoder(connPS)
+
+			syncFormatClient("Actuate", decoderPS, encoderPS)
+
+			if err := encoderPS.Encode(format); err != nil {
+				message.MyError(err, "vsnode > Actuate > encoderPS.Encode")
+			}
+			message.MyWriteMessage(*format)
+
+			// アクチュエータの状態結果を受ける
+
+			// 受信する型はActuate
+			actuate_output := m2mapi.Actuate{}
+			if err := decoderPS.Decode(&actuate_output); err != nil {
+				message.MyError(err, "vsnode > Actuate > decoderPS.Decode")
+			}
+			message.MyReadMessage(actuate_output)
+
+			// 結果をVPointに送信する
+			if err := encoder.Encode(&actuate_output); err != nil {
+				message.MyError(err, "vsnode > Actuate > encoder.Encode")
+				break
+			}
+			message.MyWriteMessage(actuate_output)
 		default:
 			fmt.Println("no match. GID: ", gid)
 			break LOOP
@@ -433,6 +483,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &m2mapi.ResolveCurrentNode{}
 	case "ConditionNode":
 		typeM = &m2mapi.ResolveConditionNode{}
+	case "Actuate":
+		typeM = &m2mapi.Actuate{}
 	case "RegisterSensingData":
 		typeM = &m2mapi.DataForRegist{}
 	}
@@ -449,6 +501,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		m.FormType = "CurrentNode"
 	case "ConditionNode":
 		m.FormType = "ConditionNode"
+	case "Actuate":
+		m.FormType = "Actuate"
 	case "RegisterSensingData":
 		m.FormType = "RegisterSensingData"
 	case "SessionKey":

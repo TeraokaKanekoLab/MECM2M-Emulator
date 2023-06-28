@@ -246,6 +246,28 @@ func psnodes(conn net.Conn, gid uint64) {
 				break
 			}
 			message.MyWriteMessage(current_node_output)
+		case *m2mapi.Actuate:
+			format := psnodesCommand.(*m2mapi.Actuate)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "psnode > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(*format)
+
+			// アクチュエータが正常に動作したことを返す
+			actuate_output := m2mapi.Actuate{}
+			actuate_output.Status = true
+
+			// 状態結果をVSNodeに送信する
+			if err := encoder.Encode(&actuate_output); err != nil {
+				message.MyError(err, "vsnode > Actuate > encoder.Encode")
+				break
+			}
+			message.MyWriteMessage(actuate_output)
 		}
 	}
 
@@ -376,6 +398,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	switch typeResult {
 	case "CurrentNode", "CurrentPoint":
 		typeM = &m2mapi.ResolveCurrentNode{}
+	case "Actuate":
+		typeM = &m2mapi.Actuate{}
 	}
 	return typeM
 }

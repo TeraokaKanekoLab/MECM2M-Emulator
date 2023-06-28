@@ -108,6 +108,16 @@ type ResolveConditionPoint struct {
 	Timeout    time.Duration
 }
 
+type Actuate struct {
+	// input
+	VNodeID_n string
+	Action    string
+	Parameter float64
+
+	// output
+	Status bool
+}
+
 type SensorData struct {
 	VNodeID_n string
 	Values    []Value
