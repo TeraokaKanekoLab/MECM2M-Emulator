@@ -30,9 +30,10 @@ import (
 )
 
 const (
-	protocol              = "unix"
-	globalGraphDBSockAddr = "/tmp/mecm2m/svr_0_m2mapi.sock"
-	socket_address_root   = "/tmp/mecm2m/"
+	protocol                 = "unix"
+	globalGraphDBSockAddr    = "/tmp/mecm2m/svr_0_m2mapi.sock"
+	socket_address_root      = "/tmp/mecm2m/"
+	link_socket_address_root = "/tmp/mecm2m/link-process/"
 
 	// Home MEC Server かどうかの判定
 	ServerID = "ServerID0001"
@@ -278,25 +279,31 @@ func m2mApi(conn net.Conn) {
 			if (format.SW.Lon < covered_area["MINLAT"][1] && format.SW.Lat < covered_area["MINLON"][0]) || (format.NE.Lon > covered_area["MAXLAT"][1] && format.NE.Lat > covered_area["MAXLON"][0]) {
 				// Global GraphDB へリクエスト
 				fmt.Println("resolve in global")
-				connCloud, err := net.Dial(protocol, globalGraphDBSockAddr)
+
+				// 2023-06-28 リンクプロセスへの送信
+				format.DestSocketAddr = globalGraphDBSockAddr
+				// リンクプロセスのソケットアドレスを作成 (クラウドへ投げることは既知)
+				linkSrcAddr := link_socket_address_root + "internet_" + server_num + "_0.sock"
+				// リンクプロセスへ転送
+				connLink, err := net.Dial(protocol, linkSrcAddr)
 				if err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > net.Dial")
 				}
-				decoderCloud := gob.NewDecoder(connCloud)
-				encoderCloud := gob.NewEncoder(connCloud)
+				decoderLink := gob.NewDecoder(connLink)
+				encoderLink := gob.NewEncoder(connLink)
 
-				syncFormatClient("Point", decoderCloud, encoderCloud)
+				syncFormatClient("Point", decoderLink, encoderLink)
 
-				if err := encoderCloud.Encode(format); err != nil {
+				if err := encoderLink.Encode(format); err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > encoderCloud.Encode")
 				}
 				message.MyWriteMessage(*format)
 
-				// Cloud でのポイント解決
+				// リンクを挟んで Cloud でのポイント解決
 
 				// 受信する型は[]ResolvePoint
 				point_output := []m2mapi.ResolvePoint{}
-				if err := decoderCloud.Decode(&point_output); err != nil {
+				if err := decoderLink.Decode(&point_output); err != nil {
 					message.MyError(err, "m2mApi > PointGlobal > decoderCloud.Decode")
 				}
 				message.MyReadMessage(point_output)
@@ -1145,7 +1152,7 @@ func graphDB(conn net.Conn) {
 			nelat = format.NE.Lat
 			nelon = format.NE.Lon
 
-			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID, vp.SocketAddress;"}]}`
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
@@ -1155,6 +1162,7 @@ func graphDB(conn net.Conn) {
 				dataArray := data.([]interface{})
 				point := m2mapi.ResolvePoint{}
 				point.VPointID_n = dataArray[0].(string)
+				point.SocketAddress = dataArray[1].(string)
 				flag := 0
 				for _, p := range point_output {
 					if p.VPointID_n == point.VPointID_n {

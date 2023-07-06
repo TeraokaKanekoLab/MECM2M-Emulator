@@ -35,8 +35,11 @@ type ResolvePoint struct {
 	SW SquarePoint
 
 	// output
-	VPointID_n string
-	//Address    string
+	VPointID_n    string
+	SocketAddress string
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolveNode struct {

@@ -175,6 +175,7 @@ func m2mApi(conn net.Conn) {
 		switch m := syncFormatServer(decoder, encoder); m.(type) {
 		case *m2mapi.ResolvePoint:
 			format := m.(*m2mapi.ResolvePoint)
+
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -868,7 +869,7 @@ func graphDB(conn net.Conn) {
 
 			// 指定された矩形範囲が少しでもカバー領域から外れていれば，クラウドサーバへリレー
 
-			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (ps:PSink)-[:isVirtualizedBy]->(vp:VPoint) WHERE ps.Position[0] > ` + strconv.FormatFloat(swlat, 'f', 4, 64) + ` and ps.Position[1] > ` + strconv.FormatFloat(swlon, 'f', 4, 64) + ` and ps.Position[0] <= ` + strconv.FormatFloat(nelat, 'f', 4, 64) + ` and ps.Position[1] <= ` + strconv.FormatFloat(nelon, 'f', 4, 64) + ` return vp.VPointID, vp.SocketAddress;"}]}`
 			// 今後はクラウドサーバ用の分岐が必要
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
@@ -880,6 +881,7 @@ func graphDB(conn net.Conn) {
 				fmt.Println(dataArray)
 				ps := m2mapi.ResolvePoint{}
 				ps.VPointID_n = dataArray[0].(string)
+				ps.SocketAddress = dataArray[1].(string)
 				flag := 0
 				for _, p := range pss {
 					if p.VPointID_n == ps.VPointID_n {

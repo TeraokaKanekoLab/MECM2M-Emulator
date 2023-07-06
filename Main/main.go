@@ -826,10 +826,11 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(condition_point_output)
 	case "actuate":
-		var VNodeID_n, Action, Parameter string
+		var VNodeID_n, Action string
+		var Parameter float64
 		VNodeID_n = options[0]
 		Action = options[1]
-		Parameter = options[2]
+		Parameter, _ = strconv.ParseFloat(options[2], 64)
 		actuate_input := &m2mapi.Actuate{
 			VNodeID_n: VNodeID_n,
 			Action:    Action,
