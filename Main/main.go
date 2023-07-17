@@ -692,15 +692,17 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(node_output)
 	case "past_node":
-		var VNodeID_n, Capability, Start, End string
+		var VNodeID_n, Capability, Start, End, SocketAddress string
 		VNodeID_n = options[0]
 		Capability = options[1]
 		Start = options[2]
 		End = options[3]
+		SocketAddress = options[4]
 		past_node_input := &m2mapi.ResolvePastNode{
-			VNodeID_n:  VNodeID_n,
-			Capability: Capability,
-			Period:     m2mapi.PeriodInput{Start: Start, End: End},
+			VNodeID_n:     VNodeID_n,
+			Capability:    Capability,
+			Period:        m2mapi.PeriodInput{Start: Start, End: End},
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(past_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > past_node > encoder.Encode")
@@ -714,15 +716,17 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(past_node_output)
 	case "past_point":
-		var VPointID_n, Capability, Start, End string
+		var VPointID_n, Capability, Start, End, SocketAddress string
 		VPointID_n = options[0]
 		Capability = options[1]
 		Start = options[2]
 		End = options[3]
+		SocketAddress = options[4]
 		past_point_input := &m2mapi.ResolvePastPoint{
-			VPointID_n: VPointID_n,
-			Capability: Capability,
-			Period:     m2mapi.PeriodInput{Start: Start, End: End},
+			VPointID_n:    VPointID_n,
+			Capability:    Capability,
+			Period:        m2mapi.PeriodInput{Start: Start, End: End},
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(past_point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > past_point > encoder.Encode")
@@ -736,12 +740,14 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(past_point_output)
 	case "current_node":
-		var VNodeID_n, Capability string
+		var VNodeID_n, Capability, SocketAddress string
 		VNodeID_n = options[0]
 		Capability = options[1]
+		SocketAddress = options[2]
 		current_node_input := &m2mapi.ResolveCurrentNode{
-			VNodeID_n:  VNodeID_n,
-			Capability: Capability,
+			VNodeID_n:     VNodeID_n,
+			Capability:    Capability,
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(current_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > current_node > encoder.Encode")
@@ -755,12 +761,14 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(current_node_output)
 	case "current_point":
-		var VPointID_n, Capability string
+		var VPointID_n, Capability, SocketAddress string
 		VPointID_n = options[0]
 		Capability = options[1]
+		SocketAddress = options[2]
 		current_point_input := &m2mapi.ResolveCurrentPoint{
-			VPointID_n: VPointID_n,
-			Capability: Capability,
+			VPointID_n:    VPointID_n,
+			Capability:    Capability,
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(current_point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > current_point > encoder.Encode")
@@ -774,7 +782,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(current_point_output)
 	case "condition_node":
-		var VNodeID_n, Capability string
+		var VNodeID_n, Capability, SocketAddress string
 		var LowerLimit, UpperLimit float64
 		var Timeout time.Duration
 		VNodeID_n = options[0]
@@ -782,11 +790,13 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		LowerLimit, _ = strconv.ParseFloat(options[2], 64)
 		UpperLimit, _ = strconv.ParseFloat(options[3], 64)
 		Timeout, _ = time.ParseDuration(options[4])
+		SocketAddress = options[5]
 		condition_node_input := &m2mapi.ResolveConditionNode{
-			VNodeID_n:  VNodeID_n,
-			Capability: Capability,
-			Limit:      m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
-			Timeout:    Timeout,
+			VNodeID_n:     VNodeID_n,
+			Capability:    Capability,
+			Limit:         m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
+			Timeout:       Timeout,
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(condition_node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > condition_node > encoder.Encode")
@@ -800,7 +810,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(condition_node_output)
 	case "condition_point":
-		var VPointID_n, Capability string
+		var VPointID_n, Capability, SocketAddress string
 		var LowerLimit, UpperLimit float64
 		var Timeout time.Duration
 		VPointID_n = options[0]
@@ -808,11 +818,13 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		LowerLimit, _ = strconv.ParseFloat(options[2], 64)
 		UpperLimit, _ = strconv.ParseFloat(options[3], 64)
 		Timeout, _ = time.ParseDuration(options[4])
+		SocketAddress = options[5]
 		condition_point_input := &m2mapi.ResolveConditionPoint{
-			VPointID_n: VPointID_n,
-			Capability: Capability,
-			Limit:      m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
-			Timeout:    Timeout,
+			VPointID_n:    VPointID_n,
+			Capability:    Capability,
+			Limit:         m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit},
+			Timeout:       Timeout,
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(condition_point_input); err != nil {
 			message.MyError(err, "commandAPIExecution > condition_point > encoder.Encode")
@@ -826,15 +838,17 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(condition_point_output)
 	case "actuate":
-		var VNodeID_n, Action string
+		var VNodeID_n, Action, SocketAddress string
 		var Parameter float64
 		VNodeID_n = options[0]
 		Action = options[1]
 		Parameter, _ = strconv.ParseFloat(options[2], 64)
+		SocketAddress = options[3]
 		actuate_input := &m2mapi.Actuate{
-			VNodeID_n: VNodeID_n,
-			Action:    Action,
-			Parameter: Parameter,
+			VNodeID_n:     VNodeID_n,
+			Action:        Action,
+			Parameter:     Parameter,
+			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(actuate_input); err != nil {
 			message.MyError(err, "commandAPIExecution > actuate > encoder.Encode")

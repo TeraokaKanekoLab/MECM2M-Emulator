@@ -917,7 +917,7 @@ func graphDB(conn net.Conn) {
 				cap = "\\\"" + cap + "\\\""
 				format_caps = append(format_caps, cap)
 			}
-			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_caps, ", ") + `] return vn.VNodeID, pn.Capability, vn.SocketAddress;"}]}`
 
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
@@ -933,6 +933,7 @@ func graphDB(conn net.Conn) {
 				//pn.CapOutput = append(pn.CapOutput, capability)
 				pn.CapOutput = capability
 				pn.VNodeID_n = dataArray[1].(string)
+				pn.SocketAddress = dataArray[2].(string)
 				flag := 0
 				for _, p := range nds {
 					if p.VNodeID_n == pn.VNodeID_n {

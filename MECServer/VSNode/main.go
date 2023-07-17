@@ -24,9 +24,10 @@ import (
 )
 
 const (
-	protocol            = "unix"
-	socket_address_root = "/tmp/mecm2m/"
-	dataResisterSock    = "/tmp/mecm2m/data_resister.sock"
+	protocol                 = "unix"
+	socket_address_root      = "/tmp/mecm2m/"
+	dataResisterSock         = "/tmp/mecm2m/data_resister.sock"
+	link_socket_address_root = "/tmp/mecm2m/link-process/"
 )
 
 type Format struct {
@@ -225,10 +226,14 @@ LOOP:
 			message.MyReadMessage(*format)
 
 			// PSNodeとのやりとり
+			// 閉域網リンクプロセスを通って，RTTを付与
 			psnode_id := convertID(format.VNodeID_n, 63)
 			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
+			format.DestSocketAddr = psnode_socket
+			linkSrcAddr := link_socket_address_root + "closed-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
 
-			connPS, err := net.Dial(protocol, psnode_socket)
+			// リンクプロセスへ転送
+			connPS, err := net.Dial(protocol, linkSrcAddr)
 			if err != nil {
 				message.MyError(err, "vsnode > CurrentNode > net.Dial")
 			}
@@ -335,10 +340,14 @@ LOOP:
 			message.MyReadMessage(*format)
 
 			// PSNodeとのやりとり
+			// 閉域網リンクプロセスを通って，RTTを付与
 			psnode_id := convertID(format.VNodeID_n, 63)
 			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
+			format.DestSocketAddr = psnode_socket
+			linkSrcAddr := link_socket_address_root + "closed-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
 
-			connPS, err := net.Dial(protocol, psnode_socket)
+			// リンクプロセスへ転送
+			connPS, err := net.Dial(protocol, linkSrcAddr)
 			if err != nil {
 				message.MyError(err, "vsnode > Actuate > net.Dial")
 			}

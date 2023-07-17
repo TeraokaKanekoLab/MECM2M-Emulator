@@ -48,77 +48,109 @@ type ResolveNode struct {
 	CapsInput  []string
 
 	// output
-	VNodeID_n string
-	CapOutput string
+	VNodeID_n     string
+	CapOutput     string
+	SocketAddress string
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolvePastNode struct {
 	// input
-	VNodeID_n  string
-	Capability string
-	Period     PeriodInput
+	VNodeID_n     string
+	Capability    string
+	Period        PeriodInput
+	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
 	//VNodeID_n 	string (dup)
 	Values []Value
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolvePastPoint struct {
 	// input
-	VPointID_n string
-	Capability string
-	Period     PeriodInput
+	VPointID_n    string
+	Capability    string
+	Period        PeriodInput
+	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
 
 	// output
 	Datas []SensorData
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolveCurrentNode struct {
 	// input
-	VNodeID_n  string
-	Capability string
+	VNodeID_n     string
+	Capability    string
+	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
 	//VNodeID_n 	string (dup)
 	Values Value
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolveCurrentPoint struct {
 	// input
-	VPointID_n string
-	Capability string
+	VPointID_n    string
+	Capability    string
+	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
 
 	// output
 	Datas []SensorData
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolveConditionNode struct {
 	// input
-	VNodeID_n  string
-	Capability string
-	Limit      Range
-	Timeout    time.Duration
+	VNodeID_n     string
+	Capability    string
+	Limit         Range
+	Timeout       time.Duration
+	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
 	//DataForRegist
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type ResolveConditionPoint struct {
 	// input
-	VPointID_n string
-	Capability string
-	Limit      Range
-	Timeout    time.Duration
+	VPointID_n    string
+	Capability    string
+	Limit         Range
+	Timeout       time.Duration
+	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type Actuate struct {
 	// input
-	VNodeID_n string
-	Action    string
-	Parameter float64
+	VNodeID_n     string
+	Action        string
+	Parameter     float64
+	SocketAddress string // 動作指示対象となるVNodeのソケットアドレス
 
 	// output
 	Status bool
+
+	// etc.
+	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type SensorData struct {

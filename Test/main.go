@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -18,33 +16,11 @@ import (
 func main() {
 	loadEnv()
 	// file_nameからサーバ番号を抽出
-	file_name := "/tmp/mecm2m/link-process/internet_0_1.sock"
+	file_name := "/tmp/mecm2m/vsnode_1_234092340293840.sock"
 	src_index := strings.Index(file_name, "_")
 	dst_index := strings.LastIndex(file_name, "_")
-	dot_index := strings.LastIndex(file_name, ".")
 	src_server_num := file_name[src_index+1 : dst_index]
-	dst_server_num := file_name[dst_index+1 : dot_index]
-	fmt.Println(src_server_num, dst_server_num)
-	// RTT時間の検索
-	rtt_fp, err := os.Open("../LinkProcess/CloudMEC/rtt.csv")
-	if err != nil {
-		message.MyError(err, "RTT file cannot open")
-	}
-	defer rtt_fp.Close()
-
-	reader := csv.NewReader(rtt_fp)
-	records, err := reader.ReadAll()
-	if err != nil {
-		message.MyError(err, "RTT file cannot read")
-	}
-
-	for _, record := range records {
-		if (record[0] == src_server_num && record[1] == dst_server_num) || (record[1] == src_server_num && record[0] == dst_server_num) {
-			rtt_str := record[2] + "s"
-			rtt, _ := time.ParseDuration(rtt_str)
-			time.Sleep(rtt)
-		}
-	}
+	fmt.Println(src_server_num)
 }
 
 func loadEnv() {

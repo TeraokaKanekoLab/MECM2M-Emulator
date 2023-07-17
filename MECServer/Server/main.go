@@ -369,25 +369,31 @@ func m2mApi(conn net.Conn) {
 			if flag == 0 {
 				// Global GraphDB へリクエスト
 				fmt.Println("resolve in global")
-				connCloud, err := net.Dial(protocol, globalGraphDBSockAddr)
+
+				// 2023-06-28 リンクプロセスへの送信
+				format.DestSocketAddr = globalGraphDBSockAddr
+				// リンクプロセスのソケットアドレスを作成 (クラウドへ投げることは既知)
+				linkSrcAddr := link_socket_address_root + "internet_" + server_num + "_0.sock"
+				// リンクプロセスへ転送
+				connLink, err := net.Dial(protocol, linkSrcAddr)
 				if err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > net.Dial")
 				}
-				decoderCloud := gob.NewDecoder(connCloud)
-				encoderCloud := gob.NewEncoder(connCloud)
+				decoderLink := gob.NewDecoder(connLink)
+				encoderLink := gob.NewEncoder(connLink)
 
-				syncFormatClient("Node", decoderCloud, encoderCloud)
+				syncFormatClient("Node", decoderLink, encoderLink)
 
-				if err := encoderCloud.Encode(format); err != nil {
+				if err := encoderLink.Encode(format); err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > encoderCloud.Encode")
 				}
 				message.MyWriteMessage(*format)
 
-				// Cloud でのノード解決
+				// リンクを挟んで Cloud でのノード解決
 
 				// 受信する型は[]ResolveNode
 				node_output := []m2mapi.ResolveNode{}
-				if err := decoderCloud.Decode(&node_output); err != nil {
+				if err := decoderLink.Decode(&node_output); err != nil {
 					message.MyError(err, "m2mApi > NodeGlobal > decoderCloud.Decode")
 				}
 				message.MyReadMessage(node_output)
@@ -443,9 +449,18 @@ func m2mApi(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			// VSNodeスレッドのソケットアドレス
-			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+			// VNodeスレッドのソケットアドレス
+			vsnode_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vsnode_server_num := throughLinkProcess(vsnode_socket)
+			if vsnode_server_num != server_num {
+				// このサーバに対象のVNodeがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vsnode_socket
+				vsnode_socket = link_socket_address_root + "internet_" + server_num + "_" + vsnode_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vsnode_socketはリンクプロセスのソケットアドレス
 			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > PastNode > net.Dial")
@@ -488,8 +503,17 @@ func m2mApi(conn net.Conn) {
 			message.MyReadMessage(*format)
 
 			// VPointスレッドのソケットアドレス
-			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+			vpoint_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vpoint_server_num := throughLinkProcess(vpoint_socket)
+			if vpoint_server_num != server_num {
+				// このサーバに対象のVPointがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vpoint_socket
+				vpoint_socket = link_socket_address_root + "internet_" + server_num + "_" + vpoint_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vpoint_socketはリンクプロセスのソケットアドレス
 			connVP, err := net.Dial(protocol, vpoint_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > PastPoint > net.Dial")
@@ -532,8 +556,17 @@ func m2mApi(conn net.Conn) {
 			message.MyReadMessage(*format)
 
 			// VSNodeスレッドのソケットアドレス
-			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+			vsnode_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vsnode_server_num := throughLinkProcess(vsnode_socket)
+			if vsnode_server_num != server_num {
+				// このサーバに対象のVNodeがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vsnode_server_num
+				vsnode_socket = link_socket_address_root + "internet_" + server_num + "_" + vsnode_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vsnode_socketはリンクプロセスのソケットアドレス
 			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > net.Dial")
@@ -551,18 +584,18 @@ func m2mApi(conn net.Conn) {
 			// VSNodeとのやりとり
 
 			// 受信する型はResolveCurrentNode
-			ms := m2mapi.ResolveCurrentNode{}
-			if err := decoderVS.Decode(&ms); err != nil {
+			current_node_output := m2mapi.ResolveCurrentNode{}
+			if err := decoderVS.Decode(&current_node_output); err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > decoderVS.Decode")
 			}
-			message.MyReadMessage(ms)
+			message.MyReadMessage(current_node_output)
 
 			// 最終的な結果をM2M Appに送信する
-			if err := encoder.Encode(&ms); err != nil {
+			if err := encoder.Encode(&current_node_output); err != nil {
 				message.MyError(err, "m2mApi > CurrentNode > encoder.Encode")
 				break
 			}
-			message.MyWriteMessage(ms)
+			message.MyWriteMessage(current_node_output)
 		case *m2mapi.ResolveCurrentPoint:
 			format := m2mApiCommand.(*m2mapi.ResolveCurrentPoint)
 			if err := decoder.Decode(format); err != nil {
@@ -579,8 +612,17 @@ func m2mApi(conn net.Conn) {
 			// M2M API -> VPoint -> Local GraphDB (VNode検索) -> VPoint -> VNode -> PNode
 
 			// VPointスレッドのソケットアドレス
-			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+			vpoint_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vpoint_server_num := throughLinkProcess(vpoint_socket)
+			if vpoint_server_num != server_num {
+				// このサーバに対象のVPointがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vpoint_socket
+				vpoint_socket = link_socket_address_root + "internet_" + server_num + "_" + vpoint_server_num + ".sock"
+			}
+
+			// リンクプロセスをかます場合，vpoint_socketはリンクプロセスのソケットアドレス
 			connVP, err := net.Dial(protocol, vpoint_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > CurrentPoint > net.Dial")
@@ -623,8 +665,17 @@ func m2mApi(conn net.Conn) {
 			message.MyReadMessage(*format)
 
 			// VSNodeスレッドのソケットアドレス
-			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+			vsnode_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vsnode_server_num := throughLinkProcess(vsnode_socket)
+			if vsnode_server_num != server_num {
+				// このサーバに対象のVNodeがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vsnode_socket
+				vsnode_socket = link_socket_address_root + "internet_" + server_num + "_" + vsnode_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vsnode_socketはリンクプロセスのソケットアドレス
 			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > ConditionNode > net.Dial")
@@ -667,8 +718,17 @@ func m2mApi(conn net.Conn) {
 			message.MyReadMessage(*format)
 
 			// VPointスレッドのソケットアドレス
-			vpoint_socket := socket_address_root + "vpoint_" + server_num + "_" + format.VPointID_n + ".sock"
+			vpoint_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vpoint_server_num := throughLinkProcess(vpoint_socket)
+			if vpoint_server_num != server_num {
+				// このサーバに対象のVNodeがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vpoint_socket
+				vpoint_socket = link_socket_address_root + "internet_" + server_num + "_" + vpoint_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vpoint_socketはリンクプロセスのソケットアドレス
 			connVP, err := net.Dial(protocol, vpoint_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > ConditionPoint > net.Dial")
@@ -711,8 +771,17 @@ func m2mApi(conn net.Conn) {
 			message.MyReadMessage(*format)
 
 			// VSNodeスレッドのソケットアドレス
-			vsnode_socket := socket_address_root + "vsnode_" + server_num + "_" + format.VNodeID_n + ".sock"
+			vsnode_socket := format.SocketAddress
 
+			// リンクプロセスを挟むか否かの分岐
+			vsnode_server_num := throughLinkProcess(vsnode_socket)
+			if vsnode_server_num != server_num {
+				// このサーバに対象のVNodeがない場合，リンクプロセスを噛ます
+				format.DestSocketAddr = vsnode_socket
+				vsnode_socket = link_socket_address_root + "internet_" + server_num + "_" + vsnode_server_num + ".sock"
+			}
+
+			// リンクプロセスを噛ます場合，vsnode_socketはリンクプロセスのソケットアドレス
 			connVS, err := net.Dial(protocol, vsnode_socket)
 			if err != nil {
 				message.MyError(err, "m2mApi > Actuate > net.Dial")
@@ -748,6 +817,14 @@ func m2mApi(conn net.Conn) {
 			}
 		}
 	}
+}
+
+// 仮想モジュールへリクエスト転送する際に，リンクプロセスを挟むか否かの判定
+func throughLinkProcess(vsnode_socket string) string {
+	dst_server_num_index := strings.Index(vsnode_socket, "_")
+	dst_server_num_index_last := strings.LastIndex(vsnode_socket, "_")
+	dst_server_num := vsnode_socket[dst_server_num_index+1 : dst_server_num_index_last]
+	return dst_server_num
 }
 
 // M2M Appと型同期をするための関数
@@ -1198,7 +1275,7 @@ func graphDB(conn net.Conn) {
 				capability = "\\\"" + capability + "\\\""
 				format_capabilities = append(format_capabilities, capability)
 			}
-			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vn.VNodeID, pn.Capability;"}]}`
+			payload := `{"statements": [{"statement": "MATCH (vp:VPoint {VPointID: ` + vpointid_n + `})-[:aggregates]->(vn:VNode)-[:isPhysicalizedBy]->(pn:PNode) WHERE pn.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vn.VNodeID, pn.Capability, vn.SocketAddress;"}]}`
 
 			var url string
 			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
@@ -1214,6 +1291,7 @@ func graphDB(conn net.Conn) {
 				//pn.CapOutput = append(pn.CapOutput, capability)
 				node.CapOutput = capability
 				node.VNodeID_n = dataArray[0].(string)
+				node.SocketAddress = dataArray[2].(string)
 				flag := 0
 				for _, p := range node_output {
 					if p.VNodeID_n == node.VNodeID_n {
