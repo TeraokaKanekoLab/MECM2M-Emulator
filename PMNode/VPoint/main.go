@@ -5,8 +5,8 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
 	"net"
 	"os"
 	"os/signal"
@@ -40,7 +40,7 @@ func main() {
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -77,7 +77,7 @@ func initialize(file string, gids chan uint64) {
 	}
 }
 
-//過去データ取得，現在データ取得，充足条件データ取得
+// 過去データ取得，現在データ取得，充足条件データ取得
 func vpoint(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
@@ -232,7 +232,7 @@ LOOP:
 	}
 }
 
-//M2M APIと型同期をするための関数
+// M2M APIと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -257,7 +257,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//SensingDB, PSNode, PMNodeと型同期をするための関数
+// SensingDB, PSNode, PMNodeと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	m := &Format{}
 	switch command {

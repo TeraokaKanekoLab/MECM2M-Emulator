@@ -1,0 +1,7 @@
+{
+    "socket_addresses": [
+        "/tmp/mecm2m/link-process/access-network_9223372036854775808_0.sock",
+        "/tmp/mecm2m/link-process/access-network_9223372036854775809_1.sock",
+        "/tmp/mecm2m/link-process/access-network_9223372036854775810_2.sock"
+    ]
+}

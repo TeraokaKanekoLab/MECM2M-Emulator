@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"sync"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/m2mapp"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/m2mapp"
+	"mecm2m-Emulator/pkg/message"
 )
 
 const (
@@ -43,7 +43,7 @@ func main() {
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -140,7 +140,7 @@ func ExecuteApp(gid uint64) {
 		var command string
 		fmt.Printf("M2M App [GID:%d] > ", gid)
 		fmt.Scan(&command)
-		message.MyExit(command)
+		//message.MyExit(command)
 		options := loadInput(command)
 
 		sockAddr := selectSocketFile(command)

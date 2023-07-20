@@ -1,4 +1,4 @@
-module mecm2m-Simulator
+module mecm2m-Emulator
 
 go 1.18
 

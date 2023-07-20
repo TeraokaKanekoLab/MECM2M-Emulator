@@ -18,11 +18,11 @@ import (
 	"sync"
 	"syscall"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
-	"mecm2m-Simulator/pkg/mserver"
-	"mecm2m-Simulator/pkg/server"
-	"mecm2m-Simulator/pkg/vpoint"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/mserver"
+	"mecm2m-Emulator/pkg/server"
+	"mecm2m-Emulator/pkg/vpoint"
 
 	"github.com/joho/godotenv"
 
@@ -81,20 +81,20 @@ func main() {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
-	/*
-		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-		signals_from_main := make(chan os.Signal, 1)
 
-		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-		signal.Notify(signals_from_main, syscall.SIGCONT)
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
 
-		// シグナルを待機
-		fmt.Println("Waiting for signal...")
-		sig := <-signals_from_main
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
 
-		// 受信したシグナルを表示
-		fmt.Printf("Received signal: %v\n", sig)
-	*/
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {
@@ -247,7 +247,7 @@ func m2mApi(conn net.Conn) {
 					dataArray := data.([]interface{})
 					dataArrayInterface := dataArray[0]
 					max_lat_record := dataArrayInterface.(map[string]interface{})
-					max_lat_interface := max_lat_record["SW"].([]interface{})
+					max_lat_interface := max_lat_record["NE"].([]interface{})
 					var max_lat []float64
 					for _, v := range max_lat_interface {
 						max_lat = append(max_lat, v.(float64))
@@ -261,7 +261,7 @@ func m2mApi(conn net.Conn) {
 					dataArray := data.([]interface{})
 					dataArrayInterface := dataArray[0]
 					max_lon_record := dataArrayInterface.(map[string]interface{})
-					max_lon_interface := max_lon_record["SW"].([]interface{})
+					max_lon_interface := max_lon_record["NE"].([]interface{})
 					var max_lon []float64
 					for _, v := range max_lon_interface {
 						max_lon = append(max_lon, v.(float64))
@@ -1422,7 +1422,8 @@ func sensingDB(conn net.Conn) {
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PNodeID = \"" + pnode_id + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
+			table := os.Getenv("MYSQL_TABLE") + "_" + server_num
+			cmd = "SELECT * FROM " + table + " WHERE PNodeID = \"" + pnode_id + "\" AND Capability = \"" + cap + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
@@ -1482,7 +1483,8 @@ func sensingDB(conn net.Conn) {
 			}
 
 			var cmd string
-			cmd = "SELECT * FROM " + os.Getenv("MYSQL_TABLE") + " WHERE PSinkID = \"" + psink_id + "\" AND Capability = \"" + capability + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
+			table := os.Getenv("MYSQL_TABLE") + "_" + server_num
+			cmd = "SELECT * FROM " + table + " WHERE PSinkID = \"" + psink_id + "\" AND Capability = \"" + capability + "\" AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
 
 			rows, err := DBConnection.Query(cmd)
 			if err != nil {
@@ -1579,7 +1581,8 @@ func sensingDB(conn net.Conn) {
 
 			// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
 			var cmd string
-			cmd = "INSERT INTO " + os.Getenv("MYSQL_TABLE") + "(PNodeID,Capability,Timestamp,Value,PSinkID,Lat,Lon) VALUES(?,?,?,?,?,?,?);"
+			table := os.Getenv("MYSQL_TABLE") + "_" + server_num
+			cmd = "INSERT INTO " + table + "(PNodeID,Capability,Timestamp,Value,PSinkID,Lat,Lon) VALUES(?,?,?,?,?,?,?);"
 
 			in, err := DBConnection.Prepare(cmd)
 			if err != nil {

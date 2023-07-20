@@ -10,10 +10,10 @@ import (
 	"io"
 	"io/ioutil"
 	"math/big"
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
-	"mecm2m-Simulator/pkg/server"
-	"mecm2m-Simulator/pkg/vsnode"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/server"
+	"mecm2m-Emulator/pkg/vsnode"
 	"net"
 	"os"
 	"os/signal"
@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 )
 
 const (
@@ -60,20 +61,20 @@ func main() {
 		fmt.Println("There is no socket files")
 		os.Exit(1)
 	}
-	/*
-		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-		signals_from_main := make(chan os.Signal, 1)
 
-		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-		signal.Notify(signals_from_main, syscall.SIGCONT)
+	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+	signals_from_main := make(chan os.Signal, 1)
 
-		// シグナルを待機
-		fmt.Println("Waiting for signal...")
-		sig := <-signals_from_main
+	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+	signal.Notify(signals_from_main, syscall.SIGCONT)
 
-		// 受信したシグナルを表示
-		fmt.Printf("Received signal: %v\n", sig)
-	*/
+	// シグナルを待機
+	fmt.Println("Waiting for signal...")
+	sig := <-signals_from_main
+
+	// 受信したシグナルを表示
+	fmt.Printf("Received signal: %v\n", sig)
+
 	socket_file_name := os.Args[1]
 	data, err := ioutil.ReadFile(socket_file_name)
 	if err != nil {

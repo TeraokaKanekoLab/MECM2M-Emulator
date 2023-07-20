@@ -6,8 +6,8 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
 	"net"
 	"os"
 	"os/signal"
@@ -49,7 +49,7 @@ func main() {
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -105,7 +105,7 @@ func main() {
 	defer close(gids)
 }
 
-//mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
+// mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
 func timeSync(mainContext context.Context, retTime chan time.Time) {
 	listener, err := net.Listen(protocol, timeSock)
 	if err != nil {
@@ -155,7 +155,7 @@ func timeSync(mainContext context.Context, retTime chan time.Time) {
 	}
 }
 
-//センサデータ送信，センサデータ登録
+// センサデータ送信，センサデータ登録
 func psnode(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
@@ -195,21 +195,18 @@ func psnode(conn net.Conn, gid uint64) {
 
 }
 
-//センサデータの登録
-//PSNode -> VPoint -> VSNode -> SensingDB
+// センサデータの登録
+// PSNode -> VPoint -> VSNode -> SensingDB
 func registerSensingData(t time.Time) {
 	//センサデータ登録用の型を指定
 	m := &m2mapi.DataForRegist{
 		PNodeID:    "TESTPNodeID",
 		Capability: "TESTCapability",
 		Timestamp:  "TESTTimestamp",
-		Value:      "TESTValue",
+		Value:      12.3,
 		PSinkID:    "TESTPSinkID",
-		ServerID:   "TESTServerID",
-		Lat:        "TESTLat",
-		Lon:        "TESTLon",
-		VNodeID:    "TESTVNodeID",
-		VPointID:   "TESTVPointID",
+		Lat:        23.4,
+		Lon:        34.5,
 	}
 
 	//VPointへ接続
@@ -230,7 +227,7 @@ func registerSensingData(t time.Time) {
 	//message.MyWriteMessage(m)
 }
 
-//VSNodeと型同期をするための関数
+// VSNodeと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -251,7 +248,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//SensingDBと型同期をするための関数
+// SensingDBと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	switch command {
 	case "RegisterSensingData":

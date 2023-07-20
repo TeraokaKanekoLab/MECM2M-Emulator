@@ -64,7 +64,6 @@ def create_index(graph, object, property):
 
 create_index(global_graph, "Area", "Label")
 
-
 try:
     local_graph.commit(local_tx)
 except:

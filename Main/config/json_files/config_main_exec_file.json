@@ -1,26 +1,14 @@
 {
     "mec-servers": {
         "environment": {
-            "num": 3
+            "num": 1
         },
         "mec-server": [
             {
-                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
-                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
-                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
-            },
-            {
-                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
-                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
-                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
-            },
-            {
-                "Server": "/home/rand/MECM2M-Simulator/MECServer/Server/main",
-                "VPoint": "/home/rand/MECM2M-Simulator/MECServer/VPoint/main",
-                "VSNode": "/home/rand/MECM2M-Simulator/MECServer/VSNode/main",
-                "vmnode": "/home/rand/MECM2M-Simulator/MECServer/VMNode/main"
+                "Server": "/home/rand/MECM2M-Emulator/MECServer/Server/main",
+                "VPoint": "/home/rand/MECM2M-Emulator/MECServer/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                "vmnode": "/home/rand/MECM2M-Emulator/MECServer/VMNode/main"
             }
         ]
     },
@@ -30,11 +18,11 @@
         },
         "pmnode": [
             {
-                "MServer": "/home/rand/MECM2M-Simulator/PMNode/MServer/main",
-                "VPoint": "/home/rand/MECM2M-Simulator/PMNode/VPoint/main",
-                "VSNode": "/home/rand/MECM2M-Simulator/PMNode/VSNode/main",
-                "PSNode": "/home/rand/MECM2M-Simulator/PMNode/PSNode/main",
-                "MServer-config-file": "/home/rand/MECM2M-Simulator/PMNode/MServer/config.json"
+                "MServer": "/home/rand/MECM2M-Emulator/PMNode/MServer/main",
+                "VPoint": "/home/rand/MECM2M-Emulator/PMNode/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Emulator/PMNode/VSNode/main",
+                "PSNode": "/home/rand/MECM2M-Emulator/PMNode/PSNode/main",
+                "MServer-config-file": "/home/rand/MECM2M-Emulator/PMNode/MServer/config.json"
             }
         ]
     },
@@ -44,8 +32,8 @@
         },
         "psnode": [
             {
-                "PSNode": "/home/rand/MECM2M-Simulator/PSNode/main",
-                "config-file": "/home/rand/MECM2M-Simulator/PSNode/config.json"
+                "PSNode": "/home/rand/MECM2M-Emulator/PSNode/main",
+                "config-file": "/home/rand/MECM2M-Emulator/PSNode/config.json"
             }
         ]
     }

@@ -12,7 +12,7 @@ json_file_path = os.getenv("PROJECT_PATH") + "/Main/config/json_files"
 #PSNODE_NUM
 EDGE_SERVER_NUM = int(os.getenv("EDGE_SERVER_NUM"))
 PMNODE_NUM = 1
-PSNODE_NUM = 1
+PSNODE_NUM = 1  #PSNodeのプロセス数．MEC Server1つに対して1つのPSNodeプロセスを用意する想定．すなわち，MEC Server数
 
 data = {"mec-servers":{"environment":{}}, "pmnodes":{"environment":{}}, "psnodes":{"environment":{}}}
 

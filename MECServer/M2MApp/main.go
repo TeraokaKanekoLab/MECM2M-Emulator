@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/m2mapp"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/m2mapp"
+	"mecm2m-Emulator/pkg/message"
 )
 
 const (

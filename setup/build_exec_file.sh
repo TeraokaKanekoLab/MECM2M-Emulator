@@ -38,4 +38,14 @@ printf "\e[1;31m \n4-1. BUILD CLOUD SERVER PROCESS \e[0m"
 # Cloud Serverプロセスの実行系ファイルを生成
 go build -o ${PROJECT_PATH}/CloudServer/Server/main ${PROJECT_PATH}/CloudServer/Server/main.go
 
+printf "\e[1;31m \n5. LINK PROCESS FRAMEWORK \e[0m"
+
+printf "\e[1;31m \n5-1. BUILD INTERNET LINK PROCESS \e[0m"
+# Internet リンクプロセスの実行系ファイルを生成
+go build -o ${PROJECT_PATH}/LinkProcess/Internet/main ${PROJECT_PATH}/LinkProcess/Internet/main.go
+
+printf "\e[1;31m \n5-2. BUILD ACCESS NETWORK LINK PROCESS \e[0m"
+# Access Network リンクプロセスの実行系ファイルを生成
+go build -o ${PROJECT_PATH}/LinkProcess/AccessNetwork/main ${PROJECT_PATH}/LinkProcess/AccessNetwork/main.go
+
 printf "\n"

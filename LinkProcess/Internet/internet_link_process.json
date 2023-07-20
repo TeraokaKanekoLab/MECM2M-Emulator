@@ -1,16 +1,6 @@
 {
     "socket_addresses": [
         "/tmp/mecm2m/link-process/internet_0_1.sock",
-        "/tmp/mecm2m/link-process/internet_1_0.sock",
-        "/tmp/mecm2m/link-process/internet_0_2.sock",
-        "/tmp/mecm2m/link-process/internet_2_0.sock",
-        "/tmp/mecm2m/link-process/internet_0_3.sock",
-        "/tmp/mecm2m/link-process/internet_3_0.sock",
-        "/tmp/mecm2m/link-process/internet_1_2.sock",
-        "/tmp/mecm2m/link-process/internet_2_1.sock",
-        "/tmp/mecm2m/link-process/internet_1_3.sock",
-        "/tmp/mecm2m/link-process/internet_3_1.sock",
-        "/tmp/mecm2m/link-process/internet_2_3.sock",
-        "/tmp/mecm2m/link-process/internet_3_2.sock"
+        "/tmp/mecm2m/link-process/internet_1_0.sock"
     ]
 }

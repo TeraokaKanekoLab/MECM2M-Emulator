@@ -19,9 +19,9 @@ import (
 	"syscall"
 	"time"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
-	"mecm2m-Simulator/pkg/mserver"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/mserver"
 
 	"github.com/joho/godotenv"
 
@@ -94,7 +94,7 @@ func main() {
 
 	go movement(pmnodePosition, switchPosition, cancelFunc)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGALRM)
 	go func() {
 		<-quit
@@ -479,7 +479,7 @@ func m2mApi(conn net.Conn) {
 	}
 }
 
-//M2M Appと型同期をするための関数
+// M2M Appと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -514,7 +514,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//内部コンポーネント（DB，仮想モジュール）と型同期をするための関数
+// 内部コンポーネント（DB，仮想モジュール）と型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	m := &Format{}
 	switch command {
@@ -542,7 +542,7 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 	}
 }
 
-//PNode Manager Server
+// PNode Manager Server
 func pnodeMgr(file string, cancelContext context.Context) {
 	message.MyMessage("[MESSAGE] Call PNode Manager thread")
 
@@ -581,7 +581,7 @@ func pnodeMgr(file string, cancelContext context.Context) {
 	message.MyReadMessage(ms)
 }
 
-//GraphDB Server
+// GraphDB Server
 func graphDB(conn net.Conn) {
 	defer conn.Close()
 
@@ -622,7 +622,7 @@ func graphDB(conn net.Conn) {
 				dataArray := data.([]interface{})
 				ps := m2mapi.ResolvePoint{}
 				ps.VPointID_n = dataArray[0].(string)
-				ps.Address = dataArray[1].(string)
+				//ps.Address = dataArray[1].(string)
 				flag := 0
 				for _, p := range pss {
 					if p.VPointID_n == ps.VPointID_n {
@@ -695,7 +695,7 @@ func graphDB(conn net.Conn) {
 	}
 }
 
-//SensingDB Server
+// SensingDB Server
 func sensingDB(conn net.Conn) {
 	defer conn.Close()
 
@@ -864,17 +864,15 @@ func sensingDB(conn net.Conn) {
 			}
 			message.MyReadMessage(*format)
 
-			var PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID string
+			var PNodeID, Capability, Timestamp, PSinkID string
+			var Value, Lat, Lon float64
 			PNodeID = format.PNodeID
 			Capability = format.Capability
 			Timestamp = format.Timestamp
 			Value = format.Value
 			PSinkID = format.PSinkID
-			ServerID = format.ServerID
 			Lat = format.Lat
 			Lon = format.Lon
-			VNodeID = format.VNodeID
-			VPointID = format.VPointID
 
 			//SensingDBを開く
 			DBConnection, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
@@ -896,7 +894,7 @@ func sensingDB(conn net.Conn) {
 			if err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > DBConnection.Prepare")
 			}
-			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, ServerID, Lat, Lon, VNodeID, VPointID); errExec == nil {
+			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon); errExec == nil {
 				message.MyMessage("Complete Data Registration!")
 			}
 			in.Close()

@@ -5,8 +5,8 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
 	"net"
 	"os"
 	"os/signal"
@@ -23,7 +23,7 @@ type Format struct {
 	FormType string
 }
 
-//VPointからのデータ通知で来たデータを充足条件データ取得でも使うためにバッファを用意する
+// VPointからのデータ通知で来たデータを充足条件データ取得でも使うためにバッファを用意する
 var bufferSensorData m2mapi.DataForRegist
 
 func cleanup(socketFiles ...string) {
@@ -43,7 +43,7 @@ func main() {
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
@@ -80,8 +80,8 @@ func initialize(file string, gids chan uint64) {
 	}
 }
 
-//過去データ取得，現在データ取得，充足条件データ取得
-//2023/03/28 context.Background()を引数に入れてみる
+// 過去データ取得，現在データ取得，充足条件データ取得
+// 2023/03/28 context.Background()を引数に入れてみる
 func vsnode(conn net.Conn, gid uint64) {
 	defer conn.Close()
 
@@ -195,7 +195,7 @@ LOOP:
 			//data := <-bufferSensorData
 			data := bufferSensorData
 			fmt.Println("after")
-			val, _ := strconv.ParseFloat(data.Value, 64)
+			val := data.Value
 
 			//formatで受けた条件とdataを比較し，該当するデータであればM2M APIへ返す
 			lowerLimit := format.Limit.LowerLimit
@@ -251,7 +251,7 @@ LOOP:
 	}
 }
 
-//M2M APIと型同期をするための関数
+// M2M APIと型同期をするための関数
 func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	m := &Format{}
 	if err := decoder.Decode(m); err != nil {
@@ -278,7 +278,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-//SensingDB, PSNode, PMNodeと型同期をするための関数
+// SensingDB, PSNode, PMNodeと型同期をするための関数
 func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
 	m := &Format{}
 	switch command {

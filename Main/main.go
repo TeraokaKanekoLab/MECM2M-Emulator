@@ -11,13 +11,14 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
 
 	"github.com/joho/godotenv"
 )
@@ -84,29 +85,28 @@ func main() {
 
 	// 1. 各インスタンスの登録・socketファイルの準備
 	// config/register_for_neo4jの実行
-	/*
-		err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
 
-			if !info.IsDir() {
-				// ファイルの抽出
-				cmd := exec.Command("python3", path)
-				output, err := cmd.CombinedOutput()
-				if err != nil {
-					fmt.Println(err)
-				}
-				fmt.Printf("%s\n", output)
-			}
-
-			return nil
-		})
-
+	err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			panic(err)
+			return err
 		}
-	*/
+
+		if !info.IsDir() {
+			// ファイルの抽出
+			cmd := exec.Command("python3", path)
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Printf("%s\n", output)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
 
 	// 2. 各プロセスファイルの実行
 	// 実行系ファイルをまとめたconfigファイルを読み込む
@@ -128,64 +128,64 @@ func main() {
 
 	// MEC Serverフレームワークの実行
 	//mec_server_num := config.MecServers.Environment.Num
-	/*
-		server_num := 1
-		for _, mec_server := range config.MecServers.MecServer {
-			server_exec_file := mec_server.Server
-			vpoint_exec_file := mec_server.VPoint
-			vsnode_exec_file := mec_server.VSNode
-			//vmnode_exec_file := mec_server.VMNode
-			fmt.Println("----------")
 
-			server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
-			cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-			errCmdServer := cmdServer.Start()
-			if errCmdServer != nil {
-				message.MyError(err, "exec.Command > MEC Server > Start")
-			} else {
-				fmt.Println(server_exec_file, " is running")
-			}
-			vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VPoint/socket_files/vpoint_" + strconv.Itoa(server_num) + ".json"
-			cmdVPoint := exec.Command(vpoint_exec_file, vpoint_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-			errCmdVPoint := cmdVPoint.Start()
-			if errCmdVPoint != nil {
-				message.MyError(err, "exec.Command > MEC VPoint > Start")
-			} else {
-				fmt.Println(vpoint_exec_file, " is running")
-			}
+	server_num := 1
+	for _, mec_server := range config.MecServers.MecServer {
+		server_exec_file := mec_server.Server
+		vpoint_exec_file := mec_server.VPoint
+		vsnode_exec_file := mec_server.VSNode
+		//vmnode_exec_file := mec_server.VMNode
+		fmt.Println("----------")
 
-			vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VSNode/socket_files/vsnode_" + strconv.Itoa(server_num) + ".json"
-			cmdVSNode := exec.Command(vsnode_exec_file, vsnode_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-			errCmdVSNode := cmdVSNode.Start()
-			if errCmdVSNode != nil {
-				message.MyError(err, "exec.Command > MEC VSNode > Start")
-			} else {
-				fmt.Println(vsnode_exec_file, " is running")
-			}
-
-			/*
-				cmdVMNode := exec.Command(vmnode_exec_file)
-				errCmdVMNode := cmdVMNode.Start()
-				if errCmdVMNode != nil {
-					message.MyError(err, "exec.Command > MEC VMNode > Start")
-				} else {
-					fmt.Println(vmnode_exec_file, " is running")
-				}
-
-
-			processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
-			server_num++
+		server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
+		cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
+		errCmdServer := cmdServer.Start()
+		if errCmdServer != nil {
+			message.MyError(errCmdServer, "exec.Command > MEC Server > Start")
+		} else {
+			fmt.Println(server_exec_file, " is running")
 		}
-	*/
+		vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VPoint/socket_files/vpoint_" + strconv.Itoa(server_num) + ".json"
+		cmdVPoint := exec.Command(vpoint_exec_file, vpoint_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
+		errCmdVPoint := cmdVPoint.Start()
+		if errCmdVPoint != nil {
+			message.MyError(errCmdVPoint, "exec.Command > MEC VPoint > Start")
+		} else {
+			fmt.Println(vpoint_exec_file, " is running")
+		}
+
+		vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VSNode/socket_files/vsnode_" + strconv.Itoa(server_num) + ".json"
+		cmdVSNode := exec.Command(vsnode_exec_file, vsnode_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
+		errCmdVSNode := cmdVSNode.Start()
+		if errCmdVSNode != nil {
+			message.MyError(errCmdVSNode, "exec.Command > MEC VSNode > Start")
+		} else {
+			fmt.Println(vsnode_exec_file, " is running")
+		}
+
+		/*
+			cmdVMNode := exec.Command(vmnode_exec_file)
+			errCmdVMNode := cmdVMNode.Start()
+			if errCmdVMNode != nil {
+				message.MyError(err, "exec.Command > MEC VMNode > Start")
+			} else {
+				fmt.Println(vmnode_exec_file, " is running")
+			}
+		*/
+
+		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
+		server_num++
+	}
 
 	// Cloud Serverの実行
+	// Cloud Serverは1つとしている
 	fmt.Println("----------")
 	cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/socket_files/server_0.json"
 	cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/main"
 	cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
 	errCmdCloudServer := cmdCloudServer.Start()
 	if errCmdCloudServer != nil {
-		message.MyError(err, "exec.Command > Cloud Server > Start")
+		message.MyError(errCmdCloudServer, "exec.Command > Cloud Server > Start")
 	} else {
 		fmt.Println(cloud_server_exec_file, " is running")
 	}
@@ -241,7 +241,6 @@ func main() {
 	*/
 
 	// PSNodeフレームワークの実行
-
 	psnode_num := 1
 	for _, psnode := range config.PsNodes.PsNode {
 		psnode_exec_file := psnode.PSNode
@@ -252,7 +251,7 @@ func main() {
 		cmdPSNode := exec.Command(psnode_exec_file, psnode_path)
 		errCmdPSNode := cmdPSNode.Start()
 		if errCmdPSNode != nil {
-			message.MyError(err, "exec.Command > PSNode > Start")
+			message.MyError(errCmdPSNode, "exec.Command > PSNode > Start")
 		} else {
 			fmt.Println(psnode_exec_file, " is running")
 		}
@@ -263,6 +262,53 @@ func main() {
 		psnode_num++
 	}
 	fmt.Println("Process IDs: ", processIds)
+
+	// 3. 通信リンクプロセスの実行
+	internet_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/main"
+	cmdInternet := exec.Command(internet_link_process_exec_file)
+	errCmdInternet := cmdInternet.Start()
+	if errCmdInternet != nil {
+		message.MyError(errCmdInternet, "exec.Command > Internet > Start")
+	} else {
+		fmt.Println(internet_link_process_exec_file, " is running")
+	}
+	processIds = append(processIds, cmdInternet.Process.Pid)
+	fmt.Println("Internet Link Process pid: ", cmdInternet.Process.Pid)
+
+	access_network_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/AccessNetwork/main"
+	access_network_link_process_dir := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/AccessNetwork"
+	err = filepath.Walk(access_network_link_process_dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && filepath.Ext(path) == ".json" {
+			// ファイルの抽出
+			cmdAccessNetwork := exec.Command(access_network_link_process_exec_file, path)
+			errCmdAccessNetwork := cmdAccessNetwork.Start()
+			if errCmdAccessNetwork != nil {
+				message.MyError(errCmdAccessNetwork, "exec.Command > AccessNetwork > Start")
+			} else {
+				fmt.Println(path, " is running")
+			}
+			processIds = append(processIds, cmdAccessNetwork.Process.Pid)
+			fmt.Println("Access Network Link Process pid: ", cmdAccessNetwork.Process.Pid)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	// 4. Global/Local SensingDB のsensordataテーブルを作成する
+	create_sensing_db_table_index := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/create_db_table_index.py"
+	cmdSensingDB := exec.Command("python3", create_sensing_db_table_index)
+	errCmdSensingDB := cmdSensingDB.Run()
+	if errCmdSensingDB != nil {
+		message.MyError(errCmdSensingDB, "start > cmdSensingDB.Run")
+	}
 
 	// main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
 
@@ -286,7 +332,7 @@ func main() {
 		}
 
 		// シミュレーション前のコマンドを制御
-		if commandExecutionBeforeSimulator(command, processIds, inputChan) {
+		if commandExecutionBeforeEmulator(command, processIds, inputChan) {
 			break
 		} else {
 			continue
@@ -313,7 +359,7 @@ func main() {
 			fmt.Println(command, ": command not found")
 			continue
 		} else if sockAddr == "basic command" {
-			commandExecutionAfterSimulator(command, processIds)
+			commandExecutionAfterEmulator(command, processIds)
 			continue
 		}
 		conn, err := net.Dial(protocol, sockAddr)
@@ -472,7 +518,7 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 }
 
 // APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)
-func commandExecutionBeforeSimulator(command string, processIds []int, inputChan chan string) bool {
+func commandExecutionBeforeEmulator(command string, processIds []int, inputChan chan string) bool {
 	flag := false
 	switch command {
 	// シミュレーションの実行
@@ -481,14 +527,14 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
 			if err != nil {
-				message.MyError(err, "commandBasicExecution > start > os.FindProcess")
+				message.MyError(err, "commandExecutionBeforeEmulator > start > os.FindProcess")
 			}
 
 			if err := process.Signal(syscall.Signal(syscall.SIGCONT)); err != nil {
-				message.MyError(err, "commandBasicExecution > start > process.Signal")
+				message.MyError(err, "commandExecutionBeforeEmulator > start > process.Signal")
 			}
 		}
-		message.MyMessage("		*** Simulator is running *** 	")
+		message.MyMessage("		*** Emulator is running *** 	")
 		flag = true
 		return flag
 	// シミュレーションの終了
@@ -498,41 +544,40 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
 			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > os.FindProcess")
+				message.MyError(err, "commandExecutionBeforeEmulator > exit > os.FindProcess")
 			}
 
 			err = process.Signal(os.Interrupt)
 			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > process.Signal")
+				message.MyError(err, "commandExecutionBeforeEmulator > exit > process.Signal")
 			} else {
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
 		}
-		/*
-			// 2-0. パスを入手
-			err := godotenv.Load(os.Getenv("HOME") + "/.env")
-			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
-			}
 
-			// 2. GraphDB, SensingDBのレコード削除
-			// GraphDB
-			clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-			cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-			errCmdGraphDB := cmdGraphDB.Run()
-			if errCmdGraphDB != nil {
-				message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
-			}
+		// 2-0. パスを入手
+		err := godotenv.Load(os.Getenv("HOME") + "/.env")
+		if err != nil {
+			message.MyError(err, "commandExecutionBeforeEmulator > exit > godotenv.Load")
+		}
 
-			// SensingDB
-			clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-			cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-			errCmdSensingDB := cmdSensingDB.Run()
-			if errCmdSensingDB != nil {
-				message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
-			}
+		// 2. GraphDB, SensingDBのレコード削除
+		// GraphDB
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
+		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandExecutionBeforeEmulator > exit > cmdGraphDB.Run")
+		}
 
-		*/
+		// SensingDB
+		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+		errCmdSensingDB := cmdSensingDB.Run()
+		if errCmdSensingDB != nil {
+			message.MyError(errCmdSensingDB, "commandExecutionBeforeEmulator > exit > cmdSensingDB.Run")
+		}
+
 		message.MyMessage("Bye")
 		os.Exit(0)
 	// デバイスの登録
@@ -545,15 +590,15 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 		cmdGraphDB := exec.Command("python3", register_psnode_script, register_psnode_file)
 		errCmdGraphDB := cmdGraphDB.Run()
 		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandBasicExecution > register > cmdGraphDB.Run")
+			message.MyError(errCmdGraphDB, "commandExecutionBeforeEmulator > register > cmdGraphDB.Run")
 		}
 
 		message.MyMessage("		*** Succeed: Register device *** 	")
 		return flag
 	// helpコマンド
 	case "help":
-		fmt.Println("[start]: 	Start MECM2M Simulator")
-		fmt.Println("[exit]: 	Exit MECM2M Simulator")
+		fmt.Println("[start]: 	Start MECM2M Emulator")
+		fmt.Println("[exit]: 	Exit MECM2M Emulator")
 		fmt.Println("[register]: 	Register PSNode")
 		return flag
 	default:
@@ -566,7 +611,7 @@ func commandExecutionBeforeSimulator(command string, processIds []int, inputChan
 }
 
 // APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)
-func commandExecutionAfterSimulator(command string, processIds []int) {
+func commandExecutionAfterEmulator(command string, processIds []int) {
 	switch command {
 	// シミュレーションの終了
 	case "exit":
@@ -574,40 +619,38 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
 			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > os.FindProcess")
+				message.MyError(err, "commandExecutionAfterEmulator > exit > os.FindProcess")
 			}
 
 			err = process.Signal(os.Interrupt)
 			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > process.Signal")
+				message.MyError(err, "commandExecutionAfterEmulator > exit > process.Signal")
 			} else {
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
 		}
-		/*
-			// 2-0. パスを入手
-			err := godotenv.Load(os.Getenv("HOME") + "/.env")
-			if err != nil {
-				message.MyError(err, "commandBasicExecution > exit > godotenv.Load")
-			}
+		// 2-0. パスを入手
+		err := godotenv.Load(os.Getenv("HOME") + "/.env")
+		if err != nil {
+			message.MyError(err, "commandExecutionAfterEmulator > exit > godotenv.Load")
+		}
 
-			// 2. GraphDB, SensingDBのレコード削除
-			// GraphDB
-			clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-			cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-			errCmdGraphDB := cmdGraphDB.Run()
-			if errCmdGraphDB != nil {
-				message.MyError(errCmdGraphDB, "commandBasicExecution > exit > cmdGraphDB.Run")
-			}
+		// 2. GraphDB, SensingDBのレコード削除
+		// GraphDB
+		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
+		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
+		errCmdGraphDB := cmdGraphDB.Run()
+		if errCmdGraphDB != nil {
+			message.MyError(errCmdGraphDB, "commandExecutionAfterEmulator > exit > cmdGraphDB.Run")
+		}
 
-			// SensingDB
-			clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-			cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-			errCmdSensingDB := cmdSensingDB.Run()
-			if errCmdSensingDB != nil {
-				message.MyError(errCmdSensingDB, "commandBasicExecution > exit > cmdSensingDB.Run")
-			}
-		*/
+		// SensingDB
+		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
+		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
+		errCmdSensingDB := cmdSensingDB.Run()
+		if errCmdSensingDB != nil {
+			message.MyError(errCmdSensingDB, "commandExecutionAfterEmulator > exit > cmdSensingDB.Run")
+		}
 		message.MyMessage("Bye")
 		os.Exit(0)
 	// デバイスの登録
@@ -621,13 +664,13 @@ func commandExecutionAfterSimulator(command string, processIds []int) {
 		cmdGraphDB := exec.Command("python3", register_psnode_script, register_psnode_file)
 		errCmdGraphDB := cmdGraphDB.Run()
 		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandBasicExecution > register > cmdGraphDB.Run")
+			message.MyError(errCmdGraphDB, "commandExecutionAfterEmulator > register > cmdGraphDB.Run")
 		}
 
 		message.MyMessage("		*** Succeed: Register device *** 	")
 	// helpコマンド
 	case "help":
-		fmt.Println("[exit]: 		Exit MECM2M Simulator")
+		fmt.Println("[exit]: 		Exit MECM2M Emulator")
 		fmt.Println("[register]: 		Register PSNode")
 		fmt.Println("[point]: 		Resolve Point")
 		fmt.Println("[node]: 		Resolve Node")

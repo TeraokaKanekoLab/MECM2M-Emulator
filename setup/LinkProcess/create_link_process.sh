@@ -13,6 +13,6 @@ python3 ${PROJECT_PATH}${DIR}/create_internet_link_process.py
 
 printf "\e[1;31m \n1-1. BUILD SOCKET ADDRESS FOR CLOSED NETWORK \e[0m"
 # 閉域網を表すリンク用のソケットアドレスを生成
-python3 ${PROJECT_PATH}${DIR}/create_closed_network_link_process.py
+python3 ${PROJECT_PATH}${DIR}/create_access_network_link_process.py
 
 printf "\n"

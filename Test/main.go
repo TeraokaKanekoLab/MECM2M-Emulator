@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"mecm2m-Simulator/pkg/message"
+	"mecm2m-Emulator/pkg/message"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -15,12 +16,29 @@ import (
 
 func main() {
 	loadEnv()
-	// file_nameからサーバ番号を抽出
-	file_name := "/tmp/mecm2m/vsnode_1_234092340293840.sock"
-	src_index := strings.Index(file_name, "_")
-	dst_index := strings.LastIndex(file_name, "_")
-	src_server_num := file_name[src_index+1 : dst_index]
-	fmt.Println(src_server_num)
+
+	internet_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/main"
+	fmt.Println(internet_link_process_exec_file)
+	cmdInternet := exec.Command(internet_link_process_exec_file)
+	errCmdInternet := cmdInternet.Run()
+	if errCmdInternet != nil {
+		message.MyError(errCmdInternet, "exec.Command > Internet > Start")
+	} else {
+		fmt.Println(internet_link_process_exec_file, " is running")
+	}
+	fmt.Println("Internet Link Process pid: ", cmdInternet.Process.Pid)
+
+	/*
+		cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/socket_files/server_0.json"
+		cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/main"
+		cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
+		errCmdCloudServer := cmdCloudServer.Run()
+		if errCmdCloudServer != nil {
+			message.MyError(errCmdCloudServer, "exec.Command > Cloud Server > Start")
+		} else {
+			fmt.Println(cloud_server_exec_file, " is running")
+		}
+	*/
 }
 
 func loadEnv() {

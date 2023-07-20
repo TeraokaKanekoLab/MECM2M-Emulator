@@ -17,10 +17,10 @@ import (
 	"sync"
 	"syscall"
 
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
-	"mecm2m-Simulator/pkg/mserver"
-	"mecm2m-Simulator/pkg/server"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/mserver"
+	"mecm2m-Emulator/pkg/server"
 
 	"github.com/joho/godotenv"
 

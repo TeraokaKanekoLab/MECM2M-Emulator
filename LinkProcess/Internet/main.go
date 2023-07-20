@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"mecm2m-Simulator/pkg/m2mapi"
-	"mecm2m-Simulator/pkg/message"
-	"mecm2m-Simulator/pkg/mserver"
-	"mecm2m-Simulator/pkg/server"
-	"mecm2m-Simulator/pkg/vpoint"
+	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/mserver"
+	"mecm2m-Emulator/pkg/server"
+	"mecm2m-Emulator/pkg/vpoint"
 	"net"
 	"os"
 	"os/signal"
@@ -27,7 +27,10 @@ import (
 const (
 	protocol                 = "unix"
 	link_socket_address_root = "/tmp/mecm2m/link-process/"
-	rtt_file                 = "rtt.csv"
+)
+
+var (
+	rtt_file string
 )
 
 type Format struct {
@@ -48,11 +51,15 @@ func cleanup(socketFiles ...string) {
 	}
 }
 
+func init() {
+	rtt_file = os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/rtt.csv"
+}
+
 func main() {
 	loadEnv()
 	// 同ディレクトリにあるinternet_link_process.jsonの中身を読み込み，インターネットに関わるすべてのソケットアドレスをsokcetFilesにappendする
 	var socketFiles []string
-	config_link_process := "./internet_link_process.json"
+	config_link_process := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/internet_link_process.json"
 	file, err := ioutil.ReadFile(config_link_process)
 	if err != nil {
 		message.MyError(err, "Failed to read config file for link process")
@@ -652,7 +659,7 @@ func searchRTT(src_server_num string, dst_server_num string) time.Duration {
 		if (record[0] == src_server_num && record[1] == dst_server_num) || (record[1] == src_server_num && record[0] == dst_server_num) {
 			rtt_float, _ := strconv.ParseFloat(record[2], 64)
 			rtt_half_float := rtt_float / 2
-			rtt_half_str := strconv.FormatFloat(rtt_half_float, 'f', 2, 64) + "s"
+			rtt_half_str := strconv.FormatFloat(rtt_half_float, 'f', 2, 64) + "ms"
 			rtt_half, _ = time.ParseDuration(rtt_half_str)
 		}
 	}
@@ -661,7 +668,8 @@ func searchRTT(src_server_num string, dst_server_num string) time.Duration {
 
 // RTT/2 時間待機する
 func delayRTTHalf(rtt_half time.Duration) {
-	time.Sleep(rtt_half)
+	//time.Sleep(rtt_half)
+	fmt.Println("delay")
 }
 
 // 型同期をするための関数
