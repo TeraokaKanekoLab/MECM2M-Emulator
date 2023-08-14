@@ -36,8 +36,8 @@ python3 ${PROJECT_PATH}${DIR}/create_psnode_json.py
 # PSNode in PMNodeのconfigファイルを生成
 #python3 ${PROJECT_PATH}${DIR}/create_psnode_in_pmnode_json.py
 
-#printf "\e[1;31m \n8. CREATE EXEC FILE JSON \e[0m"
+printf "\e[1;31m \n8. CREATE EXEC FILE JSON \e[0m"
 # 実行形ファイルをまとめたconfigファイルを生成
-#python3 ${PROJECT_PATH}${DIR}/create_exec_file_json.py
+python3 ${PROJECT_PATH}${DIR}/create_exec_file_json.py
 
 printf "\n"

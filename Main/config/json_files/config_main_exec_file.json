@@ -1,9 +1,15 @@
 {
     "mec-servers": {
         "environment": {
-            "num": 1
+            "num": 2
         },
         "mec-server": [
+            {
+                "Server": "/home/rand/MECM2M-Emulator/MECServer/Server/main",
+                "VPoint": "/home/rand/MECM2M-Emulator/MECServer/VPoint/main",
+                "VSNode": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                "vmnode": "/home/rand/MECM2M-Emulator/MECServer/VMNode/main"
+            },
             {
                 "Server": "/home/rand/MECM2M-Emulator/MECServer/Server/main",
                 "VPoint": "/home/rand/MECM2M-Emulator/MECServer/VPoint/main",
@@ -28,9 +34,13 @@
     },
     "psnodes": {
         "environment": {
-            "num": 1
+            "num": 2
         },
         "psnode": [
+            {
+                "PSNode": "/home/rand/MECM2M-Emulator/PSNode/main",
+                "config-file": "/home/rand/MECM2M-Emulator/PSNode/config.json"
+            },
             {
                 "PSNode": "/home/rand/MECM2M-Emulator/PSNode/main",
                 "config-file": "/home/rand/MECM2M-Emulator/PSNode/config.json"

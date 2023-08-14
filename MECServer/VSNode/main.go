@@ -44,6 +44,7 @@ var mu sync.Mutex
 var graphDBSockAddr string
 var sensingDBSockAddr string
 var server_num string
+var data_resister_socket string
 
 func cleanup(socketFiles ...string) {
 	for _, sock := range socketFiles {
@@ -88,6 +89,8 @@ func main() {
 	graphDBSockAddr = socket_address_root + "svr_" + server_num + "_graphdb.sock"
 	sensingDBSockAddr = socket_address_root + "svr_" + server_num + "_sensingdb.sock"
 
+	data_resister_socket = "/tmp/mecm2m/data_resister_" + server_num + ".sock"
+
 	var socket_files vsnode.VSNodeSocketFiles
 
 	if err := json.Unmarshal(data, &socket_files); err != nil {
@@ -108,7 +111,7 @@ func main() {
 			bufferSensorData["MaxWind"] = newData
 		}
 	}
-	socketFiles = append(socketFiles, dataResisterSock)
+	socketFiles = append(socketFiles, data_resister_socket)
 	gids := make(chan uint64, len(socketFiles))
 	cleanup(socketFiles...)
 
@@ -149,7 +152,7 @@ func initialize(file string, gids chan uint64, wg *sync.WaitGroup) {
 			message.MyError(err, "initialize > listener.Accept")
 			break
 		}
-		if file == dataResisterSock {
+		if file == data_resister_socket {
 			go resisterSensingData(conn)
 		} else {
 			go vsnodes(conn, gid)
@@ -231,7 +234,7 @@ LOOP:
 			psnode_id := convertID(format.VNodeID_n, 63)
 			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
 			format.DestSocketAddr = psnode_socket
-			linkSrcAddr := link_socket_address_root + "closed-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
+			linkSrcAddr := link_socket_address_root + "access-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
 
 			// リンクプロセスへ転送
 			connPS, err := net.Dial(protocol, linkSrcAddr)
@@ -345,7 +348,7 @@ LOOP:
 			psnode_id := convertID(format.VNodeID_n, 63)
 			psnode_socket := socket_address_root + "psnode_" + server_num + "_" + psnode_id + ".sock"
 			format.DestSocketAddr = psnode_socket
-			linkSrcAddr := link_socket_address_root + "closed-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
+			linkSrcAddr := link_socket_address_root + "access-network_" + format.VNodeID_n + "_" + psnode_id + ".sock"
 
 			// リンクプロセスへ転送
 			connPS, err := net.Dial(protocol, linkSrcAddr)
@@ -391,9 +394,9 @@ func resisterSensingData(conn net.Conn) {
 	decoder := gob.NewDecoder(conn)
 	encoder := gob.NewEncoder(conn)
 
-	message.MyMessage("[MESSAGE] Call resister sensing data")
+	//message.MyMessage("[MESSAGE] Call resister sensing data")
 
-LOOP:
+	//LOOP:
 	for {
 		switch vsnodesCommand := syncFormatServer(decoder, encoder); vsnodesCommand.(type) {
 		case *m2mapi.DataForRegist:
@@ -406,7 +409,7 @@ LOOP:
 				message.MyError(err, "vsnode > RegisterSensingData > decoder.Decode")
 				break
 			}
-			message.MyMessage("Notification for Data Register")
+			//message.MyMessage("Notification for Data Register")
 			//message.MyReadMessage(*format)
 
 			// バッファにデータ登録
@@ -414,7 +417,7 @@ LOOP:
 			registerCapability := format.Capability
 			bufferSensorData[registerCapability] = *format
 			mu.Unlock()
-			fmt.Println("data bufferd: ", bufferSensorData[registerCapability])
+			//fmt.Println("data bufferd: ", bufferSensorData[registerCapability])
 
 			// PSNodeのセッションキーをキャッシュしていない場合，Local GraphDB にセッションキーを聞きに行く
 			if psnode_session_keys[0] == "" {
@@ -441,7 +444,7 @@ LOOP:
 				// Local GraphDB からセッションキーを受け取る
 				ms := server.RequestSessionKey{}
 				if err := decoderSessionKey.Decode(&ms); err != nil {
-					message.MyError(err, "vsnode > RegisterSesingData > decoderSessionKey.Decode")
+					message.MyError(err, "vsnode > RegisterSensingData > decoderSessionKey.Decode")
 				}
 
 				// キャッシュ情報に登録
@@ -465,9 +468,11 @@ LOOP:
 			if err := encoderDBLocal.Encode(format); err != nil {
 				message.MyError(err, "vsnode > RegisterSensingData > encoderDBLocal.Encode")
 			}
-		default:
-			fmt.Println("break LOOP")
-			break LOOP
+			/*
+				default:
+					fmt.Println("break LOOP")
+					break LOOP
+			*/
 		}
 	}
 }

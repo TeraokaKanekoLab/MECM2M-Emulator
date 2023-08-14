@@ -748,7 +748,7 @@ func m2mApi(conn net.Conn) {
 			// 受信する型はDataForRegist
 			condition_point_output := m2mapi.DataForRegist{}
 			if err := decoderVP.Decode(&condition_point_output); err != nil {
-				message.MyError(err, "m2mApi > ConditionPoint > decoderVS.Decode")
+				message.MyError(err, "m2mApi > ConditionPoint > decoderVP.Decode")
 			}
 			message.MyReadMessage(condition_point_output)
 
@@ -1327,7 +1327,7 @@ func graphDB(conn net.Conn) {
 			payload := `{"statements": [{"statement": "MATCH (pn:PNode {PNodeID: ` + pnode_id + `}) return pn.SessionKey;"}]}`
 
 			var url string
-			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_GLOBAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_GLOBAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			datas := listenServer(payload, url)
 
 			session_key := server.RequestSessionKey{}
@@ -1383,7 +1383,7 @@ func sensingDB(conn net.Conn) {
 	decoder := gob.NewDecoder(conn)
 	encoder := gob.NewEncoder(conn)
 
-	message.MyMessage("[MESSEGE] Call SensingDB thread")
+	//message.MyMessage("[MESSEGE] Call SensingDB thread")
 
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
@@ -1420,6 +1420,7 @@ func sensingDB(conn net.Conn) {
 			} else {
 				message.MyMessage("DB Connection Success")
 			}
+			DBConnection.SetMaxOpenConns(50)
 
 			var cmd string
 			table := os.Getenv("MYSQL_TABLE") + "_" + server_num
@@ -1481,6 +1482,7 @@ func sensingDB(conn net.Conn) {
 			} else {
 				message.MyMessage("DB Connection Success")
 			}
+			DBConnection.SetMaxOpenConns(50)
 
 			var cmd string
 			table := os.Getenv("MYSQL_TABLE") + "_" + server_num
@@ -1554,7 +1556,7 @@ func sensingDB(conn net.Conn) {
 				message.MyError(err, "SensingDB > RegisterSensingData > decoder.Decode")
 				break
 			}
-			message.MyReadMessage(*format)
+			//message.MyReadMessage(*format)
 
 			var PNodeID, Capability, Timestamp, PSinkID string
 			var Value, Lat, Lon float64
@@ -1575,9 +1577,10 @@ func sensingDB(conn net.Conn) {
 			defer DBConnection.Close()
 			if err := DBConnection.Ping(); err != nil {
 				message.MyError(err, "SensingDB > RegisterSensingData > DBConnection.Ping")
-			} else {
+			} /*else {
 				message.MyMessage("DB Connection Success")
-			}
+			}*/
+			//DBConnection.SetMaxOpenConns(500)
 
 			// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
 			var cmd string
@@ -1589,7 +1592,7 @@ func sensingDB(conn net.Conn) {
 				message.MyError(err, "SensingDB > RegisterSensingData > DBConnection.Prepare")
 			}
 			if _, errExec := in.Exec(PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon); errExec == nil {
-				message.MyMessage("Complete Data Registration!")
+				//message.MyMessage("Complete Data Registration!")
 			} else {
 				fmt.Println("Faild to register data", errExec)
 			}

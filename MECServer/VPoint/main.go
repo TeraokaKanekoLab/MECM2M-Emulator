@@ -324,7 +324,7 @@ LOOP:
 			Limit := format.Limit
 			Timeout := format.Timeout
 
-			// パケットフォーマット内のVPointIDを元に，そこに接続するVNodeをLocal GraphDBで検索する
+			// パケットフォーマット内のVPointIDを元に，そこに接続するVNodeをLocal GraphDBで検索する (CurrentPointVNodeと同義)
 			// なお，すでにキャッシュの情報がある場合はスルー
 			if _, ok := vnodes_cache.vnodes[VPointID_n]; !ok {
 				connDB, err := net.Dial(protocol, graphDBSockAddr)
@@ -334,7 +334,7 @@ LOOP:
 				decoderDB := gob.NewDecoder(connDB)
 				encoderDB := gob.NewEncoder(connDB)
 
-				syncFormatClient("ConditionPointVNode", decoderDB, encoderDB)
+				syncFormatClient("CurrentPointVNode", decoderDB, encoderDB)
 
 				vpoint_id := vpoint.CurrentPointVNode{
 					VPointID:   format.VPointID_n,
@@ -369,7 +369,7 @@ LOOP:
 					decoderVS := gob.NewDecoder(connVS)
 					encoderVS := gob.NewEncoder(connVS)
 
-					syncFormatClient("ConditionPoint", decoderVS, encoderVS)
+					syncFormatClient("ConditionNode", decoderVS, encoderVS)
 
 					vpoint_info_to_vnode := m2mapi.ResolveConditionNode{
 						VNodeID_n:  connectedVNodeID[index],
@@ -391,6 +391,12 @@ LOOP:
 						message.MyError(err, "vpoint > ConditionPoint > decoderVS.Decode")
 					}
 					message.MyReadMessage(subscription_data_from_vnode)
+
+					// M2M APIへ転送
+					if err := encoder.Encode(&subscription_data_from_vnode); err != nil {
+						message.MyError(err, "vpoint > ConditionPoint > encoder.Encode")
+					}
+					message.MyWriteMessage(subscription_data_from_vnode)
 				}
 			}()
 		default:
@@ -419,6 +425,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &m2mapi.ResolvePastPoint{}
 	case "CurrentPoint":
 		typeM = &m2mapi.ResolveCurrentPoint{}
+	case "ConditionPoint":
+		typeM = &m2mapi.ResolveConditionPoint{}
 	}
 	return typeM
 }
@@ -435,6 +443,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 		format.FormType = "CurrentNode"
 	case "CurrentPointVNode":
 		format.FormType = "CurrentPointVNode"
+	case "ConditionNode":
+		format.FormType = "ConditionNode"
 	}
 	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")

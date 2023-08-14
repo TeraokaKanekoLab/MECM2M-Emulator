@@ -277,7 +277,7 @@ func searchRTT(src_server_num string, dst_server_num string) time.Duration {
 		if (record[0] == src_server_num && record[1] == dst_server_num) || (record[1] == src_server_num && record[0] == dst_server_num) {
 			rtt_float, _ := strconv.ParseFloat(record[2], 64)
 			rtt_half_float := rtt_float / 2
-			rtt_half_str := strconv.FormatFloat(rtt_half_float, 'f', 2, 64) + "s"
+			rtt_half_str := strconv.FormatFloat(rtt_half_float, 'f', 2, 64) + "ms"
 			rtt_half, _ = time.ParseDuration(rtt_half_str)
 		}
 	}

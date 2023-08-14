@@ -42,6 +42,9 @@ type CurrentTime struct {
 }
 
 var currentTime CurrentTime
+var server_num string
+var time_socket string
+var data_resister_socket string
 
 func cleanup(socketFiles ...string) {
 	for _, sock := range socketFiles {
@@ -83,6 +86,14 @@ func main() {
 		message.MyError(err, "Failed to read socket file")
 	}
 
+	server_num_first_index := strings.LastIndex(socket_file_name, "_")
+	server_num_last_index := strings.LastIndex(socket_file_name, ".")
+	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
+
+	time_socket = "/tmp/mecm2m/time_" + server_num + ".sock"
+	data_resister_socket = "/tmp/mecm2m/data_resister_" + server_num + ".sock"
+	fmt.Println(time_socket)
+
 	var socket_files psnode.PSNodeSocketFiles
 
 	if err := json.Unmarshal(data, &socket_files); err != nil {
@@ -102,7 +113,7 @@ func main() {
 		fmt.Println("ctrl-c pressed!")
 		close(quit)
 		cleanup(socketFiles...)
-		cleanup(timeSock)
+		cleanup(time_socket)
 		os.Exit(0)
 	}()
 
@@ -153,13 +164,13 @@ func main() {
 		}(file, &wg)
 	}
 	wg.Wait()
-	cleanup(timeSock)
+	cleanup(time_socket)
 	defer close(gids)
 }
 
 // mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
 func timeSync(mainContext context.Context, retTime chan time.Time) {
-	listener, err := net.Listen(protocol, timeSock)
+	listener, err := net.Listen(protocol, time_socket)
 	if err != nil {
 		message.MyError(err, "timeSync > net.Listen")
 	}
@@ -365,7 +376,7 @@ func registerSensingData(file string, t time.Time) {
 
 	// VSNodeへ接続
 	// ソケットファイルは自身のソケットファイルのID部分をビット変換
-	connDB, err := net.Dial(protocol, dataResisterSock)
+	connDB, err := net.Dial(protocol, data_resister_socket)
 	if err != nil {
 		message.MyError(err, "registerSensingDB > net.Dial")
 	}

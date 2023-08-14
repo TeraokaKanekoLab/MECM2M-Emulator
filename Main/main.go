@@ -127,8 +127,6 @@ func main() {
 	processIds := []int{}
 
 	// MEC Serverフレームワークの実行
-	//mec_server_num := config.MecServers.Environment.Num
-
 	server_num := 1
 	for _, mec_server := range config.MecServers.MecServer {
 		server_exec_file := mec_server.Server
@@ -145,6 +143,7 @@ func main() {
 		} else {
 			fmt.Println(server_exec_file, " is running")
 		}
+
 		vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VPoint/socket_files/vpoint_" + strconv.Itoa(server_num) + ".json"
 		cmdVPoint := exec.Command(vpoint_exec_file, vpoint_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
 		errCmdVPoint := cmdVPoint.Start()
@@ -241,6 +240,9 @@ func main() {
 	*/
 
 	// PSNodeフレームワークの実行
+	// 1 PSNode Process / MEC Server
+
+	psnode_process_num := len(config.PsNodes.PsNode)
 	psnode_num := 1
 	for _, psnode := range config.PsNodes.PsNode {
 		psnode_exec_file := psnode.PSNode
@@ -315,7 +317,7 @@ func main() {
 	// ファイルを引数にとるようなデバイス登録を実行する関数を作る．その際，ファイルを指定する
 	// コマンドラインで待機しながら，プログラム開始からの時間を計測し配布することができない <- ticker() により解決
 	inputChan := make(chan string)
-	go ticker(inputChan)
+	go ticker(inputChan, psnode_process_num)
 
 	// シミュレータ開始前
 	reader := bufio.NewReader(os.Stdin)
@@ -376,10 +378,13 @@ func main() {
 	}
 }
 
-func ticker(inputChan chan string) {
+func ticker(inputChan chan string, psnode_process_num int) {
 	<-inputChan
 	// 時間間隔指定
-	t := time.NewTicker(data_send_interval * time.Second)
+	// センサデータ登録の時間間隔を一定の閾値を設けてランダムに設定．PSNodeごとに違う時間間隔を設けたい（未完成）
+	//rand.Seed(time.Now().UnixNano())
+	//data_send_interval := rand.Intn(10) + 1
+	t := time.NewTicker(time.Duration(data_send_interval) * time.Second)
 	defer t.Stop()
 
 	// シグナル受信用チャネル
@@ -391,26 +396,33 @@ func ticker(inputChan chan string) {
 		select {
 		case now := <-t.C:
 			// 現在時刻(now)の送信
-			conn, err := net.Dial(protocol, timeSock)
-			if err != nil {
-				message.MyError(err, "ticker > net.Dial")
-			}
-			defer conn.Close()
+			// PSNodeプロセスの数分コネクションを張る
+			go func() {
+				for i := 1; i <= psnode_process_num; i++ {
+					str_i := strconv.Itoa(i)
+					time_socket := "/tmp/mecm2m/time_" + str_i + ".sock"
+					conn, err := net.Dial(protocol, time_socket)
+					if err != nil {
+						message.MyError(err, "ticker > net.Dial")
+					}
+					defer conn.Close()
 
-			decoder := gob.NewDecoder(conn)
-			encoder := gob.NewEncoder(conn)
+					decoder := gob.NewDecoder(conn)
+					encoder := gob.NewEncoder(conn)
 
-			myTime := &message.MyTime{
-				CurrentTime: now,
-			}
-			if err := encoder.Encode(myTime); err != nil {
-				message.MyError(err, "ticker > encoder.Encode")
-			}
+					myTime := &message.MyTime{
+						CurrentTime: now,
+					}
+					if err := encoder.Encode(myTime); err != nil {
+						message.MyError(err, "ticker > encoder.Encode")
+					}
 
-			// 現在時刻を受信できたかどうかを受信
-			if err := decoder.Decode(myTime); err != nil {
-				message.MyError(err, "ticker > decoder.Decode")
-			}
+					// 現在時刻を受信できたかどうかを受信
+					if err := decoder.Decode(myTime); err != nil {
+						message.MyError(err, "ticker > decoder.Decode")
+					}
+				}
+			}()
 		// シグナルを受信した場合
 		case s := <-sig:
 			switch s {
