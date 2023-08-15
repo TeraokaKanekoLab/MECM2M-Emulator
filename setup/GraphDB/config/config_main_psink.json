@@ -1,0 +1,184 @@
+{
+    "psinks": [
+        {
+            "property-label": "PSink",
+            "relation-label": {
+                "Area": "A0:0"
+            },
+            "data-property": {
+                "Label": "PS0",
+                "PSinkID": "2305843009213693952",
+                "PSinkType": "",
+                "ServingIPv6Prefix": "7017:bae1:7f2c:f97::/64",
+                "Position": [
+                    35.5303,
+                    139.5309
+                ],
+                "Description": "PSinkPS0"
+            },
+            "object-property": [
+                {
+                    "from": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS0"
+                    },
+                    "to": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A0:0"
+                    },
+                    "type": "isInstalledIn"
+                },
+                {
+                    "from": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A0:0"
+                    },
+                    "to": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS0"
+                    },
+                    "type": "contains"
+                }
+            ]
+        },
+        {
+            "property-label": "PSink",
+            "relation-label": {
+                "Area": "A0:1"
+            },
+            "data-property": {
+                "Label": "PS1",
+                "PSinkID": "2305843009213693953",
+                "PSinkType": "",
+                "ServingIPv6Prefix": "7342:8c63:def1:6d36::/64",
+                "Position": [
+                    35.5302,
+                    139.5312
+                ],
+                "Description": "PSinkPS1"
+            },
+            "object-property": [
+                {
+                    "from": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS1"
+                    },
+                    "to": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A0:1"
+                    },
+                    "type": "isInstalledIn"
+                },
+                {
+                    "from": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A0:1"
+                    },
+                    "to": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS1"
+                    },
+                    "type": "contains"
+                }
+            ]
+        },
+        {
+            "property-label": "PSink",
+            "relation-label": {
+                "Area": "A1:0"
+            },
+            "data-property": {
+                "Label": "PS2",
+                "PSinkID": "2305843009213693954",
+                "PSinkType": "",
+                "ServingIPv6Prefix": "8b96:96ae:3d5a:896f::/64",
+                "Position": [
+                    35.5317,
+                    139.5305
+                ],
+                "Description": "PSinkPS2"
+            },
+            "object-property": [
+                {
+                    "from": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS2"
+                    },
+                    "to": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A1:0"
+                    },
+                    "type": "isInstalledIn"
+                },
+                {
+                    "from": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A1:0"
+                    },
+                    "to": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS2"
+                    },
+                    "type": "contains"
+                }
+            ]
+        },
+        {
+            "property-label": "PSink",
+            "relation-label": {
+                "Area": "A1:1"
+            },
+            "data-property": {
+                "Label": "PS3",
+                "PSinkID": "2305843009213693955",
+                "PSinkType": "",
+                "ServingIPv6Prefix": "6691:bdb1:b8fc:f7d1::/64",
+                "Position": [
+                    35.5312,
+                    139.5315
+                ],
+                "Description": "PSinkPS3"
+            },
+            "object-property": [
+                {
+                    "from": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS3"
+                    },
+                    "to": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A1:1"
+                    },
+                    "type": "isInstalledIn"
+                },
+                {
+                    "from": {
+                        "property-label": "Area",
+                        "data-property": "Label",
+                        "value": "A1:1"
+                    },
+                    "to": {
+                        "property-label": "PSink",
+                        "data-property": "Label",
+                        "value": "PS3"
+                    },
+                    "type": "contains"
+                }
+            ]
+        }
+    ]
+}
