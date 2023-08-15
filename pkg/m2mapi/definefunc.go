@@ -35,7 +35,7 @@ type ResolvePoint struct {
 	SW SquarePoint
 
 	// output
-	VPointID_n    string
+	VPointID      string
 	SocketAddress string
 
 	// etc.
@@ -44,11 +44,11 @@ type ResolvePoint struct {
 
 type ResolveNode struct {
 	// input
-	VPointID_n string
-	CapsInput  []string
+	VPointID  string
+	CapsInput []string
 
 	// output
-	VNodeID_n     string
+	VNodeID       string
 	CapOutput     string
 	SocketAddress string
 
@@ -58,7 +58,7 @@ type ResolveNode struct {
 
 type ResolvePastNode struct {
 	// input
-	VNodeID_n     string
+	VNodeID       string
 	Capability    string
 	Period        PeriodInput
 	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス

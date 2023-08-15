@@ -361,7 +361,7 @@ func m2mApi(conn net.Conn) {
 
 			// ポイント解決の実行を前提とするので，カバー領域情報のキャッシュは登録済み
 			// クラウドへリレーするかの判断
-			vpointid_n := "\\\"" + format.VPointID_n + "\\\""
+			vpointid_n := "\\\"" + format.VPointID + "\\\""
 			local_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + "localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			node_payload := `{"statements": [{"statement": "MATCH (vp: VPoint {VPointID: ` + vpointid_n + `}) RETURN COUNT(vp);"}]}`
 			node_datas := listenServer(node_payload, local_url)
@@ -1238,11 +1238,11 @@ func graphDB(conn net.Conn) {
 			for _, data := range datas {
 				dataArray := data.([]interface{})
 				point := m2mapi.ResolvePoint{}
-				point.VPointID_n = dataArray[0].(string)
+				point.VPointID = dataArray[0].(string)
 				point.SocketAddress = dataArray[1].(string)
 				flag := 0
 				for _, p := range point_output {
-					if p.VPointID_n == point.VPointID_n {
+					if p.VPointID == point.VPointID {
 						flag = 1
 					}
 				}
@@ -1268,7 +1268,7 @@ func graphDB(conn net.Conn) {
 			message.MyReadMessage(format)
 
 			var vpointid_n string
-			vpointid_n = "\\\"" + format.VPointID_n + "\\\""
+			vpointid_n = "\\\"" + format.VPointID + "\\\""
 			capabilities := format.CapsInput
 			var format_capabilities []string
 			for _, capability := range capabilities {
@@ -1290,11 +1290,11 @@ func graphDB(conn net.Conn) {
 				// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
 				//pn.CapOutput = append(pn.CapOutput, capability)
 				node.CapOutput = capability
-				node.VNodeID_n = dataArray[0].(string)
+				node.VNodeID = dataArray[0].(string)
 				node.SocketAddress = dataArray[2].(string)
 				flag := 0
 				for _, p := range node_output {
-					if p.VNodeID_n == node.VNodeID_n {
+					if p.VNodeID == node.VNodeID {
 						flag = 1
 					} /*else {
 						// CapOutputを1つにするか配列にして複数まとめられるようにするか要検討
@@ -1402,7 +1402,7 @@ func sensingDB(conn net.Conn) {
 
 			var pnode_id, cap, start, end string
 			// 入力のVNodeIDをPNodeIDに変換
-			pnode_id = convertID(format.VNodeID_n, 63)
+			pnode_id = convertID(format.VNodeID, 63)
 			cap = format.Capability
 			start = format.Period.Start
 			end = format.Period.End
@@ -1441,7 +1441,7 @@ func sensingDB(conn net.Conn) {
 					message.MyError(err, "SensingDB > PastNode > rows.Scan")
 				}
 				vnode_id := convertID(field[0], 63)
-				sd.VNodeID_n = vnode_id
+				sd.VNodeID = vnode_id
 				valFloat, _ := strconv.ParseFloat(field[3], 64)
 				val := m2mapi.Value{Capability: field[1], Time: field[2], Value: valFloat}
 				sd.Values = append(sd.Values, val)

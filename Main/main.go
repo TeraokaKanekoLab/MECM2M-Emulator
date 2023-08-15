@@ -722,18 +722,18 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(point_output)
 	case "node":
-		var VPointID_n string
+		var VPointID string
 		Caps := make([]string, len(options)-1)
 		for i, option := range options {
 			if i == 0 {
-				VPointID_n = option
+				VPointID = option
 			} else {
 				Caps[i-1] = option
 			}
 		}
 		node_input := &m2mapi.ResolveNode{
-			VPointID_n: VPointID_n,
-			CapsInput:  Caps,
+			VPointID:  VPointID,
+			CapsInput: Caps,
 		}
 		if err := encoder.Encode(node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > node > encoder.Encode")
@@ -747,14 +747,14 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(node_output)
 	case "past_node":
-		var VNodeID_n, Capability, Start, End, SocketAddress string
-		VNodeID_n = options[0]
+		var VNodeID, Capability, Start, End, SocketAddress string
+		VNodeID = options[0]
 		Capability = options[1]
 		Start = options[2]
 		End = options[3]
 		SocketAddress = options[4]
 		past_node_input := &m2mapi.ResolvePastNode{
-			VNodeID_n:     VNodeID_n,
+			VNodeID:       VNodeID,
 			Capability:    Capability,
 			Period:        m2mapi.PeriodInput{Start: Start, End: End},
 			SocketAddress: SocketAddress,
