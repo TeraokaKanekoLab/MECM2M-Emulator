@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -26,14 +27,16 @@ var global_flag bool
 func main() {
 	loadEnv()
 	port = os.Getenv("M2M_API_PORT")
+	ip_address := os.Getenv("IP_ADDRESS")
 	graphdb_url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 	graphdb_url_global = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + os.Getenv("CLOUD_SERVER_IP_ADDRESS") + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 
 	http.HandleFunc("/m2mapi/point", resolvePoint)
 	http.HandleFunc("/m2mapi/node", resolveNode)
 	http.HandleFunc("/m2mapi/data/past/node", resolvePastNode)
+	http.HandleFunc("/m2mapi/data/current/node", resolveCurrentNode)
 
-	log.Printf("Connect to http://%s:%s/ for M2M API", "192.168.1.1", port)
+	log.Printf("Connect to http://%s:%s/ for M2M API", ip_address, port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
@@ -103,6 +106,28 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
+	// POST リクエストのみを受信する
+	if r.Method == http.MethodPost {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "resolveCurrentNode: Error reading request body", http.StatusInternalServerError)
+			return
+		}
+		inputFormat := &m2mapi.ResolveCurrentNode{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "resolveCurrentNode: Error missmatching packet format", http.StatusInternalServerError)
+		}
+
+		// VNodeへリクエスト転送
+		results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.Capability, inputFormat.SocketAddress)
+
+		fmt.Fprintf(w, "%v\n", results)
+	} else {
+		http.Error(w, "resolveCurrentNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+	}
+}
+
 func resolvePointFunction(sw, ne m2mapi.SquarePoint) []m2mapi.ResolvePoint {
 	// エッジサーバのカバー領域をもとに，検索範囲が少しでもカバー領域から外れていればクラウドサーバのDBへ検索
 	// そうでなければ，通常通りローカルのDBへ検索
@@ -132,7 +157,7 @@ func resolvePointFunction(sw, ne m2mapi.SquarePoint) []m2mapi.ResolvePoint {
 	defer resp.Body.Close()
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
-	values := BodyGraphQL(byteArray)
+	values := bodyGraphDB(byteArray)
 
 	var row_data interface{}
 	results := []m2mapi.ResolvePoint{}
@@ -188,7 +213,7 @@ func resolveNodeFunction(vpoint_id string, caps []string) []m2mapi.ResolveNode {
 	defer resp.Body.Close()
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
-	values := BodyGraphQL(byteArray)
+	values := bodyGraphDB(byteArray)
 
 	var row_data interface{}
 	results := []m2mapi.ResolveNode{}
@@ -216,18 +241,74 @@ func resolveNodeFunction(vpoint_id string, caps []string) []m2mapi.ResolveNode {
 }
 
 func resolvePastNodeFunction(vnode_id, capability, socket_address string, period m2mapi.PeriodInput) m2mapi.ResolvePastNode {
-	test := m2mapi.ResolvePastNode{}
-	return test
+	null_data := m2mapi.ResolvePastNode{VNodeID: "NULL"}
+
+	request_data := m2mapi.ResolvePastNode{
+		VNodeID:    vnode_id,
+		Capability: capability,
+		Period:     m2mapi.PeriodInput{Start: period.Start, End: period.End},
+	}
+	transmit_data, err := json.Marshal(request_data)
+	if err != nil {
+		fmt.Println("Error marshalling data: ", err)
+		return null_data
+	}
+	transmit_url := "http://" + socket_address + "/primapi/data/past/node"
+	response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return null_data
+	}
+	defer response_data.Body.Close()
+
+	byteArray, _ := ioutil.ReadAll(response_data.Body)
+	var results m2mapi.ResolvePastNode
+	if err = json.Unmarshal(byteArray, &results); err != nil {
+		fmt.Println("Error: ", err)
+		return null_data
+	}
+
+	return results
 }
 
-func BodyGraphQL(byteArray []byte) []interface{} {
+func resolveCurrentNodeFunction(vnode_id, capability, socket_address string) m2mapi.ResolveCurrentNode {
+	null_data := m2mapi.ResolveCurrentNode{VNodeID: "NULL"}
+
+	request_data := m2mapi.ResolveCurrentNode{
+		VNodeID:    vnode_id,
+		Capability: capability,
+	}
+	transmit_data, err := json.Marshal(request_data)
+	if err != nil {
+		fmt.Println("Error marshalling data: ", err)
+		return null_data
+	}
+	transmit_url := "http://" + socket_address + "/primapi/data/current/node"
+	response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return null_data
+	}
+	defer response_data.Body.Close()
+
+	byteArray, _ := ioutil.ReadAll(response_data.Body)
+	var results m2mapi.ResolveCurrentNode
+	if err = json.Unmarshal(byteArray, &results); err != nil {
+		fmt.Println("Error: ", err)
+		return null_data
+	}
+
+	return results
+}
+
+func bodyGraphDB(byteArray []byte) []interface{} {
 	var jsonBody map[string]interface{}
 	if err := json.Unmarshal(byteArray, &jsonBody); err != nil {
-		fmt.Printf("failed to unmarchal: %s", err)
+		message.MyError(err, "bodyGraphDB > json.Unmarshal")
 		return nil
 	}
 	var values []interface{}
-	for k1, v1 := range jsonBody {
+	for _, v1 := range jsonBody {
 		switch t1 := v1.(type) {
 		case []interface{}:
 			for _, v2 := range v1.([]interface{}) {
@@ -244,10 +325,28 @@ func BodyGraphQL(byteArray []byte) []interface{} {
 				}
 			}
 		default:
-			fmt.Println("k1(default)", k1, ":v1(default): ", v1)
+			fmt.Println("Format Assertion False")
 		}
 	}
 	return values
+}
+
+func Decode(byteArray []byte) (*m2mapi.ResolvePastNode, error) {
+	buf := bytes.NewReader(byteArray)
+
+	var size int32
+	if err := binary.Read(buf, binary.LittleEndian, &size); err != nil {
+		return nil, err
+	}
+
+	values := make([]int32, size)
+	for i := int32(0); i < size; i++ {
+		if err := binary.Read(buf, binary.LittleEndian, &values[i]); err != nil {
+			return nil, err
+		}
+	}
+
+	return &m2mapi.ResolvePastNode{}, nil
 }
 
 func loadEnv() {

@@ -136,6 +136,15 @@ PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
 psnode_sock_num = 0
 """
 
+# VSNode/initial_environment.json の初期化
+vsnode_dir_path = os.getenv("PROJECT_PATH") + "/VSNode/"
+initial_environment_file = vsnode_dir_path + "initial_environment.json"
+port_array = {
+    "ports": []
+}
+with open(initial_environment_file, 'w') as file:
+    json.dump(port_array, file, indent=4)
+
 # 左下からスタートし，右へ進んでいく
 # 端まで到達したら一段上へ
 while neLat <= MAX_LAT:
@@ -313,6 +322,14 @@ while neLat <= MAX_LAT:
                         vsnode_socket_file_num[server_num-1] += 1
                     """
 
+                    # VSNode/initial_environment.json に初期環境に配置されるVSNodeのポート番号を格納
+                    initial_environment_file = vsnode_dir_path + "initial_environment.json"
+                    with open(initial_environment_file, 'r') as file:
+                        ports_data = json.load(file)
+                    ports_data["ports"].append(port)
+                    with open(initial_environment_file, 'w') as file:
+                        json.dump(ports_data, file, indent=4)
+
                     id_index += 1
                     j += 1
                 psink_index += 1
@@ -486,6 +503,14 @@ while neLat <= MAX_LAT:
                         
                         vsnode_socket_file_num[server_num-1] += 1
                     """
+
+                    # VSNode/initial_environment.json に初期環境に配置されるVSNodeのポート番号を格納
+                    initial_environment_file = vsnode_dir_path + "initial_environment.json"
+                    with open(initial_environment_file, 'r') as file:
+                        ports_data = json.load(file)
+                    ports_data["ports"].append(port)
+                    with open(initial_environment_file, 'w') as file:
+                        json.dump(ports_data, file, indent=4)
 
                     id_index += 1
                     j += 1

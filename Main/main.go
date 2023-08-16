@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 	"encoding/gob"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
@@ -83,10 +81,9 @@ func main() {
 		fmt.Println("There is no ~/.env file")
 	}
 
-	// 1. 各インスタンスの登録・socketファイルの準備
-	// config/register_for_neo4jの実行
-
-	err := filepath.Walk("./config/register_for_neo4j", func(path string, info os.FileInfo, err error) error {
+	// 1. 初期環境の登録．GraphDBにデータ登録
+	graphdb_register_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/register"
+	err := filepath.Walk(graphdb_register_path, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -109,174 +106,68 @@ func main() {
 	}
 
 	// 2. 各プロセスファイルの実行
-	// 実行系ファイルをまとめたconfigファイルを読み込む
-
-	config_exec_file := "./config/json_files/config_main_exec_file.json"
-	file, err := ioutil.ReadFile(config_exec_file)
-	if err != nil {
-		message.MyError(err, "Failed to read config file for exec file")
-	}
-
-	var config Config
-
-	if err := json.Unmarshal(file, &config); err != nil {
-		message.MyError(err, "Failed to unmarshal json")
-	}
-
-	// 各プロセスのプロセス番号を配列に格納しておくことで，Mainプロセスを抜けるときに，まとめておいたプロセス番号のプロセスを一斉削除できる
+	// 各プロセスのPIDを格納
 	processIds := []int{}
 
-	// MEC Serverフレームワークの実行
-	server_num := 1
-	for _, mec_server := range config.MecServers.MecServer {
-		server_exec_file := mec_server.Server
-		vpoint_exec_file := mec_server.VPoint
-		vsnode_exec_file := mec_server.VSNode
-		//vmnode_exec_file := mec_server.VMNode
-		fmt.Println("----------")
-
-		server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/Server/socket_files/server_" + strconv.Itoa(server_num) + ".json"
-		cmdServer := exec.Command(server_exec_file, server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-		errCmdServer := cmdServer.Start()
-		if errCmdServer != nil {
-			message.MyError(errCmdServer, "exec.Command > MEC Server > Start")
-		} else {
-			fmt.Println(server_exec_file, " is running")
-		}
-
-		vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VPoint/socket_files/vpoint_" + strconv.Itoa(server_num) + ".json"
-		cmdVPoint := exec.Command(vpoint_exec_file, vpoint_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-		errCmdVPoint := cmdVPoint.Start()
-		if errCmdVPoint != nil {
-			message.MyError(errCmdVPoint, "exec.Command > MEC VPoint > Start")
-		} else {
-			fmt.Println(vpoint_exec_file, " is running")
-		}
-
-		vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/MECServer/VSNode/socket_files/vsnode_" + strconv.Itoa(server_num) + ".json"
-		cmdVSNode := exec.Command(vsnode_exec_file, vsnode_path) // 2023-05-06 ソケットファイルの指定が必要 (フルパス)
-		errCmdVSNode := cmdVSNode.Start()
-		if errCmdVSNode != nil {
-			message.MyError(errCmdVSNode, "exec.Command > MEC VSNode > Start")
-		} else {
-			fmt.Println(vsnode_exec_file, " is running")
-		}
-
-		/*
-			cmdVMNode := exec.Command(vmnode_exec_file)
-			errCmdVMNode := cmdVMNode.Start()
-			if errCmdVMNode != nil {
-				message.MyError(err, "exec.Command > MEC VMNode > Start")
-			} else {
-				fmt.Println(vmnode_exec_file, " is running")
-			}
-		*/
-
-		processIds = append(processIds, cmdServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid)
-		server_num++
-	}
-
-	// Cloud Serverの実行
-	// Cloud Serverは1つとしている
+	// 2-1. M2M API の実行
 	fmt.Println("----------")
-	cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/socket_files/server_0.json"
-	cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/main"
-	cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-	errCmdCloudServer := cmdCloudServer.Start()
-	if errCmdCloudServer != nil {
-		message.MyError(errCmdCloudServer, "exec.Command > Cloud Server > Start")
+	m2m_api_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/M2MAPI/main"
+	cmdM2MAPI := exec.Command(m2m_api_path)
+	errCmdM2MAPI := cmdM2MAPI.Start()
+	if errCmdM2MAPI != nil {
+		message.MyError(errCmdM2MAPI, "exec.Command > M2M API > Start")
 	} else {
-		fmt.Println(cloud_server_exec_file, " is running")
+		fmt.Println("M2M API is running")
 	}
-	processIds = append(processIds, cmdCloudServer.Process.Pid)
+	processIds = append(processIds, cmdM2MAPI.Process.Pid)
 
-	// PMNodeフレームワークの実行
-	//pmnode_num := config.PmNodes.Environment.Num
-	/*
-		for _, pmnode := range config.PmNodes.PmNode {
-			mserver_exec_file := pmnode.MServer
-			vpoint_exec_file := pmnode.VPoint
-			vsnode_exec_file := pmnode.VSNode
-			psnode_exec_file := pmnode.PSNode
-			mserver_config_file := pmnode.MServerConfigFile
-			fmt.Println("----------")
+	// 2-2. Local Manager の実行
 
-			cmdMServer := exec.Command(mserver_exec_file)
-			errCmdMServer := cmdMServer.Start()
-			if errCmdMServer != nil {
-				message.MyError(err, "exec.Command > PMNode MServer > Start")
-			} else {
-				fmt.Println(mserver_exec_file, " is running")
-			}
+	// 2-3. Local AAA の実行
 
-			cmdVPoint := exec.Command(vpoint_exec_file)
-			errCmdVPoint := cmdVPoint.Start()
-			if errCmdVPoint != nil {
-				message.MyError(err, "exec.Command > PMNode VPoint > Start")
-			} else {
-				fmt.Println(vpoint_exec_file, " is running")
-			}
+	// 2-4. Local Repository の実行
 
-			cmdVSNode := exec.Command(vsnode_exec_file)
-			errCmdVSNode := cmdVSNode.Start()
-			if errCmdVSNode != nil {
-				message.MyError(err, "exec.Command > PMNode VSNode > Start")
-			} else {
-				fmt.Println(vsnode_exec_file, " is running")
-			}
-
-			cmdPSNode := exec.Command(psnode_exec_file)
-			errCmdPSNode := cmdPSNode.Start()
-			if errCmdPSNode != nil {
-				message.MyError(err, "exec.Command > PMNode PSNode > Start")
-			} else {
-				fmt.Println(psnode_exec_file, " is running")
-			}
-
-			fmt.Println("MServer Config File: ", mserver_config_file)
-
-			processIds = append(processIds, cmdMServer.Process.Pid, cmdVPoint.Process.Pid, cmdVSNode.Process.Pid, cmdPSNode.Process.Pid)
-		}
-	*/
-
-	// PSNodeフレームワークの実行
-	// 1 PSNode Process / MEC Server
-
-	psnode_process_num := len(config.PsNodes.PsNode)
-	psnode_num := 1
-	for _, psnode := range config.PsNodes.PsNode {
-		psnode_exec_file := psnode.PSNode
-		config_file := psnode.ConfigFile
-		fmt.Println("----------")
-
-		psnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/PSNode/socket_files/psnode_" + strconv.Itoa(psnode_num) + ".json"
-		cmdPSNode := exec.Command(psnode_exec_file, psnode_path)
-		errCmdPSNode := cmdPSNode.Start()
-		if errCmdPSNode != nil {
-			message.MyError(errCmdPSNode, "exec.Command > PSNode > Start")
-		} else {
-			fmt.Println(psnode_exec_file, " is running")
-		}
-
-		fmt.Println("PSNode Config File: ", config_file)
-
-		processIds = append(processIds, cmdPSNode.Process.Pid)
-		psnode_num++
-	}
-	fmt.Println("Process IDs: ", processIds)
-
-	// 3. 通信リンクプロセスの実行
-	internet_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/main"
-	cmdInternet := exec.Command(internet_link_process_exec_file)
-	errCmdInternet := cmdInternet.Start()
-	if errCmdInternet != nil {
-		message.MyError(errCmdInternet, "exec.Command > Internet > Start")
+	// 2-5. VPoint の実行
+	fmt.Println("----------")
+	vpoint_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/VPoint/main"
+	cmdVPoint := exec.Command(vpoint_path)
+	errCmdVPoint := cmdVPoint.Start()
+	if errCmdVPoint != nil {
+		message.MyError(errCmdVPoint, "exec.Command > VPoint > Start")
 	} else {
-		fmt.Println(internet_link_process_exec_file, " is running")
+		fmt.Println("VPoint is running")
 	}
-	processIds = append(processIds, cmdInternet.Process.Pid)
-	fmt.Println("Internet Link Process pid: ", cmdInternet.Process.Pid)
+	processIds = append(processIds, cmdVPoint.Process.Pid)
 
+	// 2-6. VSNode の実行
+	fmt.Println("----------")
+	vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/VSNode/main"
+	cmdVSNode := exec.Command(vsnode_path)
+	errCmdVSNode := cmdVSNode.Start()
+	if errCmdVSNode != nil {
+		message.MyError(errCmdVSNode, "exec.Command > VSNode > Start")
+	} else {
+		fmt.Println("VSNode is running")
+	}
+	processIds = append(processIds, cmdVSNode.Process.Pid)
+
+	// 2-7. VMNodeH の実行
+
+	// 2-8. VMNodeF の実行
+
+	// 2-9. PSNode の実行
+	fmt.Println("----------")
+	psnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/PSNode/main"
+	cmdPSNode := exec.Command(psnode_path)
+	errCmdPSNode := cmdPSNode.Start()
+	if errCmdPSNode != nil {
+		message.MyError(errCmdPSNode, "exec.Command > PSNode > Start")
+	} else {
+		fmt.Println("PSNode is running")
+	}
+	processIds = append(processIds, cmdPSNode.Process.Pid)
+
+	// 3. 物理デバイス - 仮想モジュール間の通信リンクプロセスの実行
 	access_network_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/AccessNetwork/main"
 	access_network_link_process_dir := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/AccessNetwork"
 	err = filepath.Walk(access_network_link_process_dir, func(path string, info os.FileInfo, err error) error {
@@ -314,9 +205,9 @@ func main() {
 
 	// main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
 
-	// ファイルを引数にとるようなデバイス登録を実行する関数を作る．その際，ファイルを指定する
-	// コマンドラインで待機しながら，プログラム開始からの時間を計測し配布することができない <- ticker() により解決
 	inputChan := make(chan string)
+	psnode_process_num := 1
+	// 物理デバイスが定期的にセンサデータ登録するための時刻配布
 	go ticker(inputChan, psnode_process_num)
 
 	// シミュレータ開始前
@@ -795,12 +686,12 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(past_point_output)
 	case "current_node":
-		var VNodeID_n, Capability, SocketAddress string
-		VNodeID_n = options[0]
+		var VNodeID, Capability, SocketAddress string
+		VNodeID = options[0]
 		Capability = options[1]
 		SocketAddress = options[2]
 		current_node_input := &m2mapi.ResolveCurrentNode{
-			VNodeID_n:     VNodeID_n,
+			VNodeID:       VNodeID,
 			Capability:    Capability,
 			SocketAddress: SocketAddress,
 		}

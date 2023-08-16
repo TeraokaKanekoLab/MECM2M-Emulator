@@ -58,10 +58,10 @@ type ResolveNode struct {
 
 type ResolvePastNode struct {
 	// input
-	VNodeID       string
-	Capability    string
-	Period        PeriodInput
-	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
+	VNodeID       string      //`json:"vnode_id"`
+	Capability    string      //`json:"capability"`
+	Period        PeriodInput //`json:"period"`
+	SocketAddress string      //`json:"socket_address"` // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
 	//VNodeID_n 	string (dup)
@@ -87,7 +87,7 @@ type ResolvePastPoint struct {
 
 type ResolveCurrentNode struct {
 	// input
-	VNodeID_n     string
+	VNodeID       string
 	Capability    string
 	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
 

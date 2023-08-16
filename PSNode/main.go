@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"math/big"
 	"math/rand"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
-	"mecm2m-Emulator/pkg/psnode"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -38,12 +39,14 @@ type Format struct {
 	FormType string
 }
 
+type Ports struct {
+	Port []int `json:"ports"`
+}
+
 type CurrentTime struct {
 }
 
 var currentTime CurrentTime
-var server_num string
-var time_socket string
 var data_resister_socket string
 
 func cleanup(socketFiles ...string) {
@@ -56,16 +59,34 @@ func cleanup(socketFiles ...string) {
 	}
 }
 
+func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+
+	} else {
+		http.Error(w, "resolveCurrentNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+	}
+}
+
+func startServer(port int) {
+	mux := http.NewServeMux() // 新しいServeMuxインスタンスを作成
+	mux.HandleFunc("/devapi/data/current/node", resolveCurrentNode)
+
+	address := fmt.Sprintf(":%d", port)
+	log.Printf("Starting server on %s", address)
+
+	server := &http.Server{
+		Addr:    address,
+		Handler: mux,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Error starting server on port %d: %v", port, err)
+	}
+}
+
 func main() {
 	loadEnv()
-	//configファイルを読み込んで，センサデータ送信用のデータ，センサデータ登録用のデータを読み込む
 	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-
-	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
-	if len(os.Args) != 2 {
-		fmt.Println("There is no socket files")
-		os.Exit(1)
-	}
 
 	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
 	signals_from_main := make(chan os.Signal, 1)
@@ -80,40 +101,12 @@ func main() {
 	// 受信したシグナルを表示
 	fmt.Printf("Received signal: %v\n", sig)
 
-	socket_file_name := os.Args[1]
-	data, err := ioutil.ReadFile(socket_file_name)
-	if err != nil {
-		message.MyError(err, "Failed to read socket file")
-	}
-
-	server_num_first_index := strings.LastIndex(socket_file_name, "_")
-	server_num_last_index := strings.LastIndex(socket_file_name, ".")
-	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
-
-	time_socket = "/tmp/mecm2m/time_" + server_num + ".sock"
-	data_resister_socket = "/tmp/mecm2m/data_resister_" + server_num + ".sock"
-	fmt.Println(time_socket)
-
-	var socket_files psnode.PSNodeSocketFiles
-
-	if err := json.Unmarshal(data, &socket_files); err != nil {
-		message.MyError(err, "Failed to unmarshal json")
-	}
-
-	// PSNodeをいくつか用意しておく
-	var socketFiles []string
-	socketFiles = append(socketFiles, socket_files.PSNodes...)
-	gids := make(chan uint64, len(socketFiles))
-	cleanup(socketFiles...)
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	go func() {
 		<-quit
 		fmt.Println("ctrl-c pressed!")
 		close(quit)
-		cleanup(socketFiles...)
-		cleanup(time_socket)
 		os.Exit(0)
 	}()
 
@@ -140,37 +133,42 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	for _, file := range socketFiles {
-		wg.Add(1)
-		go func(file string, wg *sync.WaitGroup) {
-			defer wg.Done()
-			gids <- getGID()
-			gid := getGID()
-			fmt.Printf("GOROUTINE ID (%s): %d\n", file, gid)
-			listener, err := net.Listen(protocol, file)
-			if err != nil {
-				message.MyError(err, "main > net.Listen")
-			}
-			message.MyMessage("> [Initialize] Socket file launched: " + file)
-
-			for {
-				conn, err := listener.Accept()
-				if err != nil {
-					message.MyError(err, "main > listener.Accept")
-					break
-				}
-				go psnodes(conn, gid)
-			}
-		}(file, &wg)
+	// 初期環境構築時に作成したPSNodeのポート分だけ必要
+	initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/PSNode/initial_environment.json"
+	file, err := os.Open(initial_environment_file)
+	if err != nil {
+		fmt.Println("Error opening file: ", err)
+		return
 	}
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading file: ", err)
+		return
+	}
+
+	var ports Ports
+	err = json.Unmarshal(data, &ports)
+	if err != nil {
+		fmt.Println("Error decoding JSON: ", err)
+		return
+	}
+
+	for _, port := range ports.Port {
+		wg.Add(1)
+		go func(port int) {
+			defer wg.Done()
+			startServer(port)
+		}(port)
+	}
+
 	wg.Wait()
-	cleanup(time_socket)
-	defer close(gids)
 }
 
 // mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
 func timeSync(mainContext context.Context, retTime chan time.Time) {
-	listener, err := net.Listen(protocol, time_socket)
+	listener, err := net.Listen(protocol, timeSock)
 	if err != nil {
 		message.MyError(err, "timeSync > net.Listen")
 	}
@@ -245,7 +243,7 @@ func psnodes(conn net.Conn, gid uint64) {
 			currentTime := time.Now()
 			//configファイルからセンサデータ読み込む
 			current_node_output := m2mapi.ResolveCurrentNode{}
-			current_node_output.VNodeID_n = format.VNodeID_n
+			current_node_output.VNodeID = format.VNodeID
 			rand.Seed(time.Now().UnixNano())
 			value_min := 30.0
 			value_max := 40.0
