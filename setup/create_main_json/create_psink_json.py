@@ -11,53 +11,33 @@ import glob
 ## Data Property
 ## * PSinkID
 ## * PSink Type (デバイスとクラスの対応づけ)
-## * VPoint Module ID (VPoint moduleの実行系ファイル)
-## * Socket Address (VPoint のソケットファイル，本来はIP:Port)
-## * Serving IPv6 Prefix (PNode の接続用subnet)
+## * Socket Address (PSinkへのアクセス用)
+## * Serving IPv6 Prefix (デバイスの接続用subnet)
+## * MEC IPv6 Address (MEC ServerのIPv6アドレス)
 ## * Lat Lon
 ## * Description 
 # ---------------
 ## Object Property
-## * contains (Area->PSink)
-## * isInstalledIn (PSink->Area)
-
-# VPoint
-# ---------------
-## Data Property
-## * VPointID
-## * Socket Address (VPoint のソケットファイル，本来はIP:Port)
-## * Software Module (VPoint moduleの実行系ファイル)
-## * Description
-# ---------------
-## Object Property
-## * isVirtualizedBy (PSink->VPoint)
-## * isPhysicalizedBy (VPoint->PSink)
-
-# 注意事項
-# * PSink-VPointは一対一対応
+## * contains (PArea->PSink)
+## * isInstalledIn (PSink->PArea)
 
 load_dotenv()
-json_file_path = os.getenv("PROJECT_PATH") + "/Main/config/json_files"
+json_file_path = os.getenv("PROJECT_PATH") + "/setup/GraphDB/config/"
 
-# VPOINT_BASE_PORT
 # PSINK_NUM_PER_AREA
 # MIN_LAT, MAX_LAT, MIN_LON, MAX_LON
 # AREA_WIDTH
-# EDGE_SERVER_NUM
-VPOINT_BASE_PORT = int(os.getenv("VPOINT_BASE_PORT"))
+# IP_ADDRESS
 PSINK_NUM_PER_AREA = float(os.getenv("PSINK_NUM_PER_AREA"))
 MIN_LAT = float(os.getenv("MIN_LAT"))
 MAX_LAT = float(os.getenv("MAX_LAT"))
 MIN_LON = float(os.getenv("MIN_LON"))
 MAX_LON = float(os.getenv("MAX_LON"))
 AREA_WIDTH = float(os.getenv("AREA_WIDTH"))
-EDGE_SERVER_NUM = int(os.getenv("EDGE_SERVER_NUM"))
+IP_ADDRESS = os.getenv("IP_ADDRESS")
 
 lineStep = AREA_WIDTH
 forint = 1000
-
-area_num = math.ceil(((MAX_LAT-MIN_LAT)/AREA_WIDTH)*((MAX_LON-MIN_LON)/AREA_WIDTH))
-area_num_per_server = int(area_num / EDGE_SERVER_NUM)
 
 data = {"psinks":[]}
 
@@ -69,41 +49,8 @@ neLat = swLat + lineStep
 label_lat = 0
 label_lon = 0
 
-# server_counter
-server_counter = 0
-server_num = 1
-
-# ServerごとのPSinkの番号
-psink_num = 0
-
-# VPointのPort番号
-port_num = 0
-
 # ID用のindex
-id_index = 0
-
-# ソケットファイル群ファイルのリセット
-socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/VPoint/socket_files"
-if not os.path.exists(socket_files_dir_path):
-    os.makedirs(socket_files_dir_path)
-else:
-    files = glob.glob(f"{socket_files_dir_path}/*")
-    for file in files:
-        if os.path.isfile(file):
-            os.remove(file)
-
-# エッジサーバ分だけソケットファイルを作成
-for i in range(EDGE_SERVER_NUM):
-    full_path = socket_files_dir_path + "/vpoint_" + str(i+1) + ".json"
-    socket_format_json = {
-        "vpoints": []
-    }
-    with open(full_path, 'w') as f:
-        json.dump(socket_format_json, f, indent=4)
-
-# エッジサーバ数を長さとする，作成するソケットファイル数を数える配列
-socket_file_num = [0] * EDGE_SERVER_NUM
-VPOINT_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
+psink_id_index = 0
 
 # 左下からスタートし，右へ進んでいく
 # 端まで到達したら一段上へ
@@ -112,256 +59,136 @@ while neLat <= MAX_LAT:
     neLon = swLon + lineStep
     label_lon = 0
     while neLon <= MAX_LON:
-        label_area = "A" + str(label_lat) + ":" + str(label_lon)
-        server_counter += 1
-        if server_num > EDGE_SERVER_NUM:
-            server_num -= 1
-        if server_counter == area_num_per_server*server_num+1 and server_num < EDGE_SERVER_NUM:
-            psink_num = 0
-            server_num += 1
-        if (area_num_per_server*(server_num-1)) <= server_counter < (area_num_per_server*server_num):
-            label_server = "S" + str(server_num)
+        parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
         # PSINK_NUM_PER_AREA が 1以上か1より小さいかで分岐
         if PSINK_NUM_PER_AREA >= 1:
             i = 0
             while i < PSINK_NUM_PER_AREA:
-                data["psinks"].append({"psink":{}, "vpoint":{}})
+                psinks = data["psinks"]
 
                 # PSink情報の追加
-                label_psink = "PS" + str(server_num) + ":" + str(psink_num)
-                psink_id = str(int(0b0010 << 60) + id_index)
-                vpoint_id = str(int(0b1010 << 60) + id_index)
-                vpoint_module_id = os.getenv("PROJECT_PATH") + "/MECServer/VPoint/main"
-                socket_address = "/tmp/mecm2m/vpoint_" + str(server_num) + "_" + str(vpoint_id) + ".sock"
+                psink_label = "PS" + str(psink_id_index)
+                psink_id = str(int(0b0001 << 60) + psink_id_index)
+                psink_type = "Router"
+                socket_address = ""
                 random_ipv6 = ipaddress.IPv6Address(random.randint(0, 2**128 - 1))
                 serving_ipv6_prefix = str(ipaddress.IPv6Network((random_ipv6, 64), strict=False))
+                mec_ipv6_address = IP_ADDRESS
                 psink_lat = random.uniform(swLat, neLat)
                 psink_lon = random.uniform(swLon, neLon)
+                psink_description = "Description:" + psink_label
                 psink_dict = {
                     "property-label": "PSink",
                     "relation-label": {
-                        "Server": label_server,
-                        "Area": label_area
+                        "PArea": parea_label
                     },
                     "data-property": {
-                        "Label": label_psink,
+                        "Label": psink_label,
                         "PSinkID": psink_id,
-                        "PSinkType": "",
-                        "VPointModuleID": vpoint_module_id,
+                        "PSinkType": psink_type,
                         "SocketAddress": socket_address,
                         "ServingIPv6Prefix": serving_ipv6_prefix,   # 適当なサブネットマスクを生成する
+                        "MECIPv6Address": mec_ipv6_address,
                         "Position": [round(psink_lat, 4), round(psink_lon, 4)],
-                        "Description": "PSink" + label_psink
+                        "Description": psink_description
                     },
                     "object-property": [
                         {
                             "from": {
                                 "property-label": "PSink",
                                 "data-property": "Label",
-                                "value": label_psink
+                                "value": psink_label
                             },
                             "to": {
-                                "property-label": "Area",
+                                "property-label": "PArea",
                                 "data-property": "Label",
-                                "value": label_area
+                                "value": parea_label
                             },
                             "type": "isInstalledIn"
                         },
                         {
                             "from": {
-                                "property-label": "Area",
+                                "property-label": "PArea",
                                 "data-property": "Label",
-                                "value": label_area
+                                "value": parea_label
                             },
                             "to": {
                                 "property-label": "PSink",
                                 "data-property": "Label",
-                                "value": label_psink
+                                "value": psink_label
                             },
                             "type": "contains"
                         }
                     ]
                 }
-                data["psinks"][-1]["psink"] = psink_dict
-
-                # VPoint情報の追加
-                label_vpoint = "VP" + str(server_num) + ":" + str(psink_num)
-                port = VPOINT_BASE_PORT + port_num
-                vpoint_dict = {
-                    "property-label": "VPoint",
-                    "data-property": {
-                        "Label": label_vpoint,
-                        "VPointID": vpoint_id,
-                        "SocketAddress": socket_address,
-                        "SoftwareModule": vpoint_module_id,
-                        "Description": "VPoint" + label_vpoint
-                    },
-                    "object-property": [
-                        {
-                            "from": {
-                                "property-label": "VPoint",
-                                "data-property": "Label",
-                                "value": label_vpoint
-                            },
-                            "to": {
-                                "property-label": "PSink",
-                                "data-property": "Label",
-                                "value": label_psink
-                            },
-                            "type": "isPhysicalizedBy"
-                        },
-                        {
-                            "from": {
-                                "property-label": "PSink",
-                                "data-property": "Label",
-                                "value": label_psink
-                            },
-                            "to": {
-                                "property-label": "VPoint",
-                                "data-property": "Label",
-                                "value": label_vpoint
-                            },
-                            "type": "isVirtualizedBy"
-                        }
-                    ]
-                }
-                data["psinks"][-1]["vpoint"] = vpoint_dict
-
-                # VPointのソケットファイル群ファイルをここで作成
-                if socket_file_num[server_num-1] < VPOINT_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                    full_path = socket_files_dir_path + "/vpoint_" + str(server_num) + ".json"
-                    with open(full_path, 'r') as f:
-                        socket_file_data = json.load(f)
-                    socket_file_data["vpoints"].append(socket_address)
-                    with open(full_path, 'w') as f:
-                        json.dump(socket_file_data, f, indent=4)
-                    
-                    socket_file_num[server_num-1] += 1
+                psinks.append(psink_dict)
                 
-                port_num += 1
-                psink_num += 1
-                id_index += 1
+                psink_id_index += 1
                 i += 1
         # PSINK_NUM_PER_AREA が1より小さい場合，〜〜Areaに1個PSinkを設置
         else:
             interval = int(1 / PSINK_NUM_PER_AREA)
             if label_lon % interval == 0:
-                data["psinks"].append({"psink":{}, "vpoint":{}})
+                psinks = data["psinks"]
 
                 # PSink情報の追加
-                label_psink = "PS" + str(server_num) + ":" + str(psink_num)
-                psink_id = str(int(0b0010 << 60) + id_index)
-                vpoint_id = str(int(0b1010 << 60) + id_index)
-                vpoint_module_id = os.getenv("PROJECT_PATH") + "/MECServer/VPoint/main"
-                socket_address = "/tmp/mecm2m/vpoint_" + str(server_num) + "_" + str(vpoint_id) + ".sock"
+                psink_label = "PS" + str(psink_id_index)
+                psink_id = str(int(0b0001 << 60) + psink_id_index)
+                psink_type = "Router"
+                socket_address = ""
                 random_ipv6 = ipaddress.IPv6Address(random.randint(0, 2**128 - 1))
                 serving_ipv6_prefix = str(ipaddress.IPv6Network((random_ipv6, 64), strict=False))
+                mec_ipv6_address = IP_ADDRESS
                 psink_lat = random.uniform(swLat, neLat)
                 psink_lon = random.uniform(swLon, neLon)
+                psink_description = "Description:" + psink_label
                 psink_dict = {
                     "property-label": "PSink",
                     "relation-label": {
-                        "Server": label_server,
-                        "Area": label_area
+                        "PArea": parea_label
                     },
                     "data-property": {
-                        "Label": label_psink,
+                        "Label": psink_label,
                         "PSinkID": psink_id,
-                        "PSinkType": "",
-                        "VPointModuleID": vpoint_module_id,
+                        "PSinkType": psink_type,
                         "SocketAddress": socket_address,
                         "ServingIPv6Prefix": serving_ipv6_prefix,   # 適当なサブネットマスクを生成する
+                        "MECIPv6Address": mec_ipv6_address,
                         "Position": [round(psink_lat, 4), round(psink_lon, 4)],
-                        "Description": "PSink" + label_psink
+                        "Description": psink_description
                     },
                     "object-property": [
                         {
                             "from": {
                                 "property-label": "PSink",
                                 "data-property": "Label",
-                                "value": label_psink
+                                "value": psink_label
                             },
                             "to": {
-                                "property-label": "Area",
+                                "property-label": "PArea",
                                 "data-property": "Label",
-                                "value": label_area
+                                "value": parea_label
                             },
                             "type": "isInstalledIn"
                         },
                         {
                             "from": {
-                                "property-label": "Area",
+                                "property-label": "PArea",
                                 "data-property": "Label",
-                                "value": label_area
+                                "value": parea_label
                             },
                             "to": {
                                 "property-label": "PSink",
                                 "data-property": "Label",
-                                "value": label_psink
+                                "value": psink_label
                             },
                             "type": "contains"
                         }
                     ]
                 }
-                data["psinks"][-1]["psink"] = psink_dict
-
-                # VPoint情報の追加
-                label_vpoint = "VP" + str(server_num) + ":" + str(psink_num)
-                port = VPOINT_BASE_PORT + port_num
-                vpoint_dict = {
-                    "property-label": "VPoint",
-                    "data-property": {
-                        "Label": label_vpoint,
-                        "VPointID": vpoint_id,
-                        "SocketAddress": socket_address,
-                        "SoftwareModule": vpoint_module_id,
-                        "Description": "VPoint" + label_vpoint
-                    },
-                    "object-property": [
-                        {
-                            "from": {
-                                "property-label": "VPoint",
-                                "data-property": "Label",
-                                "value": label_vpoint
-                            },
-                            "to": {
-                                "property-label": "PSink",
-                                "data-property": "Label",
-                                "value": label_psink
-                            },
-                            "type": "isPhysicalizedBy"
-                        },
-                        {
-                            "from": {
-                                "property-label": "PSink",
-                                "data-property": "Label",
-                                "value": label_psink
-                            },
-                            "to": {
-                                "property-label": "VPoint",
-                                "data-property": "Label",
-                                "value": label_vpoint
-                            },
-                            "type": "isVirtualizedBy"
-                        }
-                    ]
-                }
-                data["psinks"][-1]["vpoint"] = vpoint_dict
-
-                # VPointのソケットファイル群ファイルをここで作成
-                if socket_file_num[server_num-1] < VPOINT_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                    full_path = socket_files_dir_path + "/vpoint_" + str(server_num) + ".json"
-                    with open(full_path, 'r') as f:
-                        socket_file_data = json.load(f)
-                    socket_file_data["vpoints"].append(socket_address)
-                    with open(full_path, 'w') as f:
-                        json.dump(socket_file_data, f, indent=4)
-                    
-                    socket_file_num[server_num-1] += 1
+                psinks.append(psink_dict)
                 
-                port_num += 1
-                psink_num += 1
-                id_index += 1
+                psink_id_index += 1
         label_lon += 1
         swLon = ((swLon*forint) + (lineStep*forint)) / forint
         neLon = ((neLon*forint) + (lineStep*forint)) / forint
@@ -369,6 +196,6 @@ while neLat <= MAX_LAT:
     swLat = ((swLat*forint) + (lineStep*forint)) / forint
     neLat = ((neLat*forint) + (lineStep*forint)) / forint
 
-psink_json = json_file_path + "/config_main_psink.json"
+psink_json = json_file_path + "config_main_psink.json"
 with open(psink_json, 'w') as f:
     json.dump(data, f, indent=4)

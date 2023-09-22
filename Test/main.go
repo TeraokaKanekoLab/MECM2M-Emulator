@@ -8,7 +8,6 @@ import (
 	"mecm2m-Emulator/pkg/message"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -17,28 +16,26 @@ import (
 func main() {
 	loadEnv()
 
-	internet_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/Internet/main"
-	fmt.Println(internet_link_process_exec_file)
-	cmdInternet := exec.Command(internet_link_process_exec_file)
-	errCmdInternet := cmdInternet.Run()
-	if errCmdInternet != nil {
-		message.MyError(errCmdInternet, "exec.Command > Internet > Start")
-	} else {
-		fmt.Println(internet_link_process_exec_file, " is running")
+	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
+	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
+	psnodeJsonFile, err := os.Open(psnode_json_file_path)
+	if err != nil {
+		fmt.Println(err)
 	}
-	fmt.Println("Internet Link Process pid: ", cmdInternet.Process.Pid)
+	defer psnodeJsonFile.Close()
+	psnodeByteValue, _ := ioutil.ReadAll(psnodeJsonFile)
 
-	/*
-		cloud_server_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/socket_files/server_0.json"
-		cloud_server_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/CloudServer/Server/main"
-		cmdCloudServer := exec.Command(cloud_server_exec_file, cloud_server_path) // 2023-05-05 ソケットファイルの指定が必須 (フルパス)
-		errCmdCloudServer := cmdCloudServer.Run()
-		if errCmdCloudServer != nil {
-			message.MyError(errCmdCloudServer, "exec.Command > Cloud Server > Start")
-		} else {
-			fmt.Println(cloud_server_exec_file, " is running")
-		}
-	*/
+	var psnodeResult map[string][]interface{}
+	json.Unmarshal(psnodeByteValue, &psnodeResult)
+
+	psnodes := psnodeResult["psnodes"]
+	for _, v := range psnodes {
+		psnode_format := v.(map[string]interface{})
+		psnode := psnode_format["psnode"].(map[string]interface{})
+		psnode_data_property := psnode["data-property"].(map[string]interface{})
+		pnode_id := psnode_data_property["PNodeID"].(string)
+		fmt.Println(pnode_id)
+	}
 }
 
 func loadEnv() {

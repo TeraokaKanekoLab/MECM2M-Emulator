@@ -1,50 +1,61 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
-	"context"
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"math/big"
 	"math/rand"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/psnode"
 	"net"
+	"net/http"
 	"os"
-	"os/signal"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
 )
 
 const (
-	protocol            = "unix"
-	layout              = "2006-01-02 15:04:05"
-	timeSock            = "/tmp/mecm2m/time.sock"
-	dataResisterSock    = "/tmp/mecm2m/data_resister.sock"
-	socket_address_root = "/tmp/mecm2m/"
+	protocol                         = "unix"
+	layout                           = "2006-01-02 15:04:05"
+	timeSock                         = "/tmp/mecm2m/time.sock"
+	dataResisterSock                 = "/tmp/mecm2m/data_resister.sock"
+	socket_address_root              = "/tmp/mecm2m/"
+	link_process_socket_address_path = "/tmp/mecm2m/link-process"
 )
 
 type Format struct {
 	FormType string
 }
 
+type Ports struct {
+	Port []int `json:"ports"`
+}
+
 type CurrentTime struct {
 }
 
 var currentTime CurrentTime
-var server_num string
-var time_socket string
 var data_resister_socket string
+var mu sync.Mutex
+
+func init() {
+	// .envファイルの読み込み
+	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
+		log.Fatal(err)
+	}
+}
 
 func cleanup(socketFiles ...string) {
 	for _, sock := range socketFiles {
@@ -56,236 +67,242 @@ func cleanup(socketFiles ...string) {
 	}
 }
 
-func main() {
-	loadEnv()
-	//configファイルを読み込んで，センサデータ送信用のデータ，センサデータ登録用のデータを読み込む
-	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-
-	// コマンドライン引数にソケットファイル群をまとめたファイルをしていして，初めにそのファイルを読み込む
-	if len(os.Args) != 2 {
-		fmt.Println("There is no socket files")
-		os.Exit(1)
-	}
-
-	// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
-	signals_from_main := make(chan os.Signal, 1)
-
-	// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
-	signal.Notify(signals_from_main, syscall.SIGCONT)
-
-	// シグナルを待機
-	fmt.Println("Waiting for signal...")
-	sig := <-signals_from_main
-
-	// 受信したシグナルを表示
-	fmt.Printf("Received signal: %v\n", sig)
-
-	socket_file_name := os.Args[1]
-	data, err := ioutil.ReadFile(socket_file_name)
-	if err != nil {
-		message.MyError(err, "Failed to read socket file")
-	}
-
-	server_num_first_index := strings.LastIndex(socket_file_name, "_")
-	server_num_last_index := strings.LastIndex(socket_file_name, ".")
-	server_num = socket_file_name[server_num_first_index+1 : server_num_last_index]
-
-	time_socket = "/tmp/mecm2m/time_" + server_num + ".sock"
-	data_resister_socket = "/tmp/mecm2m/data_resister_" + server_num + ".sock"
-	fmt.Println(time_socket)
-
-	var socket_files psnode.PSNodeSocketFiles
-
-	if err := json.Unmarshal(data, &socket_files); err != nil {
-		message.MyError(err, "Failed to unmarshal json")
-	}
-
-	// PSNodeをいくつか用意しておく
-	var socketFiles []string
-	socketFiles = append(socketFiles, socket_files.PSNodes...)
-	gids := make(chan uint64, len(socketFiles))
-	cleanup(socketFiles...)
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	go func() {
-		<-quit
-		fmt.Println("ctrl-c pressed!")
-		close(quit)
-		cleanup(socketFiles...)
-		cleanup(time_socket)
-		os.Exit(0)
-	}()
-
-	//ここでmainプロセスから時刻を受信する
-	mainContext := context.Background()
-	retTime := make(chan time.Time, 1)
-	go timeSync(mainContext, retTime)
-	go func(retTime chan time.Time) {
-		for {
-			select {
-			case t := <-retTime:
-				fmt.Println("It's now... ", t)
-				//PSNodeごとに周期を変えられるようにしたい
-				for _, file := range socketFiles {
-					go registerSensingData(file, t)
-				}
-			default:
-				time.Sleep(1 * time.Millisecond)
-			}
+func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "resolveCurrentNode: Error reading request body", http.StatusInternalServerError)
+			return
 		}
-	}(retTime)
+		inputFormat := &m2mapi.ResolveDataByNode{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "resolveCurrentNode: Error missmatching packet format", http.StatusInternalServerError)
+		}
 
-	//psnodeの実行
+		rand.Seed(time.Now().UnixNano())
+		value_min := 30.0
+		value_max := 40.0
+		value_value := value_min + rand.Float64()*(value_max-value_min)
+		values := []m2mapi.Value{}
+		value := m2mapi.Value{
+			Capability: inputFormat.Capability,
+			Value:      value_value,
+			Time:       time.Now().Format(layout),
+		}
+		values = append(values, value)
+		results := m2mapi.ResolveDataByNode{
+			VNodeID: inputFormat.VNodeID,
+			Values:  values,
+		}
 
-	var wg sync.WaitGroup
+		jsonData, err := json.Marshal(results)
+		if err != nil {
+			http.Error(w, "resolveCurrentNode: Error marshaling data", http.StatusInternalServerError)
+			return
+		}
 
-	for _, file := range socketFiles {
-		wg.Add(1)
-		go func(file string, wg *sync.WaitGroup) {
-			defer wg.Done()
-			gids <- getGID()
-			gid := getGID()
-			fmt.Printf("GOROUTINE ID (%s): %d\n", file, gid)
-			listener, err := net.Listen(protocol, file)
-			if err != nil {
-				message.MyError(err, "main > net.Listen")
-			}
-			message.MyMessage("> [Initialize] Socket file launched: " + file)
-
-			for {
-				conn, err := listener.Accept()
-				if err != nil {
-					message.MyError(err, "main > listener.Accept")
-					break
-				}
-				go psnodes(conn, gid)
-			}
-		}(file, &wg)
+		fmt.Fprintf(w, "%v\n", string(jsonData))
+	} else {
+		http.Error(w, "resolveCurrentNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
-	wg.Wait()
-	cleanup(time_socket)
-	defer close(gids)
+}
+
+func actuate(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "actuate: Error reading request body", http.StatusInternalServerError)
+			return
+		}
+		inputFormat := &m2mapi.Actuate{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "actuate: Error missmatching packet format", http.StatusInternalServerError)
+		}
+
+		// アクチュエートの内容をファイルに記載したい
+		url := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/PSNode/actuate.txt"
+		file, err := os.Create(url)
+		if err != nil {
+			fmt.Println("Error creating actuate file")
+			return
+		}
+		defer file.Close()
+
+		// fileに書き込むためのWriter
+		writer := bufio.NewWriter(file)
+		mu.Lock()
+		fmt.Fprintf(writer, "Lock")
+		fmt.Fprintf(writer, "VNodeID: %v, Action: %v, Parameter: %v\n", inputFormat.VNodeID, inputFormat.Action, inputFormat.Parameter)
+		fmt.Println(writer, "Unlock")
+		err = writer.Flush()
+		mu.Unlock()
+
+		status := true
+		if err != nil {
+			status = false
+		}
+		results := m2mapi.Actuate{
+			Status: status,
+		}
+
+		jsonData, err := json.Marshal(results)
+		if err != nil {
+			http.Error(w, "actuate: Error marshaling data", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprintf(w, "%v\n", string(jsonData))
+	} else {
+		http.Error(w, "actuate: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+	}
 }
 
 // mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
-func timeSync(mainContext context.Context, retTime chan time.Time) {
-	listener, err := net.Listen(protocol, time_socket)
-	if err != nil {
-		message.MyError(err, "timeSync > net.Listen")
-	}
-
-	for {
-		conn, err := listener.Accept()
+func timeSync(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			message.MyError(err, "timeSync > listener.Accept")
-			break
+			http.Error(w, "timeSync: Error reading request body", http.StatusInternalServerError)
+			return
 		}
-		defer conn.Close()
+		inputFormat := &psnode.TimeSync{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "timeSync: Error missmatching packet format", http.StatusInternalServerError)
+		}
 
-		decoderTime := gob.NewDecoder(conn)
-		encoderTime := gob.NewEncoder(conn)
-		message.MyMessage("[MESSAGE] Call timeSync thread")
+		// VSNode へセンサデータを送信するために，リンクプロセスを噛ます
+		pnode_id := trimVSNodePort(r.Host)
 
-		go func(retTime chan time.Time) {
-			for {
-				//時刻型を持つ変数の定義
-				myTime := &message.MyTime{}
-				if err := decoderTime.Decode(myTime); err != nil {
-					if err == io.EOF {
-						break
-					}
-					message.MyError(err, "timeSync > decoderTime.Decode")
-					break
-				}
+		link_process_socket_address := link_process_socket_address_path + "/access-network_" + pnode_id + ".sock"
+		connLinkProcess, err := net.Dial(protocol, link_process_socket_address)
+		if err != nil {
+			http.Error(w, "timeSync: net.Dial Error", http.StatusInternalServerError)
+		}
+		decoderLinkProcess := gob.NewDecoder(connLinkProcess)
+		encoderLinkProcess := gob.NewEncoder(connLinkProcess)
 
-				getTimeContext := context.WithValue(mainContext, currentTime, myTime.CurrentTime)
-				var t time.Time
-				switch getTimeContext.Value(currentTime).(type) {
-				case time.Time:
-					myTime.Ack = true
-					t = getTimeContext.Value(currentTime).(time.Time)
-				default:
-					myTime.Ack = false
-				}
-				if err := encoderTime.Encode(myTime); err != nil {
-					message.MyError(err, "timeSync > encoderTime.Encode")
-					break
-				}
-				retTime <- t
-			}
-		}(retTime)
+		syncFormatClient("RegisterSensingData", decoderLinkProcess, encoderLinkProcess)
+
+		// ランダムなセンサデータを生成する関数
+		sensordata := generateSensordata(inputFormat)
+		if err := encoderLinkProcess.Encode(&sensordata); err != nil {
+			http.Error(w, "timeSync: encoderLinkProcess.Encode Error", http.StatusInternalServerError)
+		}
+
+	} else {
+		http.Error(w, "timeSync: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
 }
 
-// センサデータ送信，センサデータ登録
-func psnodes(conn net.Conn, gid uint64) {
-	defer conn.Close()
+func startServer(port int) {
+	mux := http.NewServeMux() // 新しいServeMuxインスタンスを作成
+	mux.HandleFunc("/devapi/data/current/node", resolveCurrentNode)
+	mux.HandleFunc("/devapi/actuate", actuate)
+	mux.HandleFunc("/time", timeSync)
 
-	decoder := gob.NewDecoder(conn)
-	encoder := gob.NewEncoder(conn)
+	address := fmt.Sprintf(":%d", port)
+	log.Printf("Starting server on %s", address)
 
-	message.MyMessage("[MESSAGE] Call PSNode thread(" + strconv.FormatUint(gid, 10) + ")")
-
-	for {
-		//VSNodeとやりとりをする初めに型の同期をとる
-		switch psnodesCommand := syncFormatServer(decoder, encoder); psnodesCommand.(type) {
-		case *m2mapi.ResolveCurrentNode:
-			format := psnodesCommand.(*m2mapi.ResolveCurrentNode)
-			if err := decoder.Decode(format); err != nil {
-				if err == io.EOF {
-					message.MyMessage("=== closed by client")
-					break
-				}
-				message.MyError(err, "psnode > decoder.Decode")
-				break
-			}
-			message.MyReadMessage(*format)
-
-			currentTime := time.Now()
-			//configファイルからセンサデータ読み込む
-			current_node_output := m2mapi.ResolveCurrentNode{}
-			current_node_output.VNodeID_n = format.VNodeID_n
-			rand.Seed(time.Now().UnixNano())
-			value_min := 30.0
-			value_max := 40.0
-			value_float := value_min + rand.Float64()*(value_max-value_min)
-			current_node_output.Values = m2mapi.Value{Capability: format.Capability, Time: currentTime.Format(layout), Value: value_float}
-			//センサデータをVSNodeに送信する
-			if err := encoder.Encode(&current_node_output); err != nil {
-				message.MyError(err, "vsnode > CurrentNode > encoder.Encode")
-				break
-			}
-			message.MyWriteMessage(current_node_output)
-		case *m2mapi.Actuate:
-			format := psnodesCommand.(*m2mapi.Actuate)
-			if err := decoder.Decode(format); err != nil {
-				if err == io.EOF {
-					message.MyMessage("=== closed by client")
-					break
-				}
-				message.MyError(err, "psnode > decoder.Decode")
-				break
-			}
-			message.MyReadMessage(*format)
-
-			// アクチュエータが正常に動作したことを返す
-			actuate_output := m2mapi.Actuate{}
-			actuate_output.Status = true
-
-			// 状態結果をVSNodeに送信する
-			if err := encoder.Encode(&actuate_output); err != nil {
-				message.MyError(err, "vsnode > Actuate > encoder.Encode")
-				break
-			}
-			message.MyWriteMessage(actuate_output)
-		}
+	server := &http.Server{
+		Addr:    address,
+		Handler: mux,
 	}
 
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Error starting server on port %d: %v", port, err)
+	}
+}
+
+func main() {
+	/*
+		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+		signals_from_main := make(chan os.Signal, 1)
+
+		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+		signal.Notify(signals_from_main, syscall.SIGCONT)
+
+		// シグナルを待機
+		fmt.Println("Waiting for signal...")
+		sig := <-signals_from_main
+
+		// 受信したシグナルを表示
+		fmt.Printf("Received signal: %v\n", sig)
+	*/
+	var wg sync.WaitGroup
+
+	// 初期環境構築時に作成したPSNodeのポート分だけ必要
+	initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/PSNode/initial_environment.json"
+	file, err := os.Open(initial_environment_file)
+	if err != nil {
+		fmt.Println("Error opening file: ", err)
+		return
+	}
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading file: ", err)
+		return
+	}
+
+	var ports Ports
+	err = json.Unmarshal(data, &ports)
+	if err != nil {
+		fmt.Println("Error decoding JSON: ", err)
+		return
+	}
+
+	for _, port := range ports.Port {
+		wg.Add(1)
+		go func(port int) {
+			defer wg.Done()
+			startServer(port)
+		}(port)
+	}
+
+	wg.Wait()
 }
 
 // センサデータの登録
-// PSNode -> VSNode -> SensingDB
+func generateSensordata(inputFormat *psnode.TimeSync) m2mapi.DataForRegist {
+	var result m2mapi.DataForRegist
+	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
+	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
+	psnodeJsonFile, err := os.Open(psnode_json_file_path)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer psnodeJsonFile.Close()
+	psnodeByteValue, _ := ioutil.ReadAll(psnodeJsonFile)
+
+	var psnodeResult map[string][]interface{}
+	json.Unmarshal(psnodeByteValue, &psnodeResult)
+
+	psnodes := psnodeResult["psnodes"]
+	for _, v := range psnodes {
+		psnode_format := v.(map[string]interface{})
+		psnode := psnode_format["psnode"].(map[string]interface{})
+		psnode_relation_label := psnode["relation-label"].(map[string]interface{})
+		psnode_data_property := psnode["data-property"].(map[string]interface{})
+		pnode_id := psnode_data_property["PNodeID"].(string)
+		if pnode_id == inputFormat.PNodeID {
+			result.PNodeID = pnode_id
+			result.Capability = psnode_data_property["Capability"].(string)
+			result.Timestamp = inputFormat.CurrentTime.Format(layout)
+			rand.Seed(time.Now().UnixNano())
+			value_min := 30.0
+			value_max := 40.0
+			value := value_min + rand.Float64()*(value_max-value_min)
+			result.Value = value
+			result.PSinkID = psnode_relation_label["PSink"].(string)
+			position := psnode_data_property["Position"].([]interface{})
+			result.Lat = position[0].(float64)
+			result.Lon = position[1].(float64)
+		}
+	}
+	return result
+}
+
 func registerSensingData(file string, t time.Time) {
 	// センサデータ登録に必要な情報の定義
 	var pnode_id, capability, psink_id string
@@ -408,7 +425,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	var typeM any
 	switch typeResult {
 	case "CurrentNode", "CurrentPoint":
-		typeM = &m2mapi.ResolveCurrentNode{}
+		typeM = &m2mapi.ResolveDataByNode{}
 	case "Actuate":
 		typeM = &m2mapi.Actuate{}
 	}
@@ -448,12 +465,19 @@ func getGID() uint64 {
 	return n
 }
 
-func loadEnv() {
-	// .envファイルの読み込み
-	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
-		message.MyError(err, "loadEnv > godotenv.Load")
+func trimVSNodePort(address string) string {
+	host := strings.Split(address, ":")
+
+	var port int
+	if len(host) > 1 {
+		port, _ = strconv.Atoi(host[1])
+	} else {
+		return ""
 	}
-	mes := os.Getenv("SAMPLE_MESSAGE")
-	// fmt.Printf("\x1b[32m%v\x1b[0m\n", message)
-	message.MyMessage(mes)
+	base_port, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
+	pnode_id_index := port - base_port
+	pnode_id_int := (0b0010 << 60) + pnode_id_index
+	pnode_id := strconv.Itoa(pnode_id_int)
+
+	return pnode_id
 }
