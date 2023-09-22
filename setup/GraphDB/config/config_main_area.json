@@ -1,11 +1,11 @@
 {
     "areas": {
-        "area": [
+        "parea": [
             {
-                "property-label": "Area",
+                "property-label": "PArea",
                 "data-property": {
-                    "Label": "A0:0",
-                    "AreaID": "3553001395300",
+                    "Label": "PA0:0",
+                    "PAreaID": "0",
                     "SW": [
                         35.53,
                         139.53
@@ -14,15 +14,15 @@
                         35.531,
                         139.531
                     ],
-                    "Description": "Area3553001395300"
+                    "Description": "Description:PA0:0"
                 },
                 "object-property": []
             },
             {
-                "property-label": "Area",
+                "property-label": "PArea",
                 "data-property": {
-                    "Label": "A0:1",
-                    "AreaID": "3553001395310",
+                    "Label": "PA0:1",
+                    "PAreaID": "1",
                     "SW": [
                         35.53,
                         139.531
@@ -31,42 +31,42 @@
                         35.531,
                         139.532
                     ],
-                    "Description": "Area3553001395310"
+                    "Description": "Description:PA0:1"
                 },
                 "object-property": [
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:1"
+                            "value": "PA0:1"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:0"
+                            "value": "PA0:0"
                         },
                         "type": "isEastOf"
                     },
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:0"
+                            "value": "PA0:0"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:1"
+                            "value": "PA0:1"
                         },
                         "type": "isWestOf"
                     }
                 ]
             },
             {
-                "property-label": "Area",
+                "property-label": "PArea",
                 "data-property": {
-                    "Label": "A1:0",
-                    "AreaID": "3553101395300",
+                    "Label": "PA1:0",
+                    "PAreaID": "2",
                     "SW": [
                         35.531,
                         139.53
@@ -75,42 +75,42 @@
                         35.532,
                         139.531
                     ],
-                    "Description": "Area3553101395300"
+                    "Description": "Description:PA1:0"
                 },
                 "object-property": [
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:0"
+                            "value": "PA1:0"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:0"
+                            "value": "PA0:0"
                         },
                         "type": "isNorthOf"
                     },
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:0"
+                            "value": "PA0:0"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:0"
+                            "value": "PA1:0"
                         },
                         "type": "isSouthOf"
                     }
                 ]
             },
             {
-                "property-label": "Area",
+                "property-label": "PArea",
                 "data-property": {
-                    "Label": "A1:1",
-                    "AreaID": "3553101395310",
+                    "Label": "PA1:1",
+                    "PAreaID": "3",
                     "SW": [
                         35.531,
                         139.531
@@ -119,318 +119,60 @@
                         35.532,
                         139.532
                     ],
-                    "Description": "Area3553101395310"
+                    "Description": "Description:PA1:1"
                 },
                 "object-property": [
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:1"
+                            "value": "PA1:1"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:1"
+                            "value": "PA0:1"
                         },
                         "type": "isNorthOf"
                     },
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A0:1"
+                            "value": "PA0:1"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:1"
+                            "value": "PA1:1"
                         },
                         "type": "isSouthOf"
                     },
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:1"
+                            "value": "PA1:1"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:0"
+                            "value": "PA1:0"
                         },
                         "type": "isEastOf"
                     },
                     {
                         "from": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:0"
+                            "value": "PA1:0"
                         },
                         "to": {
-                            "property-label": "Area",
+                            "property-label": "PArea",
                             "data-property": "Label",
-                            "value": "A1:1"
+                            "value": "PA1:1"
                         },
                         "type": "isWestOf"
-                    }
-                ]
-            }
-        ],
-        "vpoint": [
-            {
-                "property-label": "VPoint",
-                "data-property": {
-                    "Label": "VP0:0",
-                    "VPointID": "11529215046068469760",
-                    "SocketAddress": "192.168.1.1:10000",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VPoint/main",
-                    "Description": "Description:VP0:0"
-                },
-                "object-property": [
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "to": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A0:0"
-                        },
-                        "type": "isPhysicalizedBy"
-                    },
-                    {
-                        "from": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A0:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "type": "isVirtualizedBy"
-                    }
-                ]
-            },
-            {
-                "property-label": "VPoint",
-                "data-property": {
-                    "Label": "VP0:1",
-                    "VPointID": "11529215046068469761",
-                    "SocketAddress": "192.168.1.1:10001",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VPoint/main",
-                    "Description": "Description:VP0:1"
-                },
-                "object-property": [
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "type": "isEastOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "type": "isWestOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "to": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A0:1"
-                        },
-                        "type": "isPhysicalizedBy"
-                    },
-                    {
-                        "from": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A0:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "type": "isVirtualizedBy"
-                    }
-                ]
-            },
-            {
-                "property-label": "VPoint",
-                "data-property": {
-                    "Label": "VP1:0",
-                    "VPointID": "11529215046068469762",
-                    "SocketAddress": "192.168.1.1:10002",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VPoint/main",
-                    "Description": "Description:VP1:0"
-                },
-                "object-property": [
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "type": "isNorthOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "type": "isSouthOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "to": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A1:0"
-                        },
-                        "type": "isPhysicalizedBy"
-                    },
-                    {
-                        "from": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A1:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "type": "isVirtualizedBy"
-                    }
-                ]
-            },
-            {
-                "property-label": "VPoint",
-                "data-property": {
-                    "Label": "VP1:1",
-                    "VPointID": "11529215046068469763",
-                    "SocketAddress": "192.168.1.1:10003",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VPoint/main",
-                    "Description": "Description:VP1:1"
-                },
-                "object-property": [
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "type": "isNorthOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP0:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "type": "isSouthOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "type": "isEastOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:0"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "type": "isWestOf"
-                    },
-                    {
-                        "from": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "to": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A1:1"
-                        },
-                        "type": "isPhysicalizedBy"
-                    },
-                    {
-                        "from": {
-                            "property-label": "Area",
-                            "data-property": "Label",
-                            "value": "A1:1"
-                        },
-                        "to": {
-                            "property-label": "VPoint",
-                            "data-property": "Label",
-                            "value": "VP1:1"
-                        },
-                        "type": "isVirtualizedBy"
                     }
                 ]
             }

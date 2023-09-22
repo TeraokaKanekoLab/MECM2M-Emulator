@@ -12,7 +12,7 @@ printf "\e[1;31m \n0. DELETE ALL RECORD \e[0m"
 # はじめにGraphDBに登録されているすべてのレコードを削除する
 python3 ${PROJECT_PATH}/setup/GraphDB/clear_GraphDB.py
 
-printf "\e[1;31m \n1. REGISTER AREA AND VPOINT \e[0m"
+printf "\e[1;31m \n1. REGISTER AREA \e[0m"
 # AreaとVPointを登録
 python3 ${PROJECT_PATH}${DIR}/1_register_for_neo4j_area_vpoint.py
 

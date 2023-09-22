@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/mserver"
@@ -54,11 +55,28 @@ func cleanup(socketFiles ...string) {
 }
 
 func init() {
-	rtt_file = os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/AccessNetwork/rtt.csv"
+	// .envファイルの読み込み
+	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
+		log.Fatal(err)
+	}
+	rtt_file = os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/rtt.csv"
 }
 
 func main() {
-	loadEnv()
+	/*
+		// Mainプロセスのコマンドラインからシミュレーション実行開始シグナルを受信するまで待機
+		signals_from_main := make(chan os.Signal, 1)
+
+		// 停止しているプロセスを再開するために送信されるシグナル，SIGCONT(=18)を受信するように設定
+		signal.Notify(signals_from_main, syscall.SIGCONT)
+
+		// シグナルを待機
+		fmt.Println("Waiting for signal...")
+		sig := <-signals_from_main
+
+		// 受信したシグナルを表示
+		fmt.Printf("Received signal: %v\n", sig)
+	*/
 	var socketFiles []string
 	// コマンドライン引数にソケットファイル群をまとめたファイルを指定して，初めにそのファイルを読み込む
 	if len(os.Args) != 2 {
@@ -128,8 +146,8 @@ func connectionLink(conn net.Conn, file string) {
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
 		switch psnodeCommand := syncFormatServer(decoder, encoder); psnodeCommand.(type) {
-		case *m2mapi.ResolveCurrentNode:
-			format := psnodeCommand.(*m2mapi.ResolveCurrentNode)
+		case *m2mapi.ResolveDataByNode:
+			format := psnodeCommand.(*m2mapi.ResolveDataByNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -141,11 +159,10 @@ func connectionLink(conn net.Conn, file string) {
 			message.MyReadMessage(*format)
 
 			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			src_server_num, dst_server_num := searchSrcDstServer(file)
-			fmt.Println(src_server_num, dst_server_num)
+			pnode_id := searchPNodeID(file)
 
 			// RTT時間を検索して，RTT/2 時間を取得
-			rtt_half := searchRTT(src_server_num, dst_server_num)
+			rtt_half := searchRTT(pnode_id)
 			fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
@@ -153,7 +170,9 @@ func connectionLink(conn net.Conn, file string) {
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
-			data := m2mapi.ResolveCurrentNode{
+			// 入力のVNodeIDから宛先のPSNodeのPort番号を割り出す
+			psnode_port := trimPSNodePort(format.VNodeID)
+			data := m2mapi.ResolveDataByNode{
 				VNodeID:    format.VNodeID,
 				Capability: format.Capability,
 			}
@@ -162,7 +181,7 @@ func connectionLink(conn net.Conn, file string) {
 				fmt.Println("Error marshalling data: ", err)
 				return
 			}
-			response, err := http.Post("http://localhost:8080/devapi/data/current/node", "application/json", bytes.NewBuffer(transmit_data))
+			response, err := http.Post("http://localhost:"+psnode_port+"/devapi/data/current/node", "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request:", err)
 				return
@@ -173,9 +192,9 @@ func connectionLink(conn net.Conn, file string) {
 			if err != nil {
 				panic(err)
 			}
-			var current_node_output m2mapi.ResolveCurrentNode
+			var current_node_output m2mapi.ResolveDataByNode
 			if err = json.Unmarshal(body, &current_node_output); err != nil {
-				fmt.Println("Error: ", err)
+				fmt.Println("Error Unmarshaling: ", err)
 				return
 			}
 
@@ -201,11 +220,10 @@ func connectionLink(conn net.Conn, file string) {
 			message.MyReadMessage(*format)
 
 			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			src_server_num, dst_server_num := searchSrcDstServer(file)
-			fmt.Println(src_server_num, dst_server_num)
+			pnode_id := searchPNodeID(file)
 
 			// RTT時間を検索して，RTT/2 時間を取得
-			rtt_half := searchRTT(src_server_num, dst_server_num)
+			rtt_half := searchRTT(pnode_id)
 			fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
@@ -213,28 +231,33 @@ func connectionLink(conn net.Conn, file string) {
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立
-			dst_socket_address := format.DestSocketAddr
-
-			connDst, err := net.Dial(protocol, dst_socket_address)
+			// 入力のVNodeIDから宛先のPSNodeのPort番号を割り出す
+			psnode_port := trimPSNodePort(format.VNodeID)
+			data := m2mapi.Actuate{
+				VNodeID:   format.VNodeID,
+				Action:    format.Action,
+				Parameter: format.Parameter,
+			}
+			transmit_data, err := json.Marshal(data)
 			if err != nil {
-				message.MyError(err, "connectionLink > Actuate > net.Dial")
+				fmt.Println("Error marshalling data: ", err)
+				return
 			}
-			decoderDst := gob.NewDecoder(connDst)
-			encoderDst := gob.NewEncoder(connDst)
-
-			syncFormatClient("Actuate", decoderDst, encoderDst)
-
-			if err := encoderDst.Encode(format); err != nil {
-				message.MyError(err, "connectionLink > Actuate > encoderDst.Encode")
+			response, err := http.Post("http://localhost:"+psnode_port+"/devapi/actuate", "application/json", bytes.NewBuffer(transmit_data))
+			if err != nil {
+				fmt.Println("Error making request:", err)
+				return
 			}
-			message.MyWriteMessage(*format)
+			defer response.Body.Close()
 
-			// PSNodeへ動作指示
-
-			// 受信する型はActuate
-			actuate_output := m2mapi.Actuate{}
-			if err := decoderDst.Decode(&actuate_output); err != nil {
-				message.MyError(err, "connectionLink > Actuate > decoderDst.Decode")
+			body, err := ioutil.ReadAll(response.Body)
+			if err != nil {
+				panic(err)
+			}
+			var actuate_output m2mapi.Actuate
+			if err = json.Unmarshal(body, &actuate_output); err != nil {
+				fmt.Println("Error Unmarshaling: ", err)
+				return
 			}
 
 			// RTT/2 時間待機
@@ -246,22 +269,65 @@ func connectionLink(conn net.Conn, file string) {
 				message.MyError(err, "connectionLink > Actuate > encoder.Encode")
 			}
 			message.MyWriteMessage(actuate_output)
+		case *m2mapi.DataForRegist:
+			format := psnodeCommand.(*m2mapi.DataForRegist)
+			if err := decoder.Decode(format); err != nil {
+				if err == io.EOF {
+					message.MyMessage("=== closed by client")
+					break
+				}
+				message.MyError(err, "connectionLink > DataForRegist > decoder.Decode")
+				break
+			}
+			message.MyReadMessage(*format)
+
+			// VSNode へセンサデータ転送
+			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
+			pnode_id := searchPNodeID(file)
+
+			// RTT時間を検索して，RTT/2 時間を取得
+			rtt_half := searchRTT(pnode_id)
+			fmt.Println("RTT: ", rtt_half)
+
+			// RTT/2 時間待機
+			fmt.Println("sleep RTT/2 (upstream)")
+			delayRTTHalf(rtt_half)
+
+			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
+			data := m2mapi.DataForRegist{
+				PNodeID:    format.PNodeID,
+				Capability: format.Capability,
+				Timestamp:  format.Timestamp,
+				Value:      format.Value,
+				PSinkID:    format.PSinkID,
+				Lat:        format.Lat,
+				Lon:        format.Lon,
+			}
+			transmit_data, err := json.Marshal(data)
+			if err != nil {
+				fmt.Println("Error marshalling data: ", err)
+				return
+			}
+			vsnode_port := trimVSNodePort(format.PNodeID)
+			_, err = http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
+			if err != nil {
+				fmt.Println("Error making request:", err)
+				return
+			}
 		}
 	}
 }
 
 // 開いているソケットファイル名からsrc, dstのサーバを割り出す
-func searchSrcDstServer(file string) (string, string) {
-	src_index := strings.Index(file, "_")
-	dst_index := strings.LastIndex(file, "_")
-	dot_index := strings.LastIndex(file, ".")
-	src_server_num := file[src_index+1 : dst_index]
-	dst_server_num := file[dst_index+1 : dot_index]
-	return src_server_num, dst_server_num
+func searchPNodeID(file string) string {
+	start_index := strings.LastIndex(file, "_")
+	last_index := strings.LastIndex(file, ".")
+	pnode_id := file[start_index+1 : last_index]
+	return pnode_id
 }
 
 // 通信間のサーバとRTTの組をまとめたファイルからRTT時間の検索
-func searchRTT(src_server_num string, dst_server_num string) time.Duration {
+func searchRTT(pnode_id string) time.Duration {
 	var rtt_half time.Duration
 	rtt_fp, err := os.Open(rtt_file)
 	if err != nil {
@@ -276,8 +342,8 @@ func searchRTT(src_server_num string, dst_server_num string) time.Duration {
 	}
 
 	for _, record := range records {
-		if (record[0] == src_server_num && record[1] == dst_server_num) || (record[1] == src_server_num && record[0] == dst_server_num) {
-			rtt_float, _ := strconv.ParseFloat(record[2], 64)
+		if record[0] == pnode_id {
+			rtt_float, _ := strconv.ParseFloat(record[1], 64)
 			rtt_half_float := rtt_float / 2
 			rtt_half_str := strconv.FormatFloat(rtt_half_float, 'f', 2, 64) + "ms"
 			rtt_half, _ = time.ParseDuration(rtt_half_str)
@@ -306,22 +372,14 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 
 	var typeM any
 	switch typeResult {
-	case "Point":
-		typeM = &m2mapi.ResolvePoint{}
+	case "Area":
+		typeM = &m2mapi.ResolveArea{}
 	case "Node":
 		typeM = &m2mapi.ResolveNode{}
-	case "PastNode":
-		typeM = &m2mapi.ResolvePastNode{}
-	case "PastPoint":
-		typeM = &m2mapi.ResolvePastPoint{}
-	case "CurrentNode":
-		typeM = &m2mapi.ResolveCurrentNode{}
-	case "CurrentPoint":
-		typeM = &m2mapi.ResolveCurrentPoint{}
-	case "ConditionNode":
-		typeM = &m2mapi.ResolveConditionNode{}
-	case "ConditionPoint":
-		typeM = &m2mapi.ResolveConditionPoint{}
+	case "PastNode", "CurrentNode", "ConditionNode":
+		typeM = &m2mapi.ResolveDataByNode{}
+	case "PastArea", "CurrentArea", "ConditionArea":
+		typeM = &m2mapi.ResolveDataByArea{}
 	case "Actuate":
 		typeM = &m2mapi.Actuate{}
 	case "RegisterSensingData":
@@ -380,9 +438,20 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 	}
 }
 
-func loadEnv() {
-	// .envファイルの読み込み
-	if err := godotenv.Load(os.Getenv("HOME") + "/.env"); err != nil {
-		message.MyError(err, "loadEnv > godotenv.Load")
-	}
+func trimPSNodePort(vnodeid string) string {
+	vnodeid_int, _ := strconv.ParseUint(vnodeid, 10, 64)
+	base_port_int, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
+	mask := uint64(1<<60 - 1)
+	id_index := vnodeid_int & mask
+	port := strconv.Itoa(base_port_int + int(id_index))
+	return port
+}
+
+func trimVSNodePort(pnodeid string) string {
+	pnodeid_int, _ := strconv.ParseUint(pnodeid, 10, 64)
+	base_port_int, _ := strconv.Atoi(os.Getenv("VSNODE_BASE_PORT"))
+	mask := uint64(1<<60 - 1)
+	id_index := pnodeid_int & mask
+	port := strconv.Itoa(base_port_int + int(id_index))
+	return port
 }

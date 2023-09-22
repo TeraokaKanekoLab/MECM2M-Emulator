@@ -11,8 +11,8 @@ import glob
 ## Data Property
 ## * PNodeID
 ## * PNode Type (デバイスとクラスの対応づけ)
-## * VNode Module ID (VNode moduleの実行系ファイル)
-## * Socket Address (VNode のソケットファイル，本来はIP:Port)
+## * VNode Module (VNode moduleの実行系ファイル)
+## * Socket Address (デバイスへのアクセス用，本来はIP:Port)
 ## * Lat Lon
 ## * Capability
 ## * Credential
@@ -22,12 +22,14 @@ import glob
 ## Object Property
 ## * aggregates (PSink->PNode)
 ## * isConnectedTo (PNode->PSink)
+## * contains (PArea->PNode)
+## * isInstalledIn (PNode->PArea)
 
 # VSNode
 # ---------------
 ## Data Property
 ## * VNodeID
-## * Socket Address (VNode のソケットファイル，本来はIP:Port)
+## * Socket Address (モジュールへのアクセス用，本来はIP:Port)
 ## * Software Module (VNode moduleの実行系ファイル)
 ## * Description
 # ---------------
@@ -49,20 +51,17 @@ json_file_path = os.getenv("PROJECT_PATH") + "/setup/GraphDB/config/"
 
 # VSNODE_BASE_PORT
 # PSINK_NUM_PER_AREA
-# PSNODE_NUM_PER_PSINK
 # MIN_LAT, MAX_LAT, MIN_LON, MAX_LON
 # AREA_WIDTH
-# EDGE_SERVER_NUM
+# IP_ADDRESS
 VSNODE_BASE_PORT = int(os.getenv("VSNODE_BASE_PORT"))
 PSINK_NUM_PER_AREA = float(os.getenv("PSINK_NUM_PER_AREA"))
-# ※ PSNodeは，PSinkに対して各種1つずつ
-#PSNODE_NUM_PER_PSINK = 2
 MIN_LAT = float(os.getenv("MIN_LAT"))
 MAX_LAT = float(os.getenv("MAX_LAT"))
 MIN_LON = float(os.getenv("MIN_LON"))
 MAX_LON = float(os.getenv("MAX_LON"))
 AREA_WIDTH = float(os.getenv("AREA_WIDTH"))
-EDGE_SERVER_NUM = int(os.getenv("EDGE_SERVER_NUM"))
+IP_ADDRESS = os.getenv("IP_ADDRESS")
 
 lineStep = AREA_WIDTH
 forint = 1000
@@ -90,51 +89,14 @@ vsnode_psnode_relation = {}
 for i in range(len(pn_types)):
     vsnode_psnode_relation[pn_types[i]] = []
 
-"""
-# PSNodeのソケットファイル群ファイルのリセット
-psnode_socket_files_dir_path = os.getenv("PROJECT_PATH") + "/PSNode/socket_files"
-if not os.path.exists(psnode_socket_files_dir_path):
-    os.makedirs(psnode_socket_files_dir_path)
-else:
-    files = glob.glob(f"{psnode_socket_files_dir_path}/*")
-    for file in files:
-        if os.path.isfile(file):
-            os.remove(file)
-
-# エッジサーバ分だけソケットファイルを作成
-for i in range(EDGE_SERVER_NUM):
-    full_path = psnode_socket_files_dir_path + "/psnode_" + str(i+1) + ".json"
-    socket_format_json = {
-        "psnodes": []
-    }
-    with open(full_path, 'w') as f:
-        json.dump(socket_format_json, f, indent=4)
-
-# VSNodeのソケットファイル群ファイルのリセット
-vsnode_socket_files_dir_path = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/socket_files"
-if not os.path.exists(vsnode_socket_files_dir_path):
-    os.makedirs(vsnode_socket_files_dir_path)
-else:
-    files = glob.glob(f"{vsnode_socket_files_dir_path}/*")
-    for file in files:
-        if os.path.isfile(file):
-            os.remove(file)
-
-# エッジサーバ分だけソケットファイルを作成
-for i in range(EDGE_SERVER_NUM):
-    full_path = vsnode_socket_files_dir_path + "/vsnode_" + str(i+1) + ".json"
-    socket_format_json = {
-        "vsnodes": []
-    }
-    with open(full_path, 'w') as f:
-        json.dump(socket_format_json, f, indent=4)
-
-# エッジサーバ数を長さとする，作成するソケットファイル数を数える配列
-vsnode_socket_file_num = [0] * EDGE_SERVER_NUM
-VSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
-PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK = 3
-psnode_sock_num = 0
-"""
+# PSNode/initial_environment.json の初期化
+psnode_dir_path = os.getenv("PROJECT_PATH") + "/PSNode/"
+initial_environment_file = psnode_dir_path + "initial_environment.json"
+port_array = {
+    "ports": []
+}
+with open(initial_environment_file, 'w') as file:
+    json.dump(port_array, file, indent=4)
 
 # VSNode/initial_environment.json の初期化
 vsnode_dir_path = os.getenv("PROJECT_PATH") + "/VSNode/"
@@ -157,35 +119,39 @@ while neLat <= MAX_LAT:
             while i < PSINK_NUM_PER_AREA:
                 for pntype in range(len(pn_types)):
                     vsnode_psnode_relation[pn_types[pntype]] = []
-                label_psink = "PS" + str(psink_index)
+                psink_label = "PS" + str(psink_index)
                 j = 0
                 while j < len(pn_types):
                     data["psnodes"].append({"psnode":{}, "vsnode":{}})
 
                     # PSNode情報の追加
-                    label_psnode = "PSN" + str(id_index)
-                    psnode_id = str(int(0b0000 << 60) + id_index)
+                    parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
+                    psnode_label = "PSN" + str(id_index)
+                    psnode_id = str(int(0b0010 << 60) + id_index)
                     vsnode_id = str(int(0b1000 << 60) + id_index)
                     pnode_type = pn_types[j]
-                    vnode_module_id = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
-                    port = int(os.getenv("VSNODE_BASE_PORT")) + id_index
-                    vnode_socket_address = os.getenv("IP_ADDRESS") + ":" + str(port)
+                    vnode_module = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
+                    psnode_port = int(os.getenv("PSNODE_BASE_PORT")) + id_index
+                    vsnode_port = int(os.getenv("VSNODE_BASE_PORT")) + id_index
+                    vnode_socket_address = IP_ADDRESS + ":" + str(vsnode_port)
                     psnode_lat = random.uniform(swLat, neLat)
                     psnode_lon = random.uniform(swLon, neLon)
                     capability = capabilities[pnode_type]
                     credential = "YES"
                     session_key = generate_random_string(10)
-                    psnode_description = "PSNode" + label_psnode
+                    psnode_description = "Description:" + psnode_label
                     psnode_dict = {
                         "property-label": "PSNode",
                         "relation-label": {
-                            "PSink": label_psink
+                            "PSink": psink_label,
+                            "PArea": parea_label,
                         },
                         "data-property": {
-                            "Label": label_psnode,
+                            "Label": psnode_label,
                             "PNodeID": psnode_id,
-                            "VNodeModuleID": vnode_module_id,
-                            "SocketAddress": vnode_socket_address,
+                            "PNodeType": pnode_type,
+                            "VNodeModule": vnode_module,
+                            "SocketAddress": "",
                             "Position": [round(psnode_lat, 4), round(psnode_lon, 4)],
                             "Capability": capability,
                             "Credential": credential,
@@ -197,12 +163,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "to": {
                                     "property-label": "PSink",
                                     "data-property": "Label",
-                                    "value": label_psink
+                                    "value": psink_label
                                 },
                                 "type": "isConnectedTo"
                             },
@@ -210,46 +176,67 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSink",
                                     "data-property": "Label",
-                                    "value": label_psink
+                                    "value": psink_label
                                 },
                                 "to": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "type": "aggregates"
+                            },
+                            {
+                                "from": {
+                                    "property-label": "PArea",
+                                    "data-property": "Label",
+                                    "value": parea_label
+                                },
+                                "to": {
+                                    "property-label": "PSNode",
+                                    "data-property": "Label",
+                                    "value": psnode_label
+                                },
+                                "type": "contains"
+                            },
+                            {
+                                "from": {
+                                    "property-label": "PSNode",
+                                    "data-property": "Label",
+                                    "value": psnode_label
+                                },
+                                "to": {
+                                    "property-label": "PArea",
+                                    "data-property": "Label",
+                                    "value": parea_label
+                                },
+                                "type": "isInstalledIn"
                             }
                         ]
                     }
                     data["psnodes"][-1]["psnode"] = psnode_dict
 
-                    """
-                    # PSNodeのソケットファイル群ファイルをここで作成
-                    #if server_num == 1 and psnode_sock_num < PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                    full_path = psnode_socket_files_dir_path + "/psnode_" + str(server_num) + ".json"
-                    with open(full_path, 'r') as f:
-                        socket_file_data = json.load(f)
-                    new_socket_file_path = "/tmp/mecm2m/psnode_" + str(server_num) + "_" + str(psnode_id) + ".sock"
-                    socket_file_data["psnodes"].append(new_socket_file_path)
-                    with open(full_path, 'w') as f:
-                        json.dump(socket_file_data, f, indent=4)
-                    psnode_sock_num += 1
-                    """
+                    # PSNode/initial_environment.json に初期環境に配置されるPSNodeのポート番号を格納
+                    initial_environment_file = psnode_dir_path + "initial_environment.json"
+                    with open(initial_environment_file, 'r') as file:
+                        ports_data = json.load(file)
+                    ports_data["ports"].append(psnode_port)
+                    with open(initial_environment_file, 'w') as file:
+                        json.dump(ports_data, file, indent=4)
 
                     # VSNode情報の追加
-                    vpoint_label = "VP" + str(label_lat) + ":" + str(label_lon)
-                    label_vsnode = "VSN" + str(id_index)
-                    vsnode_description = "VSNode" + label_vsnode
+                    parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
+                    vsnode_label = "VSN" + str(id_index)
+                    vsnode_description = "Description:" + vsnode_label
                     vsnode_dict = {
                         "property-label": "VSNode",
                         "relation-label": {
-                            "VPoint": vpoint_label
+                            "PArea": parea_label
                         },
                         "data-property": {
-                            "Label": label_vsnode,
+                            "Label": vsnode_label,
                             "VNodeID": vsnode_id,
                             "SocketAddress": vnode_socket_address,
-                            "SoftwareModule": vnode_module_id,
+                            "SoftwareModule": vnode_module,
                             "Description": vsnode_description
                         },
                         "object-property": [
@@ -257,12 +244,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "to": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "type": "isVirtualizedBy"
                             },
@@ -270,12 +257,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "to": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "type": "isPhysicalizedBy"
                             },
@@ -283,50 +270,37 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "to": {
-                                    "property-label": "VPoint",
+                                    "property-label": "PArea",
                                     "data-property": "Label",
-                                    "value": vpoint_label
+                                    "value": parea_label
                                 },
-                                "type": "isConnectedTo"
+                                "type": "isInstalledIn"
                             },
                             {
                                 "from": {
-                                    "property-label": "VPoint",
+                                    "property-label": "PArea",
                                     "data-property": "Label",
-                                    "value": vpoint_label
+                                    "value": parea_label
                                 },
                                 "to": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
-                                "type": "aggregates"
+                                "type": "contains"
                             }
                         ]
                     }
                     data["psnodes"][-1]["vsnode"] = vsnode_dict
 
-                    """
-                    # VSNodeのソケットファイル群ファイルをここで作成
-                    if vsnode_socket_file_num[server_num-1] < VSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                        full_path = vsnode_socket_files_dir_path + "/vsnode_" + str(server_num) + ".json"
-                        with open(full_path, 'r') as f:
-                            socket_file_data = json.load(f)
-                        socket_file_data["vsnodes"].append(socket_address)
-                        with open(full_path, 'w') as f:
-                            json.dump(socket_file_data, f, indent=4)
-                        
-                        vsnode_socket_file_num[server_num-1] += 1
-                    """
-
                     # VSNode/initial_environment.json に初期環境に配置されるVSNodeのポート番号を格納
                     initial_environment_file = vsnode_dir_path + "initial_environment.json"
                     with open(initial_environment_file, 'r') as file:
                         ports_data = json.load(file)
-                    ports_data["ports"].append(port)
+                    ports_data["ports"].append(vsnode_port)
                     with open(initial_environment_file, 'w') as file:
                         json.dump(ports_data, file, indent=4)
 
@@ -339,35 +313,39 @@ while neLat <= MAX_LAT:
             if label_lon % interval == 0:
                 for pntype in range(len(pn_types)):
                     vsnode_psnode_relation[pn_types[pntype]] = []
-                label_psink = "PS" + str(psink_index)
+                psink_label = "PS" + str(psink_index)
                 j = 0
                 while j < len(pn_types):
                     data["psnodes"].append({"psnode":{}, "vsnode":{}})
 
                     # PSNode情報の追加
-                    label_psnode = "PSN" + str(id_index)
-                    psnode_id = str(int(0b0000 << 60) + id_index)
+                    parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
+                    psnode_label = "PSN" + str(id_index)
+                    psnode_id = str(int(0b0010 << 60) + id_index)
                     vsnode_id = str(int(0b1000 << 60) + id_index)
                     pnode_type = pn_types[j]
-                    vnode_module_id = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
-                    port = int(os.getenv("VSNODE_BASE_PORT")) + id_index
-                    vnode_socket_address = os.getenv("IP_ADDRESS") + ":" + str(port)
+                    vnode_module = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
+                    psnode_port = int(os.getenv("PSNODE_BASE_PORT")) + id_index
+                    vsnode_port = int(os.getenv("VSNODE_BASE_PORT")) + id_index
+                    vnode_socket_address = IP_ADDRESS + ":" + str(port)
                     psnode_lat = random.uniform(swLat, neLat)
                     psnode_lon = random.uniform(swLon, neLon)
                     capability = capabilities[pnode_type]
                     credential = "YES"
                     session_key = generate_random_string(10)
-                    psnode_description = "PSNode" + label_psnode
+                    psnode_description = "Description:" + psnode_label
                     psnode_dict = {
                         "property-label": "PSNode",
                         "relation-label": {
-                            "PSink": label_psink
+                            "PSink": psink_label,
+                            "PArea": parea_label,
                         },
                         "data-property": {
-                            "Label": label_psnode,
+                            "Label": psnode_label,
                             "PNodeID": psnode_id,
-                            "VNodeModuleID": vnode_module_id,
-                            "SocketAddress": vnode_socket_address,
+                            "PNodeType": pnode_type,
+                            "VNodeModule": vnode_module,
+                            "SocketAddress": "",
                             "Position": [round(psnode_lat, 4), round(psnode_lon, 4)],
                             "Capability": capability,
                             "Credential": credential,
@@ -379,12 +357,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "to": {
                                     "property-label": "PSink",
                                     "data-property": "Label",
-                                    "value": label_psink
+                                    "value": psink_label
                                 },
                                 "type": "isConnectedTo"
                             },
@@ -392,46 +370,67 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSink",
                                     "data-property": "Label",
-                                    "value": label_psink
+                                    "value": psink_label
                                 },
                                 "to": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "type": "aggregates"
+                            },
+                            {
+                                "from": {
+                                    "property-label": "PArea",
+                                    "data-property": "Label",
+                                    "value": parea_label
+                                },
+                                "to": {
+                                    "property-label": "PSNode",
+                                    "data-property": "Label",
+                                    "value": psnode_label
+                                },
+                                "type": "contains"
+                            },
+                            {
+                                "from": {
+                                    "property-label": "PSNode",
+                                    "data-property": "Label",
+                                    "value": psnode_label
+                                },
+                                "to": {
+                                    "property-label": "PArea",
+                                    "data-property": "Label",
+                                    "value": parea_label
+                                },
+                                "type": "isInstalledIn"
                             }
                         ]
                     }
                     data["psnodes"][-1]["psnode"] = psnode_dict
 
-                    """
-                    # PSNodeのソケットファイル群ファイルをここで作成
-                    #if server_num == 1 and psnode_sock_num < PSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                    full_path = psnode_socket_files_dir_path + "/psnode_" + str(server_num) + ".json"
-                    with open(full_path, 'r') as f:
-                        socket_file_data = json.load(f)
-                    new_socket_file_path = "/tmp/mecm2m/psnode_" + str(server_num) + "_" + str(psnode_id) + ".sock"
-                    socket_file_data["psnodes"].append(new_socket_file_path)
-                    with open(full_path, 'w') as f:
-                        json.dump(socket_file_data, f, indent=4)
-                    psnode_sock_num += 1
-                    """
+                    # PSNode/initial_environment.json に初期環境に配置されるPSNodeのポート番号を格納
+                    initial_environment_file = psnode_dir_path + "initial_environment.json"
+                    with open(initial_environment_file, 'r') as file:
+                        ports_data = json.load(file)
+                    ports_data["ports"].append(psnode_port)
+                    with open(initial_environment_file, 'w') as file:
+                        json.dump(ports_data, file, indent=4)
 
                     # VSNode情報の追加
-                    vpoint_label = "VP" + str(label_lat) + ":" + str(label_lon)
-                    label_vsnode = "VSN" + str(id_index)
-                    vsnode_description = "VSNode" + label_vsnode
+                    parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
+                    vsnode_label = "VSN" + str(id_index)
+                    vsnode_description = "Description:" + vsnode_label
                     vsnode_dict = {
                         "property-label": "VSNode",
                         "relation-label": {
-                            "VPoint": vpoint_label
+                            "PArea": parea_label
                         },
                         "data-property": {
-                            "Label": label_vsnode,
+                            "Label": vsnode_label,
                             "VNodeID": vsnode_id,
                             "SocketAddress": vnode_socket_address,
-                            "SoftwareModule": vnode_module_id,
+                            "SoftwareModule": vnode_module,
                             "Description": vsnode_description
                         },
                         "object-property": [
@@ -439,12 +438,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "to": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "type": "isVirtualizedBy"
                             },
@@ -452,12 +451,12 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "to": {
                                     "property-label": "PSNode",
                                     "data-property": "Label",
-                                    "value": label_psnode
+                                    "value": psnode_label
                                 },
                                 "type": "isPhysicalizedBy"
                             },
@@ -465,50 +464,37 @@ while neLat <= MAX_LAT:
                                 "from": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
                                 "to": {
-                                    "property-label": "VPoint",
+                                    "property-label": "PArea",
                                     "data-property": "Label",
-                                    "value": vpoint_label
+                                    "value": parea_label
                                 },
-                                "type": "isConnectedTo"
+                                "type": "isInstalledIn"
                             },
                             {
                                 "from": {
-                                    "property-label": "VPoint",
+                                    "property-label": "PArea",
                                     "data-property": "Label",
-                                    "value": vpoint_label
+                                    "value": parea_label
                                 },
                                 "to": {
                                     "property-label": "VSNode",
                                     "data-property": "Label",
-                                    "value": label_vsnode
+                                    "value": vsnode_label
                                 },
-                                "type": "aggregates"
+                                "type": "contains"
                             }
                         ]
                     }
                     data["psnodes"][-1]["vsnode"] = vsnode_dict
 
-                    """
-                    # VSNodeのソケットファイル群ファイルをここで作成
-                    if vsnode_socket_file_num[server_num-1] < VSNODE_NUM_PER_EDGE_SERVER_FOR_SOCK:
-                        full_path = vsnode_socket_files_dir_path + "/vsnode_" + str(server_num) + ".json"
-                        with open(full_path, 'r') as f:
-                            socket_file_data = json.load(f)
-                        socket_file_data["vsnodes"].append(socket_address)
-                        with open(full_path, 'w') as f:
-                            json.dump(socket_file_data, f, indent=4)
-                        
-                        vsnode_socket_file_num[server_num-1] += 1
-                    """
-
                     # VSNode/initial_environment.json に初期環境に配置されるVSNodeのポート番号を格納
                     initial_environment_file = vsnode_dir_path + "initial_environment.json"
                     with open(initial_environment_file, 'r') as file:
                         ports_data = json.load(file)
-                    ports_data["ports"].append(port)
+                    ports_data["ports"].append(vsnode_port)
                     with open(initial_environment_file, 'w') as file:
                         json.dump(ports_data, file, indent=4)
 

@@ -29,119 +29,83 @@ type PSink struct {
 	//IoTSPID        string
 }
 
-type ResolvePoint struct {
+type ResolveArea struct {
 	// input
 	NE SquarePoint
 	SW SquarePoint
 
 	// output
-	VPointID      string
-	SocketAddress string
+	AD  string
+	TTL time.Time
 
 	// etc.
 	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
+}
+
+// エリアマッピングを取得するためのフォーマット
+type AreaMapping struct {
+	// input
+	NE SquarePoint `json:"ne"`
+	SW SquarePoint `json:"sw"`
+
+	// output
+	ServerIPs []string `json:"serverips"`
+}
+
+type ExtendAD struct {
+	// input
+	AD string
+
+	// output
+	Flag bool
 }
 
 type ResolveNode struct {
 	// input
-	VPointID  string
-	CapsInput []string
+	AD           string
+	Capabilities []string
+	NodeType     string
 
 	// output
 	VNodeID       string
-	CapOutput     string
 	SocketAddress string
 
 	// etc.
 	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
-type ResolvePastNode struct {
+type ResolveDataByNode struct {
 	// input
 	VNodeID       string      //`json:"vnode_id"`
 	Capability    string      //`json:"capability"`
 	Period        PeriodInput //`json:"period"`
-	SocketAddress string      //`json:"socket_address"` // センサデータ取得対象となるVNodeのソケットアドレス
+	Condition     ConditionInput
+	SocketAddress string //`json:"socket_address"` // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
-	//VNodeID_n 	string (dup)
+	//VNodeID 	string (dup)
 	Values []Value
 
 	// etc.
 	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
-type ResolvePastPoint struct {
+type ResolveDataByArea struct {
 	// input
-	VPointID_n    string
-	Capability    string
-	Period        PeriodInput
-	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
+	AD         string
+	Capability string
+	Period     PeriodInput
+	Condition  ConditionInput
+	NodeType   string // VSNode or VMNode or Both
+	//SocketAddress string
 
 	// output
 	Datas []SensorData
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
-}
-
-type ResolveCurrentNode struct {
-	// input
-	VNodeID       string
-	Capability    string
-	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
-
-	// output
-	//VNodeID_n 	string (dup)
-	Values Value
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
-}
-
-type ResolveCurrentPoint struct {
-	// input
-	VPointID_n    string
-	Capability    string
-	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
-
-	// output
-	Datas []SensorData
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
-}
-
-type ResolveConditionNode struct {
-	// input
-	VNodeID_n     string
-	Capability    string
-	Limit         Range
-	Timeout       time.Duration
-	SocketAddress string // センサデータ取得対象となるVNodeのソケットアドレス
-
-	// output
-	//DataForRegist
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
-}
-
-type ResolveConditionPoint struct {
-	// input
-	VPointID_n    string
-	Capability    string
-	Limit         Range
-	Timeout       time.Duration
-	SocketAddress string // センサデータ取得対象となるVPointのソケットアドレス
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
 type Actuate struct {
 	// input
-	VNodeID_n     string
+	VNodeID       string
 	Action        string
 	Parameter     float64
 	SocketAddress string // 動作指示対象となるVNodeのソケットアドレス
@@ -153,9 +117,21 @@ type Actuate struct {
 	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
 }
 
+type ConditionInput struct {
+	Limit   Range
+	Timeout time.Duration
+}
+
+type AreaDescriptor struct {
+	PAreaID  []string
+	VSNode   map[string]string // VNodeID と SocketAddressのマッピング
+	TTL      time.Time
+	ServerIP []string // ノード解決時に使いたい，MECサーバのIPアドレス
+}
+
 type SensorData struct {
-	VNodeID_n string
-	Values    []Value
+	VNodeID string
+	Values  []Value
 }
 
 type SquarePoint struct {
