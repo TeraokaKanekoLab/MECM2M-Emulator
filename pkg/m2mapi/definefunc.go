@@ -35,7 +35,7 @@ type ResolveArea struct {
 	SW SquarePoint `json:"sw"`
 
 	// output
-	AD  string    `json:"ad"`
+	AD  []string  `json:"ad"`
 	TTL time.Time `json:"ttl"`
 
 	// etc.

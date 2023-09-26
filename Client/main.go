@@ -21,8 +21,8 @@ func main() {
 	switch args[1] {
 	case "area":
 		data = m2mapi.ResolveArea{
-			NE: m2mapi.SquarePoint{Lat: 35.533, Lon: 139.532},
-			SW: m2mapi.SquarePoint{Lat: 35.532, Lon: 139.531},
+			NE: m2mapi.SquarePoint{Lat: 35.532, Lon: 139.532},
+			SW: m2mapi.SquarePoint{Lat: 35.53, Lon: 139.53},
 		}
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":
