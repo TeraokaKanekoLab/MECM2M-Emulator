@@ -39,7 +39,8 @@ type ResolveArea struct {
 	TTL time.Time `json:"ttl"`
 
 	// etc.
-	Descriptor AreaDescriptor `json:"area-descriptor"` // 転送相手からADの内容を得るため
+	Descriptor   AreaDescriptor `json:"area-descriptor"` // 転送相手からADの内容を得るため
+	TransmitFlag bool           `json:"transmit-flag"`   // M2M API -> M2M API のリクエスト転送か否かのフラグ
 }
 
 // エリアマッピングを取得するためのフォーマット
