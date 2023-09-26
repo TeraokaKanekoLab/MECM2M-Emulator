@@ -74,26 +74,29 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func resolveArea(w http.ResponseWriter, r *http.Request) {
-	// POST リクエストのみを受信する
 	if r.Method == http.MethodPost {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
-			return
-		}
-		inputFormat := &m2mapi.ResolveArea{}
-		if err := json.Unmarshal(body, inputFormat); err != nil {
-			http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
-		}
+		if r.Header.Get("Host") == "192.168.1.1:8080" {
+			fmt.Println("Success transmit!!")
+		} else if r.Header.Get("Host") == "" {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
+				return
+			}
+			inputFormat := &m2mapi.ResolveArea{}
+			if err := json.Unmarshal(body, inputFormat); err != nil {
+				http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
+			}
 
-		// GraphDBへの問い合わせ
-		results := resolveAreaFunction(inputFormat.SW, inputFormat.NE)
-		results_str, err := json.Marshal(results)
-		if err != nil {
-			fmt.Println("Error marshaling data: ", err)
-			return
+			// GraphDBへの問い合わせ
+			results := resolveAreaFunction(inputFormat.SW, inputFormat.NE)
+			results_str, err := json.Marshal(results)
+			if err != nil {
+				fmt.Println("Error marshaling data: ", err)
+				return
+			}
+			fmt.Fprintf(w, "%v\n", string(results_str))
 		}
-		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveArea: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -360,57 +363,91 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 
 	//fmt.Println("target mec server: ", target_mec_server)
 
-	// 3. 対象となったMEC ServerのLocal GraphDBに検索をかける
+	// 3. 対象となったMEC ServerのLocal GraphDBに検索をかける．
+	// この時，自MEC Serverに問い合わせる場合は，そのまま検索クエリを投げればいいが，他MEC Serverの場合，一度 M2M API を挟まなければいけない
 	// 出力結果は，PAreaID, VNodeID, VNodeSocketAddress, VMNodeRSocketAddress
 	payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vn:VNode) WHERE a.NE[0] > ` + strconv.FormatFloat(sw.Lat, 'f', 4, 64) + ` and a.NE[1] > ` + strconv.FormatFloat(sw.Lon, 'f', 4, 64) + ` and a.SW[0] < ` + strconv.FormatFloat(ne.Lat, 'f', 4, 64) + ` and a.SW[1] < ` + strconv.FormatFloat(ne.Lon, 'f', 4, 64) + ` return a.PAreaID, vn.VNodeID, vn.SocketAddress, vn.VMNodeRSocketAddress;"}]}`
 	results := m2mapi.ResolveArea{}
 	area_desc := m2mapi.AreaDescriptor{}
 	for _, server_ip := range target_mec_server {
-		graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
-		req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(payload)))
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "*/*")
+		if server_ip == ip_address {
+			// 自MEC ServerのLocal GraphDBへの検索
+			graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+			req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(payload)))
+			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("Accept", "*/*")
 
-		client := new(http.Client)
-		resp, err := client.Do(req)
-		if err != nil {
-			message.MyError(err, "resolvePointFunction > client.Do()")
-		}
-		defer resp.Body.Close()
+			client := new(http.Client)
+			resp, err := client.Do(req)
+			if err != nil {
+				message.MyError(err, "resolvePointFunction > client.Do()")
+			}
+			defer resp.Body.Close()
 
-		byteArray, _ := io.ReadAll(resp.Body)
-		values := bodyGraphDB(byteArray)
-		//fmt.Println(values)
+			byteArray, _ := io.ReadAll(resp.Body)
+			values := bodyGraphDB(byteArray)
+			//fmt.Println(values)
 
-		var row_data interface{}
-		for _, v1 := range values {
-			for k2, v2 := range v1.(map[string]interface{}) {
-				if k2 == "data" {
-					for _, v3 := range v2.([]interface{}) {
-						for k4, v4 := range v3.(map[string]interface{}) {
-							if k4 == "row" {
-								row_data = v4
-								dataArray := row_data.([]interface{})
-								area_desc.PAreaID = addIfNotExists(area_desc.PAreaID, dataArray[0].(string))
-								var vmnoder_socket_address string
-								if dataArray[3] == nil {
-									vmnoder_socket_address = ""
-								} else {
-									vmnoder_socket_address = dataArray[3].(string)
+			var row_data interface{}
+			for _, v1 := range values {
+				for k2, v2 := range v1.(map[string]interface{}) {
+					if k2 == "data" {
+						for _, v3 := range v2.([]interface{}) {
+							for k4, v4 := range v3.(map[string]interface{}) {
+								if k4 == "row" {
+									row_data = v4
+									dataArray := row_data.([]interface{})
+									area_desc.PAreaID = addIfNotExists(area_desc.PAreaID, dataArray[0].(string))
+									var vmnoder_socket_address string
+									if dataArray[3] == nil {
+										vmnoder_socket_address = ""
+									} else {
+										vmnoder_socket_address = dataArray[3].(string)
+									}
+									vnode_set := m2mapi.VNodeSet{VNodeID: dataArray[1].(string), VNodeSocketAddress: dataArray[2].(string), VMNodeRSocketAddress: vmnoder_socket_address}
+									area_desc.VNode = append(area_desc.VNode, vnode_set)
+									currentTime := time.Now()
+									area_desc.TTL = currentTime.Add(1 * time.Hour)
+									results.AD = fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
+									results.TTL = area_desc.TTL
 								}
-								vnode_set := m2mapi.VNodeSet{VNodeID: dataArray[1].(string), VNodeSocketAddress: dataArray[2].(string), VMNodeRSocketAddress: vmnoder_socket_address}
-								area_desc.VNode = append(area_desc.VNode, vnode_set)
-								currentTime := time.Now()
-								area_desc.TTL = currentTime.Add(1 * time.Hour)
-								results.AD = fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
-								results.TTL = area_desc.TTL
 							}
 						}
 					}
 				}
 			}
+			area_desc.ServerIP = append(area_desc.ServerIP, server_ip)
+		} else {
+			// 他MEC Serverへリクエスト転送
+			transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/area"
+			transmit_m2mapi_data := m2mapi.ResolveArea{
+				NE: m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
+				SW: m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
+			}
+			byte_data, _ := json.Marshal(transmit_m2mapi_data)
+			req, err := http.NewRequest("POST", transmit_m2mapi_url, bytes.NewBuffer(byte_data))
+			if err != nil {
+				fmt.Println("Error making request: ", err)
+				panic(err)
+			}
+
+			// ヘッダ情報を追加
+			req.Header.Set("Content-Type", "application/json")
+			req.Host = ip_address + ":" + os.Getenv("M2M_API_PORT")
+
+			response, err := http.DefaultClient.Do(req)
+			if err != nil {
+				fmt.Println("Error making response: ", err)
+				panic(err)
+			}
+			defer response.Body.Close()
+
+			body, err := io.ReadAll(response.Body)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("Transmit: ", string(body))
 		}
-		area_desc.ServerIP = append(area_desc.ServerIP, server_ip)
 	}
 
 	ad_cache[results.AD] = area_desc
