@@ -6,7 +6,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/big"
 	"mecm2m-Emulator/pkg/m2mapi"
@@ -45,7 +45,7 @@ func init() {
 
 func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "resolvePastNode: Error reading request body", http.StatusInternalServerError)
 			return
@@ -120,7 +120,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 
 func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "resolveCurrentNode: Error reading request body", http.StatusInternalServerError)
 			return
@@ -169,7 +169,7 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 
 func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "resolveConditionNode: Error reading request body", http.StatusInternalServerError)
 			return
@@ -249,7 +249,7 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 
 func actuate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "actuate: Error reading request body", http.StatusInternalServerError)
 			return
@@ -298,7 +298,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 
 func dataRegister(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "dataRegister: Error reading request body", http.StatusInternalServerError)
 			return
@@ -408,7 +408,7 @@ func main() {
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file: ", err)
 		return

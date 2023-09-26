@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
@@ -85,7 +84,7 @@ func main() {
 	}
 
 	config_link_process := os.Args[1]
-	file, err := ioutil.ReadFile(config_link_process)
+	file, err := os.ReadFile(config_link_process)
 	if err != nil {
 		message.MyError(err, "Failed to read config file for link process")
 	}
@@ -188,7 +187,7 @@ func connectionLink(conn net.Conn, file string) {
 			}
 			defer response.Body.Close()
 
-			body, err := ioutil.ReadAll(response.Body)
+			body, err := io.ReadAll(response.Body)
 			if err != nil {
 				panic(err)
 			}
@@ -250,7 +249,7 @@ func connectionLink(conn net.Conn, file string) {
 			}
 			defer response.Body.Close()
 
-			body, err := ioutil.ReadAll(response.Body)
+			body, err := io.ReadAll(response.Body)
 			if err != nil {
 				panic(err)
 			}

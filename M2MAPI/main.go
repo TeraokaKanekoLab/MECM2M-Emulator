@@ -19,11 +19,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var port string
-var cloud_server_ip_port string
-var ip_address string
+var (
+	port                 string
+	cloud_server_ip_port string
+	ip_address           string
 
-var ad_cache map[string]m2mapi.AreaDescriptor = make(map[string]m2mapi.AreaDescriptor)
+	ad_cache           map[string]m2mapi.AreaDescriptor = make(map[string]m2mapi.AreaDescriptor)
+	area_mapping_cache []m2mapi.MECCoverArea
+)
 
 func init() {
 	// .envファイルの読み込み
@@ -75,20 +78,24 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "resolvePoint: Error reading request body", http.StatusInternalServerError)
+			http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
 			return
 		}
 		inputFormat := &m2mapi.ResolveArea{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
-			http.Error(w, "resolvePoint: Error missmatching packet format", http.StatusInternalServerError)
+			http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
 		// GraphDBへの問い合わせ
 		results := resolveAreaFunction(inputFormat.SW, inputFormat.NE)
-
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
-		http.Error(w, "resolvePoint: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+		http.Error(w, "resolveArea: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
 	fmt.Println(ad_cache)
 }
@@ -135,8 +142,14 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 
 		// GraphDBへの問い合わせ
 		results := resolveNodeFunction(inputFormat.AD, inputFormat.Capabilities, inputFormat.NodeType)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		fmt.Println(string(results_str))
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -297,47 +310,62 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 }
 
 func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
-	// Cloud Server が所有する各MEC Serverのカバーエリア領域をはじめに聞きに行き，対象のMEC Serverすべてにエリア解決をリクエストする
+	// Cloud Sever に聞きに行くかのフラグと，エリア解決時に用いるServerIPのスライスの定義
+	ask_cloud_flag := true
+	var target_mec_server []string
 
-	// Cloud Server にある，MEC Serverとカバー領域のマッピングを参照する．
-	area_mapping_data_request := m2mapi.AreaMapping{
-		SW: sw,
-		NE: ne,
-	}
-	transmit_data, _ := json.Marshal(area_mapping_data_request)
-	cloud_url := "http://" + cloud_server_ip_port + "/m2mapi/area/mapping"
-	area_mapping_data_response, err := http.Post(cloud_url, "application/json", bytes.NewBuffer(transmit_data))
-	if err != nil {
-		fmt.Println("Error making request: ", err)
-	}
-	defer area_mapping_data_response.Body.Close()
-
-	body, err := io.ReadAll(area_mapping_data_response.Body)
-	if err != nil {
-		panic(err)
+	// 1. area_mapping_cache の情報と入力の矩形範囲を比べて，矩形範囲が area_mapping_cache の範囲と被っているか確認．被っている area_mapping がなければ，Cloud Serverに聞きに行く
+	for _, cover_area := range area_mapping_cache {
+		if (ne.Lat <= cover_area.MinLat || ne.Lon <= cover_area.MinLon) || (sw.Lat >= cover_area.MaxLat || sw.Lon >= cover_area.MaxLon) {
+			// 対象領域でない
+			//fmt.Println("Not target: ", cover_area.ServerIP)
+		} else {
+			// 対象領域である
+			ask_cloud_flag = false
+			target_mec_server = append(target_mec_server, cover_area.ServerIP)
+		}
 	}
 
-	var area_mapping_output m2mapi.AreaMapping
-	if err = json.Unmarshal(body, &area_mapping_output); err != nil {
-		fmt.Println("Error Unmarshaling: ", err)
+	// 2. area_mapping_cache に情報がない，もしくは area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
+	if ask_cloud_flag {
+		fmt.Println("Ask Cloud Server")
+		area_mapping_data_request := m2mapi.AreaMapping{
+			SW: sw,
+			NE: ne,
+		}
+		transmit_data, _ := json.Marshal(area_mapping_data_request)
+		cloud_url := "http://" + cloud_server_ip_port + "/m2mapi/area/mapping"
+		area_mapping_data_response, err := http.Post(cloud_url, "application/json", bytes.NewBuffer(transmit_data))
+		if err != nil {
+			fmt.Println("Error making request: ", err)
+		}
+		defer area_mapping_data_response.Body.Close()
+
+		body, err := io.ReadAll(area_mapping_data_response.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		var area_mapping_output []m2mapi.AreaMapping
+		if err = json.Unmarshal(body, &area_mapping_output); err != nil {
+			fmt.Println("Error Unmarshaling: ", err)
+		}
+
+		// area_mapping_cache にマッピング情報をキャッシュ
+		for _, area_mapping := range area_mapping_output {
+			area_mapping_cache = append(area_mapping_cache, area_mapping.MECCoverArea)
+			target_mec_server = append(target_mec_server, area_mapping.MECCoverArea.ServerIP)
+		}
 	}
 
-	/*
-		body_str := string(body)
-		start := strings.Index(body_str, "[")
-		end := strings.Index(body_str, "]")
-		trim_body_str := body_str[start+1 : end]
-		var area_mapping_output m2mapi.AreaMapping
-		area_mapping_output.ServerIPs = strings.Split(trim_body_str, " ")
-		fmt.Println(area_mapping_output)
-	*/
+	//fmt.Println("target mec server: ", target_mec_server)
 
-	// 出力結果は，PAreaID, VSNodeID, VNodeSocketAddress
-	payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vs:VSNode) WHERE a.NE[0] > ` + strconv.FormatFloat(sw.Lat, 'f', 4, 64) + ` and a.NE[1] > ` + strconv.FormatFloat(sw.Lon, 'f', 4, 64) + ` and a.SW[0] < ` + strconv.FormatFloat(ne.Lat, 'f', 4, 64) + ` and a.SW[1] < ` + strconv.FormatFloat(ne.Lon, 'f', 4, 64) + ` return a.PAreaID, vs.VNodeID, vs.SocketAddress;"}]}`
+	// 3. 対象となったMEC ServerのLocal GraphDBに検索をかける
+	// 出力結果は，PAreaID, VNodeID, VNodeSocketAddress, VMNodeRSocketAddress
+	payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vn:VNode) WHERE a.NE[0] > ` + strconv.FormatFloat(sw.Lat, 'f', 4, 64) + ` and a.NE[1] > ` + strconv.FormatFloat(sw.Lon, 'f', 4, 64) + ` and a.SW[0] < ` + strconv.FormatFloat(ne.Lat, 'f', 4, 64) + ` and a.SW[1] < ` + strconv.FormatFloat(ne.Lon, 'f', 4, 64) + ` return a.PAreaID, vn.VNodeID, vn.SocketAddress, vn.VMNodeRSocketAddress;"}]}`
 	results := m2mapi.ResolveArea{}
 	area_desc := m2mapi.AreaDescriptor{}
-	area_desc.VSNode = make(map[string]string)
-	for _, server_ip := range area_mapping_output.ServerIPs {
+	for _, server_ip := range target_mec_server {
 		graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 		req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(payload)))
 		req.Header.Set("Content-Type", "application/json")
@@ -364,7 +392,14 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 								row_data = v4
 								dataArray := row_data.([]interface{})
 								area_desc.PAreaID = addIfNotExists(area_desc.PAreaID, dataArray[0].(string))
-								area_desc.VSNode[dataArray[1].(string)] = dataArray[2].(string)
+								var vmnoder_socket_address string
+								if dataArray[3] == nil {
+									vmnoder_socket_address = ""
+								} else {
+									vmnoder_socket_address = dataArray[3].(string)
+								}
+								vnode_set := m2mapi.VNodeSet{VNodeID: dataArray[1].(string), VNodeSocketAddress: dataArray[2].(string), VMNodeRSocketAddress: vmnoder_socket_address}
+								area_desc.VNode = append(area_desc.VNode, vnode_set)
 								currentTime := time.Now()
 								area_desc.TTL = currentTime.Add(1 * time.Hour)
 								results.AD = fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
@@ -379,6 +414,7 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 	}
 
 	ad_cache[results.AD] = area_desc
+	results.Descriptor = area_desc
 	return results
 }
 
@@ -397,14 +433,14 @@ func resolveNodeFunction(ad string, caps []string, node_type string) []m2mapi.Re
 
 	if node_type == "All" || node_type == "VSNode" {
 		var format_vsnodes []string
-		for vsnode := range area_desc.VSNode {
-			vsnode = "\\\"" + vsnode + "\\\""
-			format_vsnodes = append(format_vsnodes, vsnode)
+		for _, vsnode := range area_desc.VNode {
+			vnode_id := "\\\"" + vsnode.VNodeID + "\\\""
+			format_vsnodes = append(format_vsnodes, vnode_id)
 		}
-		vsnode_payload := `{"statements": [{"statement": "MATCH (vs:VSNode)-[:isPhysicalizedBy]->(ps:PSNode) WHERE vs.VNodeID IN [` + strings.Join(format_vsnodes, ", ") + `] and ps.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vs.VNodeID, vs.SocketAddress;"}]}`
+		vnode_payload := `{"statements": [{"statement": "MATCH (vs:VSNode)-[:isPhysicalizedBy]->(ps:PSNode) WHERE vs.VNodeID IN [` + strings.Join(format_vsnodes, ", ") + `] and ps.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vs.VNodeID, vs.SocketAddress;"}]}`
 		for _, server_ip := range area_desc.ServerIP {
 			graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
-			req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(vsnode_payload)))
+			req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(vnode_payload)))
 			req.Header.Set("Content-Type", "application/json")
 			req.Header.Set("Accept", "*/*")
 
@@ -428,8 +464,8 @@ func resolveNodeFunction(ad string, caps []string, node_type string) []m2mapi.Re
 									row_data = v4
 									dataArray := row_data.([]interface{})
 									result := m2mapi.ResolveNode{}
-									result.VNodeID = dataArray[0].(string)
-									result.SocketAddress = dataArray[1].(string)
+									result.VNode.VNodeID = dataArray[0].(string)
+									result.VNode.VNodeSocketAddress = dataArray[1].(string)
 									results = append(results, result)
 								}
 							}
@@ -446,7 +482,7 @@ func resolveNodeFunction(ad string, caps []string, node_type string) []m2mapi.Re
 			area = "\\\"" + area + "\\\""
 			format_areas = append(format_areas, area)
 		}
-		vmnode_payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vm:VMNode)-[:isPhysicalizedBy]->(pm:PMNode) WHERE a.PAreaID IN [` + strings.Join(format_areas, ", ") + `] and pm.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vm.VNodeID, vm.SocketAddress;"}]}`
+		vmnode_payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vm:VMNode)-[:isPhysicalizedBy]->(pm:PMNode) WHERE a.PAreaID IN [` + strings.Join(format_areas, ", ") + `] and pm.Capability IN [` + strings.Join(format_capabilities, ", ") + `] return vm.VNodeID, vm.SocketAddress, vm.VMNodeRSocketAddress;"}]}`
 		for _, server_ip := range area_desc.ServerIP {
 			graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 			req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(vmnode_payload)))
@@ -473,8 +509,9 @@ func resolveNodeFunction(ad string, caps []string, node_type string) []m2mapi.Re
 									row_data = v4
 									dataArray := row_data.([]interface{})
 									result := m2mapi.ResolveNode{}
-									result.VNodeID = dataArray[0].(string)
-									result.SocketAddress = dataArray[1].(string)
+									result.VNode.VNodeID = dataArray[0].(string)
+									result.VNode.VNodeSocketAddress = dataArray[1].(string)
+									result.VNode.VMNodeRSocketAddress = dataArray[2].(string)
 									results = append(results, result)
 								}
 							}
@@ -587,9 +624,9 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 	// ADに含まれるすべてのVNodeIDに対して過去データ取得リクエストを転送したい．
 	area_desc := ad_cache[ad]
 	if node_type == "All" || node_type == "VSNode" {
-		for vsnode_id, socket_address := range area_desc.VSNode {
+		for _, vsnode := range area_desc.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode_id,
+				VNodeID:    vsnode.VNodeID,
 				Capability: capability,
 				Period:     m2mapi.PeriodInput{Start: period.Start, End: period.End},
 			}
@@ -599,7 +636,7 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 				fmt.Println("Error marshaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + socket_address + "/primapi/data/past/node"
+			transmit_url := "http://" + vsnode.VNodeSocketAddress + "/primapi/data/past/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -627,7 +664,7 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
+				VNodeID:    vmnode_result.VNode.VNodeID,
 				Capability: capability,
 				Period:     m2mapi.PeriodInput{Start: period.Start, End: period.End},
 			}
@@ -637,7 +674,7 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 				fmt.Println("Error marhsaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + vmnode_result.SocketAddress + "/primpai/data/past/node"
+			transmit_url := "http://" + vmnode_result.VNode.VNodeSocketAddress + "/primpai/data/past/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -673,7 +710,7 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 		vsnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vsnode_result := range vsnode_results_by_resolve_node {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode_result.VNodeID,
+				VNodeID:    vsnode_result.VNode.VNodeID,
 				Capability: capability,
 			}
 
@@ -682,7 +719,8 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 				fmt.Println("Error marshaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + vsnode_result.SocketAddress + "/primapi/data/current/node"
+			// VSNodeへ転送
+			transmit_url := "http://" + vsnode_result.VNode.VNodeSocketAddress + "/primapi/data/current/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -710,7 +748,7 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
+				VNodeID:    vmnode_result.VNode.VNodeID,
 				Capability: capability,
 			}
 
@@ -719,7 +757,8 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 				fmt.Println("Error marhsaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + vmnode_result.SocketAddress + "/primpai/data/current/node"
+			// VSNodeへ転送
+			transmit_url := "http://" + vmnode_result.VNode.VMNodeRSocketAddress + "/primpai/data/current/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -755,7 +794,7 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 		vsnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vsnode_result := range vsnode_results_by_resolve_node {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode_result.VNodeID,
+				VNodeID:    vsnode_result.VNode.VNodeID,
 				Capability: capability,
 				Condition:  condition,
 			}
@@ -765,7 +804,8 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 				fmt.Println("Error marshaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + vsnode_result.SocketAddress + "/primapi/data/condition/node"
+			// VSNodeへ転送
+			transmit_url := "http://" + vsnode_result.VNode.VNodeSocketAddress + "/primapi/data/condition/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -793,7 +833,7 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
+				VNodeID:    vmnode_result.VNode.VNodeID,
 				Capability: capability,
 				Condition:  condition,
 			}
@@ -803,7 +843,8 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 				fmt.Println("Error marhsaling data: ", err)
 				return null_data
 			}
-			transmit_url := "http://" + vmnode_result.SocketAddress + "/primpai/data/condition/node"
+			// VMNodeRへ転送
+			transmit_url := "http://" + vmnode_result.VNode.VMNodeRSocketAddress + "/primpai/data/condition/node"
 			response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request: ", err)
@@ -868,19 +909,17 @@ func bodyGraphDB(byteArray []byte) []interface{} {
 	}
 	var values []interface{}
 	for _, v1 := range jsonBody {
-		switch t1 := v1.(type) {
+		switch v1.(type) {
 		case []interface{}:
-			for _, v2 := range v1.([]interface{}) {
-				fmt.Println("v1([]interface{}): ", v2, "type: ", t1)
+			for range v1.([]interface{}) {
 				values = v1.([]interface{})
 			}
 		case map[string]interface{}:
 			for _, v2 := range v1.(map[string]interface{}) {
-				switch t2 := v2.(type) {
+				switch v2.(type) {
 				case []interface{}:
 					values = v2.([]interface{})
 				default:
-					fmt.Println("type: ", t2)
 				}
 			}
 		default:

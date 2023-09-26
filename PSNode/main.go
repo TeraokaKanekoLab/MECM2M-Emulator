@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"math/rand"
@@ -69,7 +68,7 @@ func cleanup(socketFiles ...string) {
 
 func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "resolveCurrentNode: Error reading request body", http.StatusInternalServerError)
 			return
@@ -109,7 +108,7 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 
 func actuate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "actuate: Error reading request body", http.StatusInternalServerError)
 			return
@@ -160,7 +159,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 // mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
 func timeSync(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "timeSync: Error reading request body", http.StatusInternalServerError)
 			return
@@ -239,7 +238,7 @@ func main() {
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file: ", err)
 		return
@@ -273,7 +272,7 @@ func generateSensordata(inputFormat *psnode.TimeSync) m2mapi.DataForRegist {
 		fmt.Println(err)
 	}
 	defer psnodeJsonFile.Close()
-	psnodeByteValue, _ := ioutil.ReadAll(psnodeJsonFile)
+	psnodeByteValue, _ := io.ReadAll(psnodeJsonFile)
 
 	var psnodeResult map[string][]interface{}
 	json.Unmarshal(psnodeByteValue, &psnodeResult)
@@ -317,7 +316,7 @@ func registerSensingData(file string, t time.Time) {
 		fmt.Println(err)
 	}
 	defer psnodeJsonFile.Close()
-	psnodeByteValue, _ := ioutil.ReadAll(psnodeJsonFile)
+	psnodeByteValue, _ := io.ReadAll(psnodeJsonFile)
 
 	var psnodeResult map[string][]interface{}
 	json.Unmarshal(psnodeByteValue, &psnodeResult)
@@ -357,7 +356,7 @@ func registerSensingData(file string, t time.Time) {
 		fmt.Println(err)
 	}
 	defer psinkJsonFile.Close()
-	psinkByteValue, _ := ioutil.ReadAll(psinkJsonFile)
+	psinkByteValue, _ := io.ReadAll(psinkJsonFile)
 
 	var psinkResult map[string][]interface{}
 	json.Unmarshal(psinkByteValue, &psinkResult)

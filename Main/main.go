@@ -7,7 +7,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -151,7 +151,7 @@ func main() {
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file: ", err)
 		return
@@ -575,18 +575,21 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		}
 		message.MyReadMessage(point_output)
 	case "node":
-		var VPointID string
-		Caps := make([]string, len(options)-1)
-		for i, option := range options {
-			if i == 0 {
-				VPointID = option
-			} else {
-				Caps[i-1] = option
+		/*
+			var VPointID string
+			Caps := make([]string, len(options)-1)
+			for i, option := range options {
+				if i == 0 {
+					VPointID = option
+				} else {
+					Caps[i-1] = option
+				}
 			}
-		}
-		node_input := &m2mapi.ResolveNode{
-			VNodeID: VPointID,
-		}
+			node_input := &m2mapi.ResolveNode{
+				DestSocketAddr: VPointID,
+			}
+		*/
+		node_input := &m2mapi.ResolveNode{}
 		if err := encoder.Encode(node_input); err != nil {
 			message.MyError(err, "commandAPIExecution > node > encoder.Encode")
 		}

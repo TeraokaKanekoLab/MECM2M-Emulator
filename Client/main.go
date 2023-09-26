@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/psnode"
@@ -21,8 +21,8 @@ func main() {
 	switch args[1] {
 	case "area":
 		data = m2mapi.ResolveArea{
-			NE: m2mapi.SquarePoint{Lat: 35.531, Lon: 139.531},
-			SW: m2mapi.SquarePoint{Lat: 35.53, Lon: 139.53},
+			NE: m2mapi.SquarePoint{Lat: 35.533, Lon: 139.532},
+			SW: m2mapi.SquarePoint{Lat: 35.531, Lon: 139.531},
 		}
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":
@@ -105,7 +105,7 @@ func main() {
 	}
 	defer response.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		panic(err)
 	}

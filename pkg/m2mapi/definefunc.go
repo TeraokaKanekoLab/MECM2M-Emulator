@@ -31,15 +31,15 @@ type PSink struct {
 
 type ResolveArea struct {
 	// input
-	NE SquarePoint
-	SW SquarePoint
+	NE SquarePoint `json:"ne"`
+	SW SquarePoint `json:"sw"`
 
 	// output
-	AD  string
-	TTL time.Time
+	AD  string    `json:"ad"`
+	TTL time.Time `json:"ttl"`
 
 	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
+	Descriptor AreaDescriptor `json:"area-descriptor"` // 転送相手からADの内容を得るため
 }
 
 // エリアマッピングを取得するためのフォーマット
@@ -49,118 +49,121 @@ type AreaMapping struct {
 	SW SquarePoint `json:"sw"`
 
 	// output
-	ServerIPs []string `json:"serverips"`
+	MECCoverArea MECCoverArea `json:"mec-cover-area"`
 }
 
 type ExtendAD struct {
 	// input
-	AD string
+	AD string `json:"ad"`
 
 	// output
-	Flag bool
+	Flag bool `json:"flag"`
 }
 
 type ResolveNode struct {
 	// input
-	AD           string
-	Capabilities []string
-	NodeType     string
+	AD           string   `json:"ad"`
+	Capabilities []string `json:"capabilities"`
+	NodeType     string   `json:"node-type"`
 
 	// output
-	VNodeID       string
-	SocketAddress string
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
+	VNode VNodeSet `json:"vnode"`
 }
 
 type ResolveDataByNode struct {
 	// input
-	VNodeID       string      //`json:"vnode_id"`
-	Capability    string      //`json:"capability"`
-	Period        PeriodInput //`json:"period"`
-	Condition     ConditionInput
-	SocketAddress string //`json:"socket_address"` // センサデータ取得対象となるVNodeのソケットアドレス
+	VNodeID       string         `json:"vnode-id"`
+	Capability    string         `json:"capability"`
+	Period        PeriodInput    `json:"period"`
+	Condition     ConditionInput `json:"condition"`
+	SocketAddress string         `json:"socket-address"` // センサデータ取得対象となるVNodeのソケットアドレス
 
 	// output
 	//VNodeID 	string (dup)
-	Values []Value
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
+	Values []Value `json:"values"`
 }
 
 type ResolveDataByArea struct {
 	// input
-	AD         string
-	Capability string
-	Period     PeriodInput
-	Condition  ConditionInput
-	NodeType   string // VSNode or VMNode or Both
-	//SocketAddress string
+	AD         string         `json:"ad"`
+	Capability string         `json:"capability"`
+	Period     PeriodInput    `json:"period"`
+	Condition  ConditionInput `json:"condition"`
+	NodeType   string         `json:"node-type"` // VSNode or VMNode or Both
 
 	// output
-	Datas []SensorData
+	Datas []SensorData `json:"datas"`
 }
 
 type Actuate struct {
 	// input
-	VNodeID       string
-	Action        string
-	Parameter     float64
-	SocketAddress string // 動作指示対象となるVNodeのソケットアドレス
+	VNodeID       string  `json:"vnode-id"`
+	Action        string  `json:"action"`
+	Parameter     float64 `json:"parameter"`
+	SocketAddress string  `json:"socket-address"` // 動作指示対象となるVNodeのソケットアドレス
 
 	// output
-	Status bool
-
-	// etc.
-	DestSocketAddr string // リンクプロセスが宛先のソケットアドレスを認識するために必要
+	Status bool `json:"status"`
 }
 
 type ConditionInput struct {
-	Limit   Range
-	Timeout time.Duration
+	Limit   Range         `json:"limit"`
+	Timeout time.Duration `json:"timeout"`
 }
 
 type AreaDescriptor struct {
-	PAreaID  []string
-	VSNode   map[string]string // VNodeID と SocketAddressのマッピング
-	TTL      time.Time
-	ServerIP []string // ノード解決時に使いたい，MECサーバのIPアドレス
+	PAreaID  []string   `json:"parea-id"`
+	VNode    []VNodeSet `json:"vnode"`
+	TTL      time.Time  `json:"ttl"`
+	ServerIP []string   `json:"server-ip"` // ノード解決時に使いたい，MECサーバのIPアドレス
 }
 
 type SensorData struct {
-	VNodeID string
-	Values  []Value
+	VNodeID string  `json:"vnode-id"`
+	Values  []Value `json:"values"`
 }
 
 type SquarePoint struct {
-	Lat float64
-	Lon float64
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
 type PeriodInput struct {
-	Start string
-	End   string
+	Start string `json:"start"`
+	End   string `json:"end"`
 }
 
 type Value struct {
-	Capability string
-	Time       string
-	Value      float64
+	Capability string  `json:"capability"`
+	Time       string  `json:"time"`
+	Value      float64 `json:"value"`
 }
 
 type Range struct {
-	LowerLimit float64
-	UpperLimit float64
+	LowerLimit float64 `json:"lower-limit"`
+	UpperLimit float64 `json:"upper-limit"`
 }
 
 type DataForRegist struct {
-	PNodeID    string
-	Capability string
-	Timestamp  string
-	Value      float64
-	PSinkID    string
-	Lat        float64
-	Lon        float64
+	PNodeID    string  `json:"pnode-id"`
+	Capability string  `json:"capability"`
+	Timestamp  string  `json:"timestamp"`
+	Value      float64 `json:"value"`
+	PSinkID    string  `json:"psink-id"`
+	Lat        float64 `json:"lat"`
+	Lon        float64 `json:"lon"`
+}
+
+type VNodeSet struct {
+	VNodeID              string `json:"vnode-id"`
+	VNodeSocketAddress   string `json:"vnode-socket-address"`
+	VMNodeRSocketAddress string `json:"vmnoder-socket-address"`
+}
+
+type MECCoverArea struct {
+	ServerIP string  `json:"server-ip"`
+	MinLat   float64 `json:"min-lat"`
+	MaxLat   float64 `json:"max-lat"`
+	MinLon   float64 `json:"min-lon"`
+	MaxLon   float64 `json:"max-lon"`
 }
