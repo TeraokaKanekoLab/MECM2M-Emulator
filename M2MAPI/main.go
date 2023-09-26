@@ -321,17 +321,21 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 
 func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 	// Cloud Sever に聞きに行くかのフラグと，エリア解決時に用いるServerIPのスライスの定義
-	ask_cloud_flag := true
+	ask_cloud_flag := false
 	var target_mec_server []string
 
 	// 1. area_mapping_cache の情報と入力の矩形範囲を比べて，矩形範囲が area_mapping_cache の範囲と被っているか確認．被っている area_mapping がなければ，Cloud Serverに聞きに行く
+	if len(area_mapping_cache) == 0 {
+		ask_cloud_flag = true
+	}
 	for _, cover_area := range area_mapping_cache {
 		if (ne.Lat <= cover_area.MinLat || ne.Lon <= cover_area.MinLon) || (sw.Lat >= cover_area.MaxLat || sw.Lon >= cover_area.MaxLon) {
 			// 対象領域でない
 			//fmt.Println("Not target: ", cover_area.ServerIP)
+			// 1つでもキャッシュされてない情報がある場合，Cloud Serverへ聞きに行く
+			ask_cloud_flag = true
 		} else {
 			// 対象領域である
-			ask_cloud_flag = false
 			target_mec_server = append(target_mec_server, cover_area.ServerIP)
 		}
 	}
@@ -364,11 +368,11 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 		// area_mapping_cache にマッピング情報をキャッシュ
 		for _, area_mapping := range area_mapping_output {
 			area_mapping_cache = append(area_mapping_cache, area_mapping.MECCoverArea)
-			target_mec_server = append(target_mec_server, area_mapping.MECCoverArea.ServerIP)
+			target_mec_server = addIfNotExists(target_mec_server, area_mapping.MECCoverArea.ServerIP)
 		}
 	}
 
-	//fmt.Println("target mec server: ", target_mec_server)
+	fmt.Println("target mec server: ", target_mec_server)
 
 	// 3. 対象となったMEC ServerのLocal GraphDBに検索をかける．
 	// この時，自MEC Serverに問い合わせる場合は，そのまま検索クエリを投げればいいが，他MEC Serverの場合，一度 M2M API を挟まなければいけない
@@ -417,7 +421,6 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 									currentTime := time.Now()
 									area_desc.TTL = currentTime.Add(1 * time.Hour)
 									ad = fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
-									results.AD = append(results.AD, ad)
 									results.TTL = area_desc.TTL
 								}
 							}
@@ -425,6 +428,7 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 					}
 				}
 			}
+			results.AD = append(results.AD, ad)
 			area_desc.ServerIP = append(area_desc.ServerIP, server_ip)
 			ad_cache[ad] = area_desc
 		} else {
@@ -448,7 +452,7 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 				panic(err)
 			}
 			transmit_response := m2mapi.ResolveArea{}
-			err = json.Unmarshal(body, &transmit_m2mapi_data)
+			err = json.Unmarshal(body, &transmit_response)
 			if err != nil {
 				fmt.Println("Error unmarshaling: ", err)
 			}
@@ -508,7 +512,6 @@ func resolveAreaTransmitFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 							currentTime := time.Now()
 							area_desc.TTL = currentTime.Add(1 * time.Hour)
 							ad = fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
-							results.AD = append(results.AD, ad)
 							results.TTL = area_desc.TTL
 						}
 					}
@@ -516,6 +519,7 @@ func resolveAreaTransmitFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 			}
 		}
 	}
+	results.AD = append(results.AD, ad)
 	ad_cache[results.AD[0]] = area_desc
 	results.Descriptor = area_desc
 
