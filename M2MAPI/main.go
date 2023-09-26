@@ -75,19 +75,19 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 func resolveArea(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		if r.Header.Get("Host") == "192.168.1.1:8080" {
-			fmt.Println("Success transmit!!")
-		} else if r.Header.Get("Host") == "" {
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
-				return
-			}
-			inputFormat := &m2mapi.ResolveArea{}
-			if err := json.Unmarshal(body, inputFormat); err != nil {
-				http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
-			}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
+			return
+		}
+		inputFormat := &m2mapi.ResolveArea{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
+		}
 
+		if inputFormat.TransmitFlag {
+			fmt.Println("Success transmit!!")
+		} else {
 			// GraphDBへの問い合わせ
 			results := resolveAreaFunction(inputFormat.SW, inputFormat.NE)
 			results_str, err := json.Marshal(results)
@@ -421,21 +421,12 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 			// 他MEC Serverへリクエスト転送
 			transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/area"
 			transmit_m2mapi_data := m2mapi.ResolveArea{
-				NE: m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
-				SW: m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
+				NE:           m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
+				SW:           m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
+				TransmitFlag: true,
 			}
 			byte_data, _ := json.Marshal(transmit_m2mapi_data)
-			req, err := http.NewRequest("POST", transmit_m2mapi_url, bytes.NewBuffer(byte_data))
-			if err != nil {
-				fmt.Println("Error making request: ", err)
-				panic(err)
-			}
-
-			// ヘッダ情報を追加
-			req.Header.Set("Content-Type", "application/json")
-			req.Host = ip_address + ":" + os.Getenv("M2M_API_PORT")
-
-			response, err := http.DefaultClient.Do(req)
+			response, err := http.Post(transmit_m2mapi_url, "application/json", bytes.NewBuffer(byte_data))
 			if err != nil {
 				fmt.Println("Error making response: ", err)
 				panic(err)
