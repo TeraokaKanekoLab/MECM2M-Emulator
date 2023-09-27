@@ -97,11 +97,13 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			} else {
 				switch key {
 				case "sw":
-					app_sw = value.(m2mapp.SquarePoint)
-					trans_sw = value.(m2mapi.SquarePoint)
+					value_map := value.(map[string]interface{})
+					app_sw = m2mapp.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
+					trans_sw = m2mapi.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
 				case "ne":
-					app_ne = value.(m2mapp.SquarePoint)
-					trans_ne = value.(m2mapi.SquarePoint)
+					value_map := value.(map[string]interface{})
+					app_ne = m2mapp.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
+					trans_ne = m2mapi.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
 				}
 			}
 		}
