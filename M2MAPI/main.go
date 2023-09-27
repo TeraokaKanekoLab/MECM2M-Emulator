@@ -98,18 +98,36 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 				switch key {
 				case "sw":
 					value_map := value.(map[string]interface{})
-					app_sw = m2mapp.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
-					trans_sw = m2mapi.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
+					var swlat, swlon float64
+					for key2, value2 := range value_map {
+						switch key2 {
+						case "Lat", "lat":
+							swlat = value2.(float64)
+						case "Lon", "lon":
+							swlon = value2.(float64)
+						}
+					}
+					app_sw = m2mapp.SquarePoint{Lat: swlat, Lon: swlon}
+					trans_sw = m2mapi.SquarePoint{Lat: swlat, Lon: swlon}
 				case "ne":
 					value_map := value.(map[string]interface{})
-					app_ne = m2mapp.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
-					trans_ne = m2mapi.SquarePoint{Lat: value_map["Lat"].(float64), Lon: value_map["Lon"].(float64)}
+					var nelat, nelon float64
+					for key2, value2 := range value_map {
+						switch key2 {
+						case "Lat", "lat":
+							nelat = value2.(float64)
+						case "Lon", "lon":
+							nelon = value2.(float64)
+						}
+					}
+					app_ne = m2mapp.SquarePoint{Lat: nelat, Lon: nelon}
+					trans_ne = m2mapi.SquarePoint{Lat: nelat, Lon: nelon}
 				}
 			}
 		}
 
 		if transmit_flag {
-			//fmt.Println("Success transmit!!")
+
 			results := resolveAreaTransmitFunction(trans_sw, trans_ne)
 			results_str, err := json.Marshal(results)
 			if err != nil {
@@ -480,6 +498,7 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 				fmt.Println("Error unmarshaling: ", err)
 			}
 
+			fmt.Println("from mec 2: ", transmit_response)
 			area_desc.AreaDescriptorDetail[server_ip] = transmit_response
 		}
 	}
