@@ -14,6 +14,7 @@ import (
 	"unsafe"
 
 	"mecm2m-Emulator/pkg/m2mapi"
+	"mecm2m-Emulator/pkg/m2mapp"
 	"mecm2m-Emulator/pkg/message"
 
 	"github.com/joho/godotenv"
@@ -80,14 +81,34 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "resolveArea: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.ResolveArea{}
-		if err := json.Unmarshal(body, inputFormat); err != nil {
+		var inputFormat map[string]interface{}
+		if err := json.Unmarshal(body, &inputFormat); err != nil {
 			http.Error(w, "resolveArea: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
-		if inputFormat.TransmitFlag {
+		transmit_flag := false
+		var app_sw, app_ne m2mapp.SquarePoint
+		var trans_sw, trans_ne m2mapi.SquarePoint
+		for key, value := range inputFormat {
+			if key == "transmit-flag" {
+				// 転送経路へ
+				transmit_flag = true
+				break
+			} else {
+				switch key {
+				case "sw":
+					app_sw = value.(m2mapp.SquarePoint)
+					trans_sw = value.(m2mapi.SquarePoint)
+				case "ne":
+					app_ne = value.(m2mapp.SquarePoint)
+					trans_ne = value.(m2mapi.SquarePoint)
+				}
+			}
+		}
+
+		if transmit_flag {
 			//fmt.Println("Success transmit!!")
-			results := resolveAreaTransmitFunction(inputFormat.SW, inputFormat.NE)
+			results := resolveAreaTransmitFunction(trans_sw, trans_ne)
 			results_str, err := json.Marshal(results)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
@@ -96,8 +117,12 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(results_str))
 		} else {
 			// GraphDBへの問い合わせ
-			results := resolveAreaFunction(inputFormat.SW, inputFormat.NE)
-			results_str, err := json.Marshal(results)
+			results := resolveAreaFunction(app_sw, app_ne)
+			results_app := m2mapp.ResolveAreaOutput{
+				AD:  results.AD,
+				TTL: results.TTL,
+			}
+			results_str, err := json.Marshal(results_app)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
 				return
@@ -125,7 +150,6 @@ func extendAD(w http.ResponseWriter, r *http.Request) {
 
 		output := m2mapi.ExtendAD{}
 		if value, ok := ad_cache[inputFormat.AD]; ok {
-			//value.TTL.Add(1 * time.Hour)
 			for _, ad_detail := range value.AreaDescriptorDetail {
 				ad_detail.TTL.Add(1 * time.Hour)
 			}
@@ -322,7 +346,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
+func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	// Cloud Sever に聞きに行くかのフラグと，エリア解決時に用いるServerIPのスライスの定義
 	ask_cloud_flag := false
 	var target_mec_server []string
@@ -347,8 +371,8 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 	if ask_cloud_flag {
 		fmt.Println("Ask Cloud Server")
 		area_mapping_data_request := m2mapi.AreaMapping{
-			SW: sw,
-			NE: ne,
+			SW: m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
+			NE: m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
 		}
 		transmit_data, _ := json.Marshal(area_mapping_data_request)
 		cloud_url := "http://" + cloud_server_ip_port + "/m2mapi/area/mapping"

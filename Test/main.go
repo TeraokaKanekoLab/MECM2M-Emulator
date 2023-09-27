@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"mecm2m-Emulator/pkg/m2mapp"
 	"mecm2m-Emulator/pkg/message"
 	"net/http"
 	"os"
@@ -16,25 +17,43 @@ import (
 func main() {
 	loadEnv()
 
-	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
-	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
-	psnodeJsonFile, err := os.Open(psnode_json_file_path)
-	if err != nil {
-		fmt.Println(err)
+	jsonStr := m2mapp.ResolveAreaInput{
+		NE: m2mapp.SquarePoint{Lat: 35.533, Lon: 139.532},
+		SW: m2mapp.SquarePoint{Lat: 35.531, Lon: 139.53},
 	}
-	defer psnodeJsonFile.Close()
-	psnodeByteValue, _ := ioutil.ReadAll(psnodeJsonFile)
 
-	var psnodeResult map[string][]interface{}
-	json.Unmarshal(psnodeByteValue, &psnodeResult)
+	jsonStr_byte, _ := json.Marshal(jsonStr)
 
-	psnodes := psnodeResult["psnodes"]
-	for _, v := range psnodes {
-		psnode_format := v.(map[string]interface{})
-		psnode := psnode_format["psnode"].(map[string]interface{})
-		psnode_data_property := psnode["data-property"].(map[string]interface{})
-		pnode_id := psnode_data_property["PNodeID"].(string)
-		fmt.Println(pnode_id)
+	// JSONデコード用のマップ
+	var data map[string]interface{}
+
+	// JSONデコード
+	if err := json.Unmarshal(jsonStr_byte, &data); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// 各フィールドごとに処理
+	for key, value := range data {
+		switch key {
+		case "field1":
+			// フィールド1に対する処理
+			fmt.Println("Field1:", value.(string))
+		case "field2":
+			// フィールド2に対する処理
+			fmt.Println("Field2:", value.([]interface{}))
+		case "field3":
+			// フィールド3に対する処理
+			if bytesData, ok := value.([]byte); ok {
+				// []byte型として処理
+				fmt.Println("Field3 (as []byte):", string(bytesData))
+			} else {
+				fmt.Println("Field3 (not []byte):", value)
+			}
+		default:
+			// その他のフィールドに対する処理
+			fmt.Println("Unknown field:", key)
+		}
 	}
 }
 
