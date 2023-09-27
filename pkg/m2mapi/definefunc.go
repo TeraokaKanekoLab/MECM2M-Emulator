@@ -35,7 +35,7 @@ type ResolveArea struct {
 	SW SquarePoint `json:"sw"`
 
 	// output
-	AD  []string  `json:"ad"`
+	AD  string    `json:"ad"`
 	TTL time.Time `json:"ttl"`
 
 	// etc.
@@ -68,7 +68,7 @@ type ResolveNode struct {
 	NodeType     string   `json:"node-type"`
 
 	// output
-	VNode VNodeSet `json:"vnode"`
+	VNode []VNodeSet `json:"vnode"`
 }
 
 type ResolveDataByNode struct {
@@ -113,10 +113,14 @@ type ConditionInput struct {
 }
 
 type AreaDescriptor struct {
-	PAreaID  []string   `json:"parea-id"`
-	VNode    []VNodeSet `json:"vnode"`
-	TTL      time.Time  `json:"ttl"`
-	ServerIP []string   `json:"server-ip"` // ノード解決時に使いたい，MECサーバのIPアドレス
+	// ServerIPをkey, AreaDescriptorDetailをvalue
+	AreaDescriptorDetail map[string]AreaDescriptorDetail `json:"area-descriptor-detail"`
+}
+
+type AreaDescriptorDetail struct {
+	PAreaID []string   `json:"parea-id"`
+	VNode   []VNodeSet `json:"vnode"`
+	TTL     time.Time  `json:"ttl"`
 }
 
 type SensorData struct {
