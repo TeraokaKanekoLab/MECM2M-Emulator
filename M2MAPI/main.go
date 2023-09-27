@@ -383,6 +383,7 @@ func resolveAreaFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 	payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vs:VSNode) WHERE a.NE[0] > ` + strconv.FormatFloat(sw.Lat, 'f', 4, 64) + ` and a.NE[1] > ` + strconv.FormatFloat(sw.Lon, 'f', 4, 64) + ` and a.SW[0] < ` + strconv.FormatFloat(ne.Lat, 'f', 4, 64) + ` and a.SW[1] < ` + strconv.FormatFloat(ne.Lon, 'f', 4, 64) + ` return a.PAreaID, vs.VNodeID, vs.SocketAddress;"}]}`
 	results := m2mapi.ResolveArea{}      // 最終的に M2M App に返す結果
 	area_desc := m2mapi.AreaDescriptor{} // すべての結果を1つのADにまとめる
+	area_desc.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 	for _, server_ip := range target_mec_server {
 		if server_ip == ip_address {
 			// 自MEC ServerのLocal GraphDBへの検索
