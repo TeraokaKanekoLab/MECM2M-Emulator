@@ -127,7 +127,6 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if transmit_flag {
-
 			results := resolveAreaTransmitFunction(trans_sw, trans_ne)
 			results_str, err := json.Marshal(results)
 			if err != nil {
@@ -137,10 +136,12 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(results_str))
 		} else {
 			// GraphDBへの問い合わせ
+			fmt.Println("from pmnode")
 			results := resolveAreaFunction(app_sw, app_ne)
 			results_app := m2mapp.ResolveAreaOutput{
-				AD:  results.AD,
-				TTL: results.TTL,
+				AD:         results.AD,
+				TTL:        results.TTL,
+				Descriptor: results.Descriptor,
 			}
 			results_str, err := json.Marshal(results_app)
 			if err != nil {
@@ -378,7 +379,6 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	for _, cover_area := range area_mapping_cache {
 		if (ne.Lat <= cover_area.MinLat || ne.Lon <= cover_area.MinLon) || (sw.Lat >= cover_area.MaxLat || sw.Lon >= cover_area.MaxLon) {
 			// 対象領域でない
-			//fmt.Println("Not target: ", cover_area.ServerIP)
 			// 1つでもキャッシュされてない情報がある場合，Cloud Serverへ聞きに行く
 			ask_cloud_flag = true
 		} else {
@@ -498,7 +498,6 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 				fmt.Println("Error unmarshaling: ", err)
 			}
 
-			fmt.Println("from mec 2: ", transmit_response)
 			area_desc.AreaDescriptorDetail[server_ip] = transmit_response
 		}
 	}
@@ -508,6 +507,7 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	ttl := time.Now().Add(1 * time.Hour)
 	results.AD = ad
 	results.TTL = ttl
+	results.Descriptor = area_desc
 
 	ad_cache[ad] = area_desc
 	return results
