@@ -202,15 +202,21 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 				case "ad":
 					app_ad = value.(string)
 				case "capability":
-					app_capability = append(app_capability, value.([]string)...)
-					trans_capability = value.([]string)
+					for _, v := range value.([]interface{}) {
+						app_capability = append(app_capability, v.(string))
+						trans_capability = append(trans_capability, v.(string))
+					}
 				case "node-type":
 					app_node_type = value.(string)
 					trans_node_type = value.(string)
 				case "parea-id":
-					trans_parea_id = append(trans_parea_id, value.([]string)...)
+					for _, v := range value.([]interface{}) {
+						trans_parea_id = append(trans_parea_id, v.(string))
+					}
 				case "vnode-id":
-					trans_vnode_id = append(trans_vnode_id, value.([]string)...)
+					for _, v := range value.([]interface{}) {
+						trans_vnode_id = append(trans_vnode_id, v.(string))
+					}
 				}
 			}
 		}
