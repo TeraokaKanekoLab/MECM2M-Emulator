@@ -15,11 +15,15 @@ import (
 )
 
 func main() {
+	var ad string
 	var data any
 	var url string
 	args := os.Args
 
-	data, url = switchM2MAPI(args[1], args[2])
+	if len(args) > 2 {
+		ad = args[2]
+	}
+	data, url = switchM2MAPI(args[1], ad)
 
 	client_data, err := json.Marshal(data)
 	if err != nil {
@@ -137,6 +141,8 @@ func formatBody(command string, body []byte) string {
 			return results
 		}
 		return string(results_byte)
+	case "node":
+		return string(body)
 	default:
 		return results
 	}

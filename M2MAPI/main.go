@@ -87,11 +87,17 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 		}
 
 		transmit_flag := false
+		pmnode_flag := false
 		var app_sw, app_ne m2mapp.SquarePoint
 		var trans_sw, trans_ne m2mapi.SquarePoint
 		for key, value := range inputFormat {
-			if key == "transmit-flag" {
+			if key == "transmit-flag" && value.(bool) {
 				// 転送経路へ
+				fmt.Println("find transmit flag")
+				transmit_flag = true
+			} else if key == "pmnode-flag" && value.(bool) {
+				// PMNode M2M APIからの転送
+				fmt.Println("find pmnode flag")
 				transmit_flag = true
 			} else {
 				switch key {
@@ -127,6 +133,14 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 
 		if transmit_flag {
 			results := resolveAreaTransmitFunction(trans_sw, trans_ne)
+			results_str, err := json.Marshal(results)
+			if err != nil {
+				fmt.Println("Error marshaling data: ", err)
+				return
+			}
+			fmt.Fprintf(w, "%v\n", string(results_str))
+		} else if pmnode_flag {
+			results := resolveAreaFunction(app_sw, app_ne)
 			results_str, err := json.Marshal(results)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
@@ -195,7 +209,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 		var app_ad, app_node_type, trans_node_type string
 		var app_capability, trans_parea_id, trans_vnode_id, trans_capability []string
 		for key, value := range inputFormat {
-			if key == "transmit_flag" {
+			if key == "transmit-flag" {
 				if value.(bool) {
 					fmt.Println("finad flag")
 					transmit_flag = true
@@ -239,6 +253,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("Error marshaling data: ", err)
 				return
 			}
+			fmt.Println(string(results_str))
 			fmt.Fprintf(w, "%v\n", string(results_str))
 		}
 	} else {

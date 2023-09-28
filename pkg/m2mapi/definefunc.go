@@ -41,6 +41,7 @@ type ResolveArea struct {
 	// etc.
 	Descriptor   AreaDescriptorDetail `json:"area-descriptor"` // 転送相手からADの内容を得るため
 	TransmitFlag bool                 `json:"transmit-flag"`   // M2M API -> M2M API のリクエスト転送か否かのフラグ
+	PMNodeFlag   bool                 `json:"pmnode-flag"`     // PMNode M2M API -> M2M API のリクエスト転送か否かのフラグ
 }
 
 // エリアマッピングを取得するためのフォーマット
@@ -70,18 +71,9 @@ type ResolveNode struct {
 
 	// output
 	VNode []VNodeSet `json:"vnode"`
-	/*
-		// input
-		AD         string   `json:"ad"`
-		Capability []string `json:"capability"`
-		NodeType   string   `json:"node-type"`
-
-		// output
-		VNode []VNodeSet `json:"vnode"`
-	*/
 
 	// etc.
-	TransmitFlag bool `json:"transmit_flag"` // M2M API -> M2M API のリクエスト転送か否かのフラグ
+	TransmitFlag bool `json:"transmit-flag"` // M2M API -> M2M API のリクエスト転送か否かのフラグ
 }
 
 type ResolveDataByNode struct {
