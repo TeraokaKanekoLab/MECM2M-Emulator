@@ -94,9 +94,9 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 				// 転送経路へ
 				transmit_flag = true
 			} else {
-				value_map := value.(map[string]interface{})
 				switch key {
 				case "sw":
+					value_map := value.(map[string]interface{})
 					var swlat, swlon float64
 					for key2, value2 := range value_map {
 						switch key2 {
@@ -109,6 +109,7 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 					app_sw = m2mapp.SquarePoint{Lat: swlat, Lon: swlon}
 					trans_sw = m2mapi.SquarePoint{Lat: swlat, Lon: swlon}
 				case "ne":
+					value_map := value.(map[string]interface{})
 					var nelat, nelon float64
 					for key2, value2 := range value_map {
 						switch key2 {
