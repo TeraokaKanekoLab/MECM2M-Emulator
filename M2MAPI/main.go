@@ -250,18 +250,9 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 									trans_ad_detail_value.PAreaID = append(trans_ad_detail_value.PAreaID, parea_id.(string))
 								}
 							case "vnode":
-								vv3 := v3.(map[string]interface{})
+								vv3 := v3.([]interface{})
 								var vnode_set m2mapi.VNodeSet
-								for k4, v4 := range vv3 {
-									switch k4 {
-									case "vnode-id":
-										vnode_set.VNodeID = v4.(string)
-									case "vnode-socket-address":
-										vnode_set.VNodeSocketAddress = v4.(string)
-									case "vmnoder-socket-address":
-										vnode_set.VMNodeRSocketAddress = v4.(string)
-									}
-								}
+								fmt.Println(vv3)
 								trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 							}
 						}
@@ -281,6 +272,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(resutls_str))
 		}
 		if pmnode_flag {
+			fmt.Println("pmnode_flag. transmit_ad_detail: ", trans_ad_detail)
 			results := resolveNodePMNodeFunction(trans_ad_detail, trans_capability, trans_node_type)
 			resutls_str, err := json.Marshal(results)
 			if err != nil {
@@ -708,10 +700,12 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.Resol
 				ad_detail_single := m2mapi.AreaDescriptor{}
 				ad_detail_single.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 				ad_detail_single.AreaDescriptorDetail[server_ip] = area_desc.AreaDescriptorDetail[server_ip]
+				fmt.Println("20230928: area descriptor detail: ", ad_detail_single.AreaDescriptorDetail[server_ip])
 				transmit_m2mapi_data := m2mapi.ResolveNode{
 					AreaDescriptorDetail: ad_detail_single.AreaDescriptorDetail,
 					Capability:           cap,
 					NodeType:             node_type,
+					TransmitFlag:         true,
 				}
 				byte_data, _ := json.Marshal(transmit_m2mapi_data)
 				response, err := http.Post(transmit_m2mapi_url, "application/json", bytes.NewBuffer(byte_data))
@@ -785,11 +779,13 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.Resol
 				transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/node"
 				// server_ip のAD情報だけ取り出す
 				ad_detail_single := m2mapi.AreaDescriptor{}
+				ad_detail_single.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 				ad_detail_single.AreaDescriptorDetail[server_ip] = area_desc.AreaDescriptorDetail[server_ip]
 				transmit_m2mapi_data := m2mapi.ResolveNode{
 					AreaDescriptorDetail: ad_detail_single.AreaDescriptorDetail,
 					Capability:           cap,
 					NodeType:             node_type,
+					TransmitFlag:         true,
 				}
 				byte_data, _ := json.Marshal(transmit_m2mapi_data)
 				response, err := http.Post(transmit_m2mapi_url, "application/json", bytes.NewBuffer(byte_data))
@@ -979,11 +975,13 @@ func resolveNodePMNodeFunction(ip_ad_detail map[string]m2mapi.AreaDescriptorDeta
 				transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/node"
 				// server_ip のAD情報だけ取り出す
 				ad_detail_single := m2mapi.AreaDescriptor{}
+				ad_detail_single.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 				ad_detail_single.AreaDescriptorDetail[server_ip] = ad_detail
 				transmit_m2mapi_data := m2mapi.ResolveNode{
 					AreaDescriptorDetail: ad_detail_single.AreaDescriptorDetail,
 					Capability:           cap,
 					NodeType:             node_type,
+					TransmitFlag:         true,
 				}
 				byte_data, _ := json.Marshal(transmit_m2mapi_data)
 				response, err := http.Post(transmit_m2mapi_url, "application/json", bytes.NewBuffer(byte_data))
@@ -1057,11 +1055,13 @@ func resolveNodePMNodeFunction(ip_ad_detail map[string]m2mapi.AreaDescriptorDeta
 				transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/node"
 				// server_ip のAD情報だけ取り出す
 				ad_detail_single := m2mapi.AreaDescriptor{}
+				ad_detail_single.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 				ad_detail_single.AreaDescriptorDetail[server_ip] = ad_detail
 				transmit_m2mapi_data := m2mapi.ResolveNode{
 					AreaDescriptorDetail: ad_detail_single.AreaDescriptorDetail,
 					Capability:           cap,
 					NodeType:             node_type,
+					TransmitFlag:         true,
 				}
 				byte_data, _ := json.Marshal(transmit_m2mapi_data)
 				response, err := http.Post(transmit_m2mapi_url, "application/json", bytes.NewBuffer(byte_data))
