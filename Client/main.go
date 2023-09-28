@@ -19,7 +19,32 @@ func main() {
 	var url string
 	args := os.Args
 
-	switch args[1] {
+	data, url = switchM2MAPI(args[1], args[2])
+
+	client_data, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Error marshalling data: ", err)
+		return
+	}
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	results := formatBody(args[1], body)
+
+	fmt.Println("Server Response:", results)
+}
+
+func switchM2MAPI(command, ad string) (data any, url string) {
+	switch command {
 	case "area":
 		data = m2mapp.ResolveAreaInput{
 			NE: m2mapp.SquarePoint{Lat: 35.533, Lon: 139.532},
@@ -28,7 +53,7 @@ func main() {
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":
 		data = m2mapp.ResolveNodeInput{
-			AD:         args[2],
+			AD:         ad,
 			Capability: []string{"MaxTemp", "MaxHumid", "MaxWind"},
 			NodeType:   "VSNode",
 		}
@@ -58,7 +83,7 @@ func main() {
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
 		data = m2mapi.ResolveDataByArea{
-			AD:         args[2],
+			AD:         ad,
 			Capability: "MaxTemp",
 			Period:     m2mapi.PeriodInput{Start: "2023-08-16 04:55:50 +0900 JST", End: "2023-08-16 04:56:00 +0900 JST"},
 			NodeType:   "VSNode",
@@ -66,14 +91,14 @@ func main() {
 		url = "http://localhost:8080/m2mapi/data/past/area"
 	case "current_area":
 		data = m2mapi.ResolveDataByArea{
-			AD:         args[2],
+			AD:         ad,
 			Capability: "MaxHumid",
 			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/area"
 	case "condition_area":
 		data = m2mapi.ResolveDataByArea{
-			AD:         args[2],
+			AD:         ad,
 			Capability: "MaxTemp",
 			Condition:  m2mapi.ConditionInput{Limit: m2mapi.Range{LowerLimit: 33, UpperLimit: 37}, Timeout: 10 * time.Second},
 			NodeType:   "VSNode",
@@ -93,23 +118,26 @@ func main() {
 		fmt.Println("There is no args")
 		log.Fatal()
 	}
+	return data, url
+}
 
-	client_data, err := json.Marshal(data)
-	if err != nil {
-		fmt.Println("Error marshalling data: ", err)
-		return
+func formatBody(command string, body []byte) string {
+	var results string
+	switch command {
+	case "area":
+		format := m2mapp.ResolveAreaOutput{}
+		if err := json.Unmarshal(body, &format); err != nil {
+			fmt.Println("Error unmarshaling: ", err)
+			return results
+		}
+		format.Descriptor = m2mapi.AreaDescriptor{}
+		results_byte, err := json.Marshal(format)
+		if err != nil {
+			fmt.Println("Error marshaling: ", err)
+			return results
+		}
+		return string(results_byte)
+	default:
+		return results
 	}
-	response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-	if err != nil {
-		fmt.Println("Error making request:", err)
-		return
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Server Response:", string(body))
 }

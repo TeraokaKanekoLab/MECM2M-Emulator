@@ -196,7 +196,10 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 		var app_capability, trans_parea_id, trans_vnode_id, trans_capability []string
 		for key, value := range inputFormat {
 			if key == "transmit_flag" {
-				transmit_flag = true
+				if value.(bool) {
+					fmt.Println("finad flag")
+					transmit_flag = true
+				}
 			} else {
 				switch key {
 				case "ad":
