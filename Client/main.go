@@ -27,10 +27,10 @@ func main() {
 		}
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":
-		data = m2mapi.ResolveNode{
-			AD:           args[2],
-			Capabilities: []string{"MaxTemp", "MaxHumid", "MaxWind"},
-			NodeType:     "VSNode",
+		data = m2mapp.ResolveNodeInput{
+			AD:         args[2],
+			Capability: []string{"MaxTemp", "MaxHumid", "MaxWind"},
+			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/node"
 	case "past_node":
