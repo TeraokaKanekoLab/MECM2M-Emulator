@@ -246,7 +246,9 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 							fmt.Println("k3, v3: ", k3, v3)
 							switch k3 {
 							case "parea-id":
-								trans_ad_detail_value.PAreaID = v3.([]string)
+								for _, parea_id := range v3.([]interface{}) {
+									trans_ad_detail_value.PAreaID = append(trans_ad_detail_value.PAreaID, parea_id.(string))
+								}
 							case "vnode":
 								vv3 := v3.(map[string]interface{})
 								var vnode_set m2mapi.VNodeSet
@@ -704,6 +706,7 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.Resol
 				}
 				// server_ip のAD情報だけ取り出す
 				ad_detail_single := m2mapi.AreaDescriptor{}
+				ad_detail_single.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 				ad_detail_single.AreaDescriptorDetail[server_ip] = area_desc.AreaDescriptorDetail[server_ip]
 				transmit_m2mapi_data := m2mapi.ResolveNode{
 					AreaDescriptorDetail: ad_detail_single.AreaDescriptorDetail,
