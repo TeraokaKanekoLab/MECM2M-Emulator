@@ -237,32 +237,32 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 					trans_node_type = value.(string)
 				case "area-descriptor-detail":
 					ad_detail := value.(map[string]interface{})
-					fmt.Println("ad_detail: ", ad_detail)
 					for k2, v2 := range ad_detail {
-						fmt.Println("k2, v2: ", k2, v2, trans_ad_detail)
 						vv2 := v2.(map[string]interface{})
 						//trans_ad_detail[k2] = v2.(m2mapi.AreaDescriptorDetail)
 						for k3, v3 := range vv2 {
-							fmt.Println("k3, v3: ", k3, v3)
 							switch k3 {
 							case "parea-id":
 								for _, parea_id := range v3.([]interface{}) {
 									trans_ad_detail_value.PAreaID = append(trans_ad_detail_value.PAreaID, parea_id.(string))
 								}
 							case "vnode":
-								vv3 := v3.(map[string]interface{})
+								vv3 := v3.([]interface{})
 								var vnode_set m2mapi.VNodeSet
-								for k4, v4 := range vv3 {
-									switch k4 {
-									case "vnode-id":
-										vnode_set.VNodeID = v4.(string)
-									case "vnode-socket-address":
-										vnode_set.VNodeSocketAddress = v4.(string)
-									case "vmnoder-socket-address":
-										vnode_set.VMNodeRSocketAddress = v4.(string)
+								for _, v4 := range vv3 {
+									vv4 := v4.(map[string]interface{})
+									for k5, v5 := range vv4 {
+										switch k5 {
+										case "vnode-id":
+											vnode_set.VNodeID = v5.(string)
+										case "vnode-socket-address":
+											vnode_set.VNodeSocketAddress = v5.(string)
+										case "vmnoder-socket-address":
+											vnode_set.VMNodeRSocketAddress = v5.(string)
+										}
+										trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 									}
 								}
-								trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 							}
 						}
 						trans_ad_detail[k2] = trans_ad_detail_value
@@ -272,6 +272,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if transmit_flag {
+			fmt.Println("transmit_flag. trans_ad_detail: ", trans_ad_detail)
 			results := resolveNodeTransmitFunction(trans_ad_detail, trans_capability, trans_node_type)
 			resutls_str, err := json.Marshal(results)
 			if err != nil {
@@ -281,6 +282,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(resutls_str))
 		}
 		if pmnode_flag {
+			fmt.Println("pmnode_flag. transmit_ad_detail: ", trans_ad_detail)
 			results := resolveNodePMNodeFunction(trans_ad_detail, trans_capability, trans_node_type)
 			resutls_str, err := json.Marshal(results)
 			if err != nil {
@@ -290,6 +292,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(resutls_str))
 		}
 		if !transmit_flag && !pmnode_flag {
+			fmt.Println("no flag")
 			results := resolveNodeFunction(app_ad, app_capability, app_node_type)
 			results_str, err := json.Marshal(results)
 			if err != nil {
@@ -821,6 +824,7 @@ func resolveNodeTransmitFunction(ip_ad_detail map[string]m2mapi.AreaDescriptorDe
 	results := m2mapi.ResolveNode{}
 
 	ad_detail := ip_ad_detail[ip_address]
+	fmt.Println("20230928: ad_detail: ", ad_detail)
 
 	var format_capability []string
 	for _, cap := range capability {
