@@ -629,13 +629,13 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.Resol
 										dataArray := row_data.([]interface{})
 										vsnode_set_own.VNodeID = dataArray[0].(string)
 										vsnode_set_own.VNodeSocketAddress = dataArray[1].(string)
+										results.VNode = append(results.VNode, vsnode_set_own)
 									}
 								}
 							}
 						}
 					}
 				}
-				results.VNode = append(results.VNode, vsnode_set_own)
 
 			} else {
 				// 他MEC ServerのGraphDBでの検索
@@ -710,13 +710,13 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.Resol
 										vmnode_set_own.VNodeID = dataArray[0].(string)
 										vmnode_set_own.VNodeSocketAddress = dataArray[1].(string)
 										vmnode_set_own.VMNodeRSocketAddress = dataArray[2].(string)
+										results.VNode = append(results.VNode, vmnode_set_own)
 									}
 								}
 							}
 						}
 					}
 				}
-				results.VNode = append(results.VNode, vmnode_set_own)
 			} else {
 				// 他MEC ServerのGraphDBでの検索
 				transmit_m2mapi_url := "http://" + server_ip + ":" + os.Getenv("M2M_API_PORT") + "/m2mapi/node"
@@ -800,13 +800,13 @@ func resolveNodeTransmitFunction(parea_id, vnode_id, capability []string, node_t
 								dataArray := row_data.([]interface{})
 								vsnode_set_own.VNodeID = dataArray[0].(string)
 								vsnode_set_own.VNodeSocketAddress = dataArray[1].(string)
+								results.VNode = append(results.VNode, vsnode_set_own)
 							}
 						}
 					}
 				}
 			}
 		}
-		results.VNode = append(results.VNode, vsnode_set_own)
 	}
 
 	if node_type == "All" || node_type == "VMNode" {
@@ -844,13 +844,13 @@ func resolveNodeTransmitFunction(parea_id, vnode_id, capability []string, node_t
 								vmnode_set_own.VNodeID = dataArray[0].(string)
 								vmnode_set_own.VNodeSocketAddress = dataArray[1].(string)
 								vmnode_set_own.VMNodeRSocketAddress = dataArray[2].(string)
+								results.VNode = append(results.VNode, vmnode_set_own)
 							}
 						}
 					}
 				}
 			}
 		}
-		results.VNode = append(results.VNode, vmnode_set_own)
 	}
 
 	return results
