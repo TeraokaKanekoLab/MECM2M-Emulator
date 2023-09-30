@@ -143,7 +143,17 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(results_str))
 		}
 		if pmnode_flag {
-			results := resolveAreaFunction(app_sw, app_ne)
+			// PMNode M2M API からのリクエスト
+			m2mapi_results := resolveAreaFunction(app_sw, app_ne)
+			// m2mapp用に成型
+			results := m2mapp.ResolveAreaOutput{}
+			ad := fmt.Sprintf("%x", uintptr(unsafe.Pointer(&m2mapi_results.AreaDescriptor)))
+			ttl := time.Now().Add(1 * time.Hour)
+			results.AD = ad
+			results.TTL = ttl
+			results.Descriptor = m2mapi_results.AreaDescriptor
+			ad_cache[ad] = m2mapi_results.AreaDescriptor
+
 			results_str, err := json.Marshal(results)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
@@ -152,8 +162,16 @@ func resolveArea(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "%v\n", string(results_str))
 		}
 		if !transmit_flag && !pmnode_flag {
-			// M2M App からの直接リクエスト or PMNode M2M API からのリクエスト
-			results := resolveAreaFunction(app_sw, app_ne)
+			// M2M App からの直接リクエスト
+			m2mapi_results := resolveAreaFunction(app_sw, app_ne)
+			// m2mapp用に成型
+			results := m2mapp.ResolveAreaOutput{}
+			ad := fmt.Sprintf("%x", uintptr(unsafe.Pointer(&m2mapi_results.AreaDescriptor)))
+			ttl := time.Now().Add(1 * time.Hour)
+			results.AD = ad
+			results.TTL = ttl
+			ad_cache[ad] = m2mapi_results.AreaDescriptor
+
 			results_str, err := json.Marshal(results)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
@@ -249,7 +267,6 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 							case "vnode":
 								vv3 := v3.([]interface{})
 								var vnode_set m2mapi.VNodeSet
-<<<<<<< HEAD
 								for _, v4 := range vv3 {
 									vv4 := v4.(map[string]interface{})
 									for k5, v5 := range vv4 {
@@ -264,10 +281,6 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 										trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 									}
 								}
-=======
-								fmt.Println(vv3)
-								trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
->>>>>>> 8b46dabf22225e6a2ed46e4c5ef197e6065d4c6f
 							}
 						}
 						trans_ad_detail[k2] = trans_ad_detail_value
@@ -298,7 +311,11 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 		}
 		if !transmit_flag && !pmnode_flag {
 			fmt.Println("no flag")
-			results := resolveNodeFunction(app_ad, app_capability, app_node_type)
+			m2mapi_results := resolveNodeFunction(app_ad, app_capability, app_node_type)
+			// m2mapp用に成型
+			results := m2mapp.ResolveNodeOutput{}
+			results.VNode = m2mapi_results.VNode
+
 			results_str, err := json.Marshal(results)
 			if err != nil {
 				fmt.Println("Error marshaling data: ", err)
@@ -319,13 +336,13 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "resolvePastNode: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.ResolveDataByNode{}
+		inputFormat := &m2mapp.ResolveDataByNodeInput{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "resolvePastNode: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
 		// VNodeへリクエスト転送
-		results := resolvePastNodeFunction(inputFormat.VNodeID, inputFormat.Capability, inputFormat.SocketAddress, inputFormat.Period)
+		results := resolvePastNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Period)
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -347,7 +364,7 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// VNodeへリクエスト転送
-		results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.Capability, inputFormat.SocketAddress)
+		results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability)
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -369,7 +386,7 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// VNode へリクエスト転送
-		results := resolveConditionNodeFunction(inputFormat.VNodeID, inputFormat.Capability, inputFormat.SocketAddress, inputFormat.Condition)
+		results := resolveConditionNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Condition)
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -465,7 +482,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapp.ResolveAreaOutput {
+func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	// Cloud Sever に聞きに行くかのフラグと，エリア解決時に用いるServerIPのスライスの定義
 	ask_cloud_flag := false
 	var target_mec_server []string
@@ -523,8 +540,8 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapp.ResolveAreaOutput {
 	// この時，自MEC Serverに問い合わせる場合は，そのまま検索クエリを投げればいいが，他MEC Serverの場合，一度 M2M API を挟まなければいけない
 	// 出力結果は，PAreaID, VNodeID, VNodeSocketAddress, VMNodeRSocketAddress
 	payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vs:VSNode) WHERE a.NE[0] > ` + strconv.FormatFloat(sw.Lat, 'f', 4, 64) + ` and a.NE[1] > ` + strconv.FormatFloat(sw.Lon, 'f', 4, 64) + ` and a.SW[0] < ` + strconv.FormatFloat(ne.Lat, 'f', 4, 64) + ` and a.SW[1] < ` + strconv.FormatFloat(ne.Lon, 'f', 4, 64) + ` return a.PAreaID, vs.VNodeID, vs.SocketAddress;"}]}`
-	results := m2mapp.ResolveAreaOutput{} // 最終的に M2M App に返す結果
-	area_desc := m2mapi.AreaDescriptor{}  // すべての結果を1つのADにまとめる
+	results := m2mapi.ResolveArea{}      // 最終的に M2M App に返す結果
+	area_desc := m2mapi.AreaDescriptor{} // すべての結果を1つのADにまとめる
 	area_desc.AreaDescriptorDetail = make(map[string]m2mapi.AreaDescriptorDetail)
 	for _, server_ip := range target_mec_server {
 		if server_ip == ip_address {
@@ -593,15 +610,8 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapp.ResolveAreaOutput {
 			area_desc.AreaDescriptorDetail[server_ip] = transmit_response.Descriptor
 		}
 	}
+	results.AreaDescriptor = area_desc
 
-	// 最後にAreaDescriptorをADとして結果を返す
-	ad := fmt.Sprintf("%x", uintptr(unsafe.Pointer(&area_desc)))
-	ttl := time.Now().Add(1 * time.Hour)
-	results.AD = ad
-	results.TTL = ttl
-	results.Descriptor = area_desc
-
-	ad_cache[ad] = area_desc
 	return results
 }
 
@@ -648,9 +658,9 @@ func resolveAreaTransmitFunction(sw, ne m2mapi.SquarePoint) m2mapi.ResolveArea {
 	return area_desc_detail
 }
 
-func resolveNodeFunction(ad string, cap []string, node_type string) m2mapp.ResolveNodeOutput {
+func resolveNodeFunction(ad string, cap []string, node_type string) m2mapi.ResolveNode {
 	// M2M App からの直接のリクエスト
-	results := m2mapp.ResolveNodeOutput{}
+	results := m2mapi.ResolveNode{}
 
 	area_desc := ad_cache[ad]
 
@@ -1104,8 +1114,8 @@ func resolveNodePMNodeFunction(ip_ad_detail map[string]m2mapi.AreaDescriptorDeta
 	return results
 }
 
-func resolvePastNodeFunction(vnode_id, capability, socket_address string, period m2mapi.PeriodInput) m2mapi.ResolveDataByNode {
-	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
+func resolvePastNodeFunction(vnode_id, socket_address string, capability []string, period m2mapp.PeriodInput) m2mapp.ResolveDataByNodeOutput {
+	null_data := m2mapp.ResolveDataByNodeOutput{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
 		VNodeID:    vnode_id,
@@ -1126,7 +1136,7 @@ func resolvePastNodeFunction(vnode_id, capability, socket_address string, period
 	defer response_data.Body.Close()
 
 	byteArray, _ := io.ReadAll(response_data.Body)
-	var results m2mapi.ResolveDataByNode
+	var results m2mapp.ResolveDataByNodeOutput
 	if err = json.Unmarshal(byteArray, &results); err != nil {
 		fmt.Println("Error unmarshaling data: ", err)
 		return null_data
@@ -1135,12 +1145,12 @@ func resolvePastNodeFunction(vnode_id, capability, socket_address string, period
 	return results
 }
 
-func resolveCurrentNodeFunction(vnode_id, capability, socket_address string) m2mapi.ResolveDataByNode {
+func resolveCurrentNodeFunction(vnode_id, socket_address string, capability []string) m2mapi.ResolveDataByNode {
 	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
-		VNodeID:    vnode_id,
-		Capability: capability,
+		VNodeID: vnode_id,
+		//Capability: capability,
 	}
 	transmit_data, err := json.Marshal(request_data)
 	if err != nil {
@@ -1165,13 +1175,13 @@ func resolveCurrentNodeFunction(vnode_id, capability, socket_address string) m2m
 	return results
 }
 
-func resolveConditionNodeFunction(vnode_id, capability, socket_address string, condition m2mapi.ConditionInput) m2mapi.ResolveDataByNode {
+func resolveConditionNodeFunction(vnode_id, socket_address string, capability []string, condition m2mapi.ConditionInput) m2mapi.ResolveDataByNode {
 	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
-		VNodeID:    vnode_id,
-		Capability: capability,
-		Condition:  condition,
+		VNodeID: vnode_id,
+		//Capability: capability,
+		Condition: condition,
 	}
 	transmit_data, err := json.Marshal(request_data)
 	if err != nil {
@@ -1205,9 +1215,9 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 	if node_type == "All" || node_type == "VSNode" {
 		for _, vsnode := range area_desc.AreaDescriptorDetail[""].VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode.VNodeID,
-				Capability: capability,
-				Period:     m2mapi.PeriodInput{Start: period.Start, End: period.End},
+				VNodeID: vsnode.VNodeID,
+				//Capability: capability,
+				Period: m2mapi.PeriodInput{Start: period.Start, End: period.End},
 			}
 
 			transmit_data, err := json.Marshal(request_data)
@@ -1243,9 +1253,9 @@ func resolvePastAreaFunction(ad, capability, node_type string, period m2mapi.Per
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
-				Capability: capability,
-				Period:     m2mapi.PeriodInput{Start: period.Start, End: period.End},
+				VNodeID: vmnode_result.VNodeID,
+				//Capability: capability,
+				Period: m2mapi.PeriodInput{Start: period.Start, End: period.End},
 			}
 
 			transmit_data, err := json.Marshal(request_data)
@@ -1289,8 +1299,8 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 		vsnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vsnode_result := range vsnode_results_by_resolve_node.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode_result.VNodeID,
-				Capability: capability,
+				VNodeID: vsnode_result.VNodeID,
+				//Capability: capability,
 			}
 
 			transmit_data, err := json.Marshal(request_data)
@@ -1327,8 +1337,8 @@ func resolveCurrentAreaFunction(ad, capability, node_type string) m2mapi.Resolve
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
-				Capability: capability,
+				VNodeID: vmnode_result.VNodeID,
+				//Capability: capability,
 			}
 
 			transmit_data, err := json.Marshal(request_data)
@@ -1373,9 +1383,9 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 		vsnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vsnode_result := range vsnode_results_by_resolve_node.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vsnode_result.VNodeID,
-				Capability: capability,
-				Condition:  condition,
+				VNodeID: vsnode_result.VNodeID,
+				//Capability: capability,
+				Condition: condition,
 			}
 
 			transmit_data, err := json.Marshal(request_data)
@@ -1412,9 +1422,9 @@ func resolveConditionAreaFunction(ad, capability, node_type string, condition m2
 		vmnode_results_by_resolve_node := resolveNodeFunction(ad, []string{capability}, node_type)
 		for _, vmnode_result := range vmnode_results_by_resolve_node.VNode {
 			request_data := m2mapi.ResolveDataByNode{
-				VNodeID:    vmnode_result.VNodeID,
-				Capability: capability,
-				Condition:  condition,
+				VNodeID: vmnode_result.VNodeID,
+				//Capability: capability,
+				Condition: condition,
 			}
 
 			transmit_data, err := json.Marshal(request_data)

@@ -1,4 +1,4 @@
-package vsnode
+package vmnode
 
 type ResolveDataByNode struct {
 	// input
