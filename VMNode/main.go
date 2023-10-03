@@ -58,7 +58,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 入力のVNodeIDをPNodeIDに変換
-		pnode_id := convertID(inputFormat.VNodeID, 64)
+		pnode_id := convertID(inputFormat.VNodeID, 63)
 		capability := inputFormat.Capability
 		start := inputFormat.Period.Start
 		end := inputFormat.Period.End
@@ -83,7 +83,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		table := os.Getenv("MYSQL_TABLE")
 		var format_capability []string
 		for _, cap := range capability {
-			cap = "\\\"" + cap + "\\\""
+			cap = "\"" + cap + "\""
 			format_capability = append(format_capability, cap)
 		}
 		cmd = "SELECT * FROM " + table + " WHERE PNodeID = \"" + pnode_id + "\" AND Capability IN (" + strings.Join(format_capability, ",") + ") AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
@@ -121,7 +121,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		var vals []m2mapi.Value
 		for i, sensing_db_result := range sensing_db_results {
 			if i == 0 {
-				vnode_id = convertID(sensing_db_result.PNodeID, 64)
+				vnode_id = convertID(sensing_db_result.PNodeID, 63)
 			}
 			val := m2mapi.Value{
 				Capability: sensing_db_result.Capability,

@@ -83,7 +83,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		table := os.Getenv("MYSQL_TABLE")
 		var format_capability []string
 		for _, cap := range capability {
-			cap = "\\\"" + cap + "\\\""
+			cap = "\"" + cap + "\""
 			format_capability = append(format_capability, cap)
 		}
 		cmd = "SELECT * FROM " + table + " WHERE PNodeID = \"" + pnode_id + "\" AND Capability IN (" + strings.Join(format_capability, ",") + ") AND Timestamp > \"" + start + "\" AND Timestamp <= \"" + end + "\";"
