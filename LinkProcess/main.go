@@ -11,6 +11,7 @@ import (
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/mserver"
+	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/server"
 	"mecm2m-Emulator/pkg/vpoint"
 	"mecm2m-Emulator/pkg/vsnode"
@@ -265,8 +266,8 @@ func connectionLink(conn net.Conn, file string) {
 				message.MyError(err, "connectionLink > Actuate > encoder.Encode")
 			}
 			message.MyWriteMessage(actuate_output)
-		case *m2mapi.DataForRegist:
-			format := psnodeCommand.(*m2mapi.DataForRegist)
+		case *psnode.DataForRegist:
+			format := psnodeCommand.(*psnode.DataForRegist)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -290,16 +291,18 @@ func connectionLink(conn net.Conn, file string) {
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
-			data := m2mapi.DataForRegist{
-				PNodeID:    format.PNodeID,
-				Capability: format.Capability,
-				Timestamp:  format.Timestamp,
-				Value:      format.Value,
-				PSinkID:    format.PSinkID,
-				Lat:        format.Lat,
-				Lon:        format.Lon,
-			}
-			transmit_data, err := json.Marshal(data)
+			/*
+				data := psnode.DataForRegist{
+					PNodeID:    format.PNodeID,
+					Capability: format.Capability,
+					Timestamp:  format.Timestamp,
+					Value:      format.Value,
+					PSinkID:    format.PSinkID,
+					Lat:        format.Lat,
+					Lon:        format.Lon,
+				}
+			*/
+			transmit_data, err := json.Marshal(format)
 			if err != nil {
 				fmt.Println("Error marshalling data: ", err)
 				return
@@ -377,7 +380,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	case "Actuate":
 		typeM = &m2mapi.Actuate{}
 	case "RegisterSensingData":
-		typeM = &m2mapi.DataForRegist{}
+		typeM = &psnode.DataForRegist{}
 	case "ConnectNew":
 		typeM = &mserver.ConnectNew{}
 	case "ConnectForModule":

@@ -343,7 +343,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 
 		// VNodeへリクエスト転送
 		m2mapi_results := resolvePastNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Period)
-		//m2mapp用に成型
+		// m2mapp用に成型
 		results := m2mapp.ResolveDataByNodeOutput{}
 		results.VNodeID = m2mapi_results.VNodeID
 		for _, val := range m2mapi_results.Values {
@@ -376,7 +376,7 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 
 		// VNodeへリクエスト転送
 		m2mapi_results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability)
-		//m2mapp用に成型
+		// m2mapp用に成型
 		results := m2mapp.ResolveDataByNodeOutput{}
 		results.VNodeID = m2mapi_results.VNodeID
 		for _, val := range m2mapi_results.Values {
@@ -402,13 +402,24 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "resolveConditionNode: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.ResolveDataByNode{}
+		inputFormat := &m2mapp.ResolveDataByNodeInput{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "resolveConditionNode: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
 		// VNode へリクエスト転送
-		results := resolveConditionNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Condition)
+		m2mapi_results := resolveConditionNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Condition)
+		// m2mapi用に成型
+		results := m2mapp.ResolveDataByNodeOutput{}
+		results.VNodeID = m2mapi_results.VNodeID
+		for _, val := range m2mapi_results.Values {
+			v := m2mapp.Value{
+				Capability: val.Capability,
+				Time:       val.Time,
+				Value:      val.Value,
+			}
+			results.Values = append(results.Values, v)
+		}
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -1198,13 +1209,13 @@ func resolveCurrentNodeFunction(vnode_id, socket_address string, capability []st
 	return results
 }
 
-func resolveConditionNodeFunction(vnode_id, socket_address string, capability []string, condition m2mapi.ConditionInput) m2mapi.ResolveDataByNode {
+func resolveConditionNodeFunction(vnode_id, socket_address string, capability []string, condition m2mapp.ConditionInput) m2mapi.ResolveDataByNode {
 	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
-		VNodeID: vnode_id,
-		//Capability: capability,
-		Condition: condition,
+		VNodeID:    vnode_id,
+		Capability: capability,
+		Condition:  m2mapi.ConditionInput{Limit: m2mapi.Range{LowerLimit: condition.Limit.LowerLimit, UpperLimit: condition.Limit.UpperLimit}, Timeout: condition.Timeout},
 	}
 	transmit_data, err := json.Marshal(request_data)
 	if err != nil {

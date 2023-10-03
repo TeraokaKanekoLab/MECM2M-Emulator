@@ -11,6 +11,7 @@ import (
 	"math/big"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/vsnode"
 	"net"
 	"net/http"
@@ -34,7 +35,7 @@ type Format struct {
 }
 
 // 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
-var bufferSensorData = make(map[string]m2mapi.DataForRegist)
+var bufferSensorData = make(map[string]psnode.DataForRegist)
 var mu sync.Mutex
 var buffer_chan = make(chan string)
 
@@ -282,7 +283,7 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					fmt.Fprintf(w, "%v\n", string(jsonData))
-					bufferSensorData[inputPNodeID] = m2mapi.DataForRegist{}
+					bufferSensorData[inputPNodeID] = psnode.DataForRegist{}
 					return
 				} else {
 					continue Loop
@@ -351,7 +352,7 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "dataRegister: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.DataForRegist{}
+		inputFormat := &psnode.DataForRegist{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "dataRegister: Error missmatching packet format", http.StatusInternalServerError)
 		}

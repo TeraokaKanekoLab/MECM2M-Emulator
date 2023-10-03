@@ -261,8 +261,8 @@ func main() {
 }
 
 // センサデータの登録
-func generateSensordata(inputFormat *psnode.TimeSync) m2mapi.DataForRegist {
-	var result m2mapi.DataForRegist
+func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
+	var result psnode.DataForRegist
 	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
 	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
 	psnodeJsonFile, err := os.Open(psnode_json_file_path)
