@@ -64,14 +64,14 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		url = "http://localhost:8080/m2mapi/node"
 	case "past_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "13835058055282163712",
+			VNodeID:       "9223372036854775808",
 			Capability:    []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
 			Period:        m2mapp.PeriodInput{Start: "2023-10-03 11:00:00 +0900 JST", End: "2023-10-03 12:00:03 +0900 JST"},
 			SocketAddress: "192.168.1.1:11000",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/node"
 	case "current_node":
-		data = m2mapi.ResolveDataByNode{
+		data = m2mapp.ResolveDataByNodeInput{
 			VNodeID:       "9223372036854775808",
 			Capability:    []string{"MaxTemp"},
 			SocketAddress: "192.168.1.1:11000",
@@ -146,6 +146,8 @@ func formatBody(command string, body []byte) string {
 	case "node":
 		return string(body)
 	case "past_node":
+		return string(body)
+	case "current_node":
 		return string(body)
 	default:
 		return results

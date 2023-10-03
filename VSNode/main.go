@@ -95,7 +95,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		defer rows.Close()
 
 		// vsnodeが受信する型として情報を持たせておく
-		var sensing_db_results []vsnode.ResolveDataByNode
+		var sensing_db_results []vsnode.ResolvePastDataByNode
 		for rows.Next() {
 			field := []string{"0", "0", "0", "0", "0", "0", "0"}
 			// PNodeID, Capability, Timestamp, Value, PSinkID, Lat, Lon
@@ -106,7 +106,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 			value_float, _ := strconv.ParseFloat(field[3], 64)
 			lat_float, _ := strconv.ParseFloat(field[5], 64)
 			lon_float, _ := strconv.ParseFloat(field[6], 64)
-			sensing_db_result := vsnode.ResolveDataByNode{
+			sensing_db_result := vsnode.ResolvePastDataByNode{
 				PNodeID:    field[0],
 				Capability: field[1],
 				Timestamp:  field[2],
@@ -121,7 +121,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		var vals []m2mapi.Value
 		for i, sensing_db_result := range sensing_db_results {
 			if i == 0 {
-				vnode_id = convertID(sensing_db_result.PNodeID, 63)
+				vnode_id = convertID(sensing_db_result.PNodeID, 63, 61)
 			}
 			val := m2mapi.Value{
 				Capability: sensing_db_result.Capability,
@@ -159,8 +159,14 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "resolveCurrentNode: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
-		// PSNodeへリクエストを送信するためにリンクプロセスを噛ます
+		// vsnodeパッケージに成型しなおす
 		pnode_id := convertID(inputFormat.VNodeID, 63, 61)
+		vsnode_request := vsnode.ResolveCurrentDataByNode{
+			PNodeID:    pnode_id,
+			Capability: inputFormat.Capability[0],
+		}
+
+		// PSNodeへリクエストを送信するためにリンクプロセスを噛ます
 		link_process_socket_address := link_process_socket_address_path + "/access-network_" + pnode_id + ".sock"
 		connLinkProcess, err := net.Dial(protocol, link_process_socket_address)
 		if err != nil {
@@ -171,16 +177,29 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 
 		syncFormatClient("CurrentNode", decoderLinkProcess, encoderLinkProcess)
 
-		if err := encoderLinkProcess.Encode(inputFormat); err != nil {
+		if err := encoderLinkProcess.Encode(&vsnode_request); err != nil {
 			message.MyError(err, "resolveCurrentNode > encoderLinkProcess.Encode")
 		}
 
 		// PSNodeへ
 
-		// 受信する型は m2mapi.ResolveDataByNode
-		results := m2mapi.ResolveDataByNode{}
-		if err := decoderLinkProcess.Decode(&results); err != nil {
+		// 受信する型は vsnode.ResolveCurrentDataByNode
+		vsnode_results := vsnode.ResolveCurrentDataByNode{}
+		if err := decoderLinkProcess.Decode(&vsnode_results); err != nil {
 			message.MyError(err, "resolveCurrentNode > decoderLinkProcess.Decode")
+		}
+		fmt.Println("recieve from psnode: ", vsnode_results)
+
+		// m2mapi.ResolveDataByNodeに変換
+		vnode_id := convertID(vsnode_results.PNodeID, 63, 61)
+		values := m2mapi.Value{
+			Capability: vsnode_results.Capability,
+			Time:       vsnode_results.Timestamp,
+			Value:      vsnode_results.Value,
+		}
+		results := m2mapi.ResolveDataByNode{
+			VNodeID: vnode_id,
+			Values:  []m2mapi.Value{values},
 		}
 
 		// 最後にM2M APIへ返送

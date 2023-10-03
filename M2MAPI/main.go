@@ -342,7 +342,18 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// VNodeへリクエスト転送
-		results := resolvePastNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Period)
+		m2mapi_results := resolvePastNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability, inputFormat.Period)
+		//m2mapp用に成型
+		results := m2mapp.ResolveDataByNodeOutput{}
+		results.VNodeID = m2mapi_results.VNodeID
+		for _, val := range m2mapi_results.Values {
+			v := m2mapp.Value{
+				Capability: val.Capability,
+				Time:       val.Time,
+				Value:      val.Value,
+			}
+			results.Values = append(results.Values, v)
+		}
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -358,13 +369,24 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "resolveCurrentNode: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.ResolveDataByNode{}
+		inputFormat := &m2mapp.ResolveDataByNodeInput{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "resolveCurrentNode: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
 		// VNodeへリクエスト転送
-		results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability)
+		m2mapi_results := resolveCurrentNodeFunction(inputFormat.VNodeID, inputFormat.SocketAddress, inputFormat.Capability)
+		//m2mapp用に成型
+		results := m2mapp.ResolveDataByNodeOutput{}
+		results.VNodeID = m2mapi_results.VNodeID
+		for _, val := range m2mapi_results.Values {
+			v := m2mapp.Value{
+				Capability: val.Capability,
+				Time:       val.Time,
+				Value:      val.Value,
+			}
+			results.Values = append(results.Values, v)
+		}
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -1114,8 +1136,8 @@ func resolveNodePMNodeFunction(ip_ad_detail map[string]m2mapi.AreaDescriptorDeta
 	return results
 }
 
-func resolvePastNodeFunction(vnode_id, socket_address string, capability []string, period m2mapp.PeriodInput) m2mapp.ResolveDataByNodeOutput {
-	null_data := m2mapp.ResolveDataByNodeOutput{VNodeID: "NULL"}
+func resolvePastNodeFunction(vnode_id, socket_address string, capability []string, period m2mapp.PeriodInput) m2mapi.ResolveDataByNode {
+	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
 		VNodeID:    vnode_id,
@@ -1136,7 +1158,7 @@ func resolvePastNodeFunction(vnode_id, socket_address string, capability []strin
 	defer response_data.Body.Close()
 
 	byteArray, _ := io.ReadAll(response_data.Body)
-	var results m2mapp.ResolveDataByNodeOutput
+	var results m2mapi.ResolveDataByNode
 	if err = json.Unmarshal(byteArray, &results); err != nil {
 		fmt.Println("Error unmarshaling data: ", err)
 		return null_data
@@ -1149,8 +1171,8 @@ func resolveCurrentNodeFunction(vnode_id, socket_address string, capability []st
 	null_data := m2mapi.ResolveDataByNode{VNodeID: "NULL"}
 
 	request_data := m2mapi.ResolveDataByNode{
-		VNodeID: vnode_id,
-		//Capability: capability,
+		VNodeID:    vnode_id,
+		Capability: capability,
 	}
 	transmit_data, err := json.Marshal(request_data)
 	if err != nil {
@@ -1171,6 +1193,7 @@ func resolveCurrentNodeFunction(vnode_id, socket_address string, capability []st
 		fmt.Println("Error unmarshaling data: ", err)
 		return null_data
 	}
+	fmt.Println("recieve from vsnode: ", results)
 
 	return results
 }

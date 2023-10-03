@@ -13,6 +13,7 @@ import (
 	"mecm2m-Emulator/pkg/mserver"
 	"mecm2m-Emulator/pkg/server"
 	"mecm2m-Emulator/pkg/vpoint"
+	"mecm2m-Emulator/pkg/vsnode"
 	"net"
 	"net/http"
 	"os"
@@ -145,8 +146,8 @@ func connectionLink(conn net.Conn, file string) {
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
 		switch psnodeCommand := syncFormatServer(decoder, encoder); psnodeCommand.(type) {
-		case *m2mapi.ResolveDataByNode:
-			format := psnodeCommand.(*m2mapi.ResolveDataByNode)
+		case *vsnode.ResolveCurrentDataByNode:
+			format := psnodeCommand.(*vsnode.ResolveCurrentDataByNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -158,10 +159,10 @@ func connectionLink(conn net.Conn, file string) {
 			message.MyReadMessage(*format)
 
 			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			pnode_id := searchPNodeID(file)
+			//pnode_id := searchPNodeID(file)
 
 			// RTT時間を検索して，RTT/2 時間を取得
-			rtt_half := searchRTT(pnode_id)
+			rtt_half := searchRTT(format.PNodeID)
 			fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
@@ -170,12 +171,8 @@ func connectionLink(conn net.Conn, file string) {
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
 			// 入力のVNodeIDから宛先のPSNodeのPort番号を割り出す
-			psnode_port := trimPSNodePort(format.VNodeID)
-			data := m2mapi.ResolveDataByNode{
-				VNodeID:    format.VNodeID,
-				Capability: format.Capability,
-			}
-			transmit_data, err := json.Marshal(data)
+			psnode_port := trimPSNodePort(format.PNodeID)
+			transmit_data, err := json.Marshal(format)
 			if err != nil {
 				fmt.Println("Error marshalling data: ", err)
 				return
@@ -191,7 +188,7 @@ func connectionLink(conn net.Conn, file string) {
 			if err != nil {
 				panic(err)
 			}
-			var current_node_output m2mapi.ResolveDataByNode
+			var current_node_output vsnode.ResolveCurrentDataByNode
 			if err = json.Unmarshal(body, &current_node_output); err != nil {
 				fmt.Println("Error Unmarshaling: ", err)
 				return
@@ -371,12 +368,10 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 
 	var typeM any
 	switch typeResult {
-	case "Area":
-		typeM = &m2mapi.ResolveArea{}
-	case "Node":
-		typeM = &m2mapi.ResolveNode{}
-	case "PastNode", "CurrentNode", "ConditionNode":
-		typeM = &m2mapi.ResolveDataByNode{}
+	case "CurrentNode":
+		typeM = &vsnode.ResolveCurrentDataByNode{}
+	case "ConditionNode":
+		typeM = &vsnode.ResolveConditionDataByNode{}
 	case "PastArea", "CurrentArea", "ConditionArea":
 		typeM = &m2mapi.ResolveDataByArea{}
 	case "Actuate":

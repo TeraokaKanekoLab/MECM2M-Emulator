@@ -94,7 +94,7 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 		}
 		defer rows.Close()
 
-		// vsnodeが受信する型として情報を持たせておく
+		// vmnodeが受信する型として情報を持たせておく
 		var sensing_db_results []vmnode.ResolveDataByNode
 		for rows.Next() {
 			field := []string{"0", "0", "0", "0", "0", "0", "0"}
