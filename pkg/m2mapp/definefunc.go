@@ -67,6 +67,20 @@ type ResolveDataByNodeOutput struct {
 	Values  []Value `json:"values"`
 }
 
+type ResolveDataByAreaInput struct {
+	// input
+	AD         string         `json:"ad"`
+	Capability []string       `json:"capability"`
+	Period     PeriodInput    `json:"period"`
+	Condition  ConditionInput `json:"condition"`
+	NodeType   string         `json:"node-type"`
+}
+
+type ResolveDataByAreaOutput struct {
+	// output
+	Values map[string][]Value `json:"values"`
+}
+
 type SquarePoint struct {
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`

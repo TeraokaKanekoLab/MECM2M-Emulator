@@ -444,8 +444,8 @@ func trimPSNodePort(vnodeid string) string {
 	return port
 }
 
-func trimVSNodePort(pnodeid string) string {
-	pnodeid_int, _ := strconv.ParseUint(pnodeid, 10, 64)
+func trimVSNodePort(pnode_id string) string {
+	pnodeid_int, _ := strconv.ParseUint(pnode_id, 10, 64)
 	base_port_int, _ := strconv.Atoi(os.Getenv("VSNODE_BASE_PORT"))
 	mask := uint64(1<<60 - 1)
 	id_index := pnodeid_int & mask

@@ -86,25 +86,25 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
-		data = m2mapi.ResolveDataByArea{
+		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: "MaxTemp",
-			Period:     m2mapi.PeriodInput{Start: "2023-08-16 04:55:50 +0900 JST", End: "2023-08-16 04:56:00 +0900 JST"},
+			Capability: []string{"MaxTemp"},
+			Period:     m2mapp.PeriodInput{Start: "2023-08-16 04:55:50 +0900 JST", End: "2023-08-16 04:56:00 +0900 JST"},
 			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/area"
 	case "current_area":
-		data = m2mapi.ResolveDataByArea{
+		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: "MaxHumid",
+			Capability: []string{"MaxHumid"},
 			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/area"
 	case "condition_area":
-		data = m2mapi.ResolveDataByArea{
+		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: "MaxTemp",
-			Condition:  m2mapi.ConditionInput{Limit: m2mapi.Range{LowerLimit: 33, UpperLimit: 37}, Timeout: 10 * time.Second},
+			Capability: []string{"MaxTemp"},
+			Condition:  m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 33, UpperLimit: 37}, Timeout: 10 * time.Second},
 			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"
