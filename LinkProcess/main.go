@@ -313,8 +313,10 @@ func connectionLink(conn net.Conn, file string) {
 				fmt.Println("Error making request:", err)
 				return
 			}
-			if err = encoder.Encode(response_data); err != nil {
-				fmt.Println("Error encoding: ", err)
+			response_byte, err := io.ReadAll(response_data.Body)
+			if err = encoder.Encode(string(response_byte)); err != nil {
+				fmt.Println("Error encoding data: ", err)
+				return
 			}
 		}
 	}

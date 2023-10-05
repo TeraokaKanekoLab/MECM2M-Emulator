@@ -37,6 +37,18 @@ func init() {
 	port = os.Getenv("M2M_API_PORT")
 	ip_address = os.Getenv("IP_ADDRESS")
 	cloud_server_ip_port = os.Getenv("CLOUD_SERVER_IP_PORT")
+	minlat_float, _ := strconv.ParseFloat(os.Getenv("MIN_LAT"), 64)
+	maxlat_float, _ := strconv.ParseFloat(os.Getenv("MAX_LAT"), 64)
+	minlon_float, _ := strconv.ParseFloat(os.Getenv("MIN_LON"), 64)
+	maxlon_float, _ := strconv.ParseFloat(os.Getenv("MAX_LON"), 64)
+	own_cover_area := m2mapi.MECCoverArea{
+		ServerIP: ip_address,
+		MinLat:   minlat_float,
+		MaxLat:   maxlat_float,
+		MinLon:   minlon_float,
+		MaxLon:   maxlon_float,
+	}
+	area_mapping_cache = append(area_mapping_cache, own_cover_area)
 }
 
 func main() {
@@ -576,7 +588,7 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 
 	// 2. area_mapping_cache に情報がない，もしくは area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
 	if ask_cloud_flag {
-		fmt.Println("Ask Cloud Server")
+		fmt.Println("Ask other MEC Server")
 		area_mapping_data_request := m2mapi.AreaMapping{
 			SW: m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
 			NE: m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
@@ -1282,6 +1294,7 @@ func resolveConditionNodeFunction(vnode_id, socket_address string, capability []
 func resolvePastAreaFunction(ad, node_type string, capability []string, period m2mapp.PeriodInput) m2mapi.ResolveDataByArea {
 	null_data := m2mapi.ResolveDataByArea{AD: "NULL"}
 	var results m2mapi.ResolveDataByArea
+	results.Values = make(map[string][]m2mapi.Value)
 
 	// データ取得対象となるVNode群の検索
 	resolve_node_results := resolveNodeFunction(ad, capability, node_type)
@@ -1357,6 +1370,7 @@ func resolvePastAreaFunction(ad, node_type string, capability []string, period m
 func resolveCurrentAreaFunction(ad, node_type string, capability []string) m2mapi.ResolveDataByArea {
 	null_data := m2mapi.ResolveDataByArea{AD: "NULL"}
 	var results m2mapi.ResolveDataByArea
+	results.Values = make(map[string][]m2mapi.Value)
 
 	// データ取得対象となるVNode群の検索
 	resolve_node_results := resolveNodeFunction(ad, capability, node_type)
@@ -1432,6 +1446,7 @@ func resolveCurrentAreaFunction(ad, node_type string, capability []string) m2map
 func resolveConditionAreaFunction(ad, node_type string, capability []string, condition m2mapp.ConditionInput) m2mapi.ResolveDataByArea {
 	null_data := m2mapi.ResolveDataByArea{AD: "NULL"}
 	var results m2mapi.ResolveDataByArea
+	results.Values = make(map[string][]m2mapi.Value)
 
 	// データ取得対象となるVNode群の検索
 	resolve_node_results := resolveNodeFunction(ad, capability, node_type)

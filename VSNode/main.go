@@ -37,7 +37,7 @@ type Format struct {
 // 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
 var bufferSensorData = make(map[string]psnode.DataForRegist)
 var mu sync.Mutex
-var buffer_chan = make(chan string, 2)
+var buffer_chan = make(chan string)
 
 func init() {
 	// .envファイルの読み込み
@@ -397,8 +397,11 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 		registerPNodeID := inputFormat.PNodeID
 		bufferSensorData[registerPNodeID] = *inputFormat
 		mu.Unlock()
+
 		// チャネルに知らせる
-		buffer_chan <- "buffered"
+		go func(buffer_chan chan string) {
+			buffer_chan <- "buffered"
+		}(buffer_chan)
 
 		fmt.Println("Data Inserted Successfully!")
 		fmt.Fprintf(w, "%v\n", "Register Success")
