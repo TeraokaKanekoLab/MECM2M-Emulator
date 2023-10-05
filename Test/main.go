@@ -2,10 +2,11 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"mecm2m-Emulator/pkg/m2mapp"
+	"io"
+	"math/big"
 	"mecm2m-Emulator/pkg/message"
 	"net/http"
 	"os"
@@ -17,44 +18,14 @@ import (
 func main() {
 	loadEnv()
 
-	jsonStr := m2mapp.ResolveAreaInput{
-		NE: m2mapp.SquarePoint{Lat: 35.533, Lon: 139.532},
-		SW: m2mapp.SquarePoint{Lat: 35.531, Lon: 139.53},
+	n, err := rand.Int(rand.Reader, big.NewInt(1000))
+	if err != nil {
+		panic(err)
 	}
-
-	jsonStr_byte, _ := json.Marshal(jsonStr)
-
-	// JSONデコード用のマップ
-	var data map[string]interface{}
-
-	// JSONデコード
-	if err := json.Unmarshal(jsonStr_byte, &data); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// 各フィールドごとに処理
-	for key, value := range data {
-		switch key {
-		case "field1":
-			// フィールド1に対する処理
-			fmt.Println("Field1:", value.(string))
-		case "field2":
-			// フィールド2に対する処理
-			fmt.Println("Field2:", value.([]interface{}))
-		case "field3":
-			// フィールド3に対する処理
-			if bytesData, ok := value.([]byte); ok {
-				// []byte型として処理
-				fmt.Println("Field3 (as []byte):", string(bytesData))
-			} else {
-				fmt.Println("Field3 (not []byte):", value)
-			}
-		default:
-			// その他のフィールドに対する処理
-			fmt.Println("Unknown field:", key)
-		}
-	}
+	floatValue := new(big.Float).SetInt(n)
+	float64Value, _ := floatValue.Float64()
+	f := float64Value / 100
+	fmt.Println(n, f)
 }
 
 func loadEnv() {
@@ -79,7 +50,7 @@ func listenServer(payload string, url string) []interface{} {
 		message.MyError(err, "ListenServer > client.Do")
 	}
 	defer resp.Body.Close()
-	byteArray, _ := ioutil.ReadAll(resp.Body)
+	byteArray, _ := io.ReadAll(resp.Body)
 
 	var datas []interface{}
 	if strings.Contains(url, "neo4j") {
