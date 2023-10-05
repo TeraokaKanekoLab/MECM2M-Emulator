@@ -308,10 +308,13 @@ func connectionLink(conn net.Conn, file string) {
 				return
 			}
 			vsnode_port := trimVSNodePort(format.PNodeID)
-			_, err = http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
+			response_data, err := http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request:", err)
 				return
+			}
+			if err = encoder.Encode(response_data); err != nil {
+				fmt.Println("Error encoding: ", err)
 			}
 		}
 	}

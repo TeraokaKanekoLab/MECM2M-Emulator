@@ -80,9 +80,9 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 	case "condition_node":
 		data = m2mapp.ResolveDataByNodeInput{
 			VNodeID:       "9223372036854775808",
-			Capability:    []string{"MaxTemp"},
+			Capability:    []string{"MaxSpeed"},
 			Condition:     m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 33, UpperLimit: 37}, Timeout: 10 * time.Second},
-			SocketAddress: "192.168.1.1:11000",
+			SocketAddress: "192.168.11.11:13000",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
@@ -115,6 +115,7 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		url = "http://localhost:8080/m2mapi/area/extend"
 	case "time":
 		data = psnode.TimeSync{
+			PNodeID:     "2305843009213693952",
 			CurrentTime: time.Now(),
 		}
 		url = "http://localhost:14000/time"
@@ -148,6 +149,16 @@ func formatBody(command string, body []byte) string {
 	case "past_node":
 		return string(body)
 	case "current_node":
+		return string(body)
+	case "condition_node":
+		return string(body)
+	case "past_area":
+		return string(body)
+	case "current_area":
+		return string(body)
+	case "condition_area":
+		return string(body)
+	case "time":
 		return string(body)
 	default:
 		return results
