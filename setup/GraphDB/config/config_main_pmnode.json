@@ -1,0 +1,600 @@
+{
+    "pmnodes": [
+        {
+            "pmnode": {
+                "property-label": "PMNode",
+                "relation-label": {
+                    "PSink": "PS0",
+                    "PArea": "PA0:0"
+                },
+                "data-property": {
+                    "Label": "PMN0",
+                    "PNodeID": "4611686018427387904",
+                    "PNodeType": "Car",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "SocketAddress": "",
+                    "Position": [
+                        35.5303,
+                        139.5303
+                    ],
+                    "Capability": "TOYOTA",
+                    "Credential": "YES",
+                    "SessionKey": "l5iJDa7hcb",
+                    "Description": "Description:PMN0",
+                    "HomeIPv6Address": "192.168.1.1",
+                    "UpdateTime": "2023-10-16 08:36:09",
+                    "Velocity": 50.5,
+                    "Acceleration": 10.1,
+                    "Direction": "North"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "to": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS0"
+                        },
+                        "type": "isConnectedTo"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS0"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "type": "aggregates"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:0"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:0"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            },
+            "vmnode": {
+                "property-label": "VMNode",
+                "relation-label": {
+                    "PArea": "PA0:0"
+                },
+                "data-property": {
+                    "Label": "VMN0",
+                    "VNodeID": "13835058055282163712",
+                    "SocketAddress": "192.168.1.1:12000",
+                    "Description": "Description:VMN0"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN0"
+                        },
+                        "type": "isVirtualizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN0"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN0"
+                        },
+                        "type": "isPhysicalizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:0"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN0"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN0"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:0"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            }
+        },
+        {
+            "pmnode": {
+                "property-label": "PMNode",
+                "relation-label": {
+                    "PSink": "PS1",
+                    "PArea": "PA0:1"
+                },
+                "data-property": {
+                    "Label": "PMN1",
+                    "PNodeID": "4611686018427387905",
+                    "PNodeType": "Car",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "SocketAddress": "",
+                    "Position": [
+                        35.5304,
+                        139.5318
+                    ],
+                    "Capability": "TOYOTA",
+                    "Credential": "YES",
+                    "SessionKey": "eMvXzGoENS",
+                    "Description": "Description:PMN1",
+                    "HomeIPv6Address": "192.168.1.1",
+                    "UpdateTime": "2023-10-16 08:36:09",
+                    "Velocity": 50.5,
+                    "Acceleration": 10.1,
+                    "Direction": "North"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "to": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS1"
+                        },
+                        "type": "isConnectedTo"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS1"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "type": "aggregates"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:1"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:1"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            },
+            "vmnode": {
+                "property-label": "VMNode",
+                "relation-label": {
+                    "PArea": "PA0:1"
+                },
+                "data-property": {
+                    "Label": "VMN1",
+                    "VNodeID": "13835058055282163713",
+                    "SocketAddress": "192.168.1.1:12001",
+                    "Description": "Description:VMN1"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN1"
+                        },
+                        "type": "isVirtualizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN1"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN1"
+                        },
+                        "type": "isPhysicalizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:1"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN1"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN1"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA0:1"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            }
+        },
+        {
+            "pmnode": {
+                "property-label": "PMNode",
+                "relation-label": {
+                    "PSink": "PS2",
+                    "PArea": "PA1:0"
+                },
+                "data-property": {
+                    "Label": "PMN2",
+                    "PNodeID": "4611686018427387906",
+                    "PNodeType": "Car",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "SocketAddress": "",
+                    "Position": [
+                        35.5319,
+                        139.5306
+                    ],
+                    "Capability": "TOYOTA",
+                    "Credential": "YES",
+                    "SessionKey": "pfeorOAovb",
+                    "Description": "Description:PMN2",
+                    "HomeIPv6Address": "192.168.1.1",
+                    "UpdateTime": "2023-10-16 08:36:09",
+                    "Velocity": 50.5,
+                    "Acceleration": 10.1,
+                    "Direction": "North"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "to": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS2"
+                        },
+                        "type": "isConnectedTo"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS2"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "type": "aggregates"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:0"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:0"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            },
+            "vmnode": {
+                "property-label": "VMNode",
+                "relation-label": {
+                    "PArea": "PA1:0"
+                },
+                "data-property": {
+                    "Label": "VMN2",
+                    "VNodeID": "13835058055282163714",
+                    "SocketAddress": "192.168.1.1:12002",
+                    "Description": "Description:VMN2"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN2"
+                        },
+                        "type": "isVirtualizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN2"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN2"
+                        },
+                        "type": "isPhysicalizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:0"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN2"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN2"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:0"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            }
+        },
+        {
+            "pmnode": {
+                "property-label": "PMNode",
+                "relation-label": {
+                    "PSink": "PS3",
+                    "PArea": "PA1:1"
+                },
+                "data-property": {
+                    "Label": "PMN3",
+                    "PNodeID": "4611686018427387907",
+                    "PNodeType": "Car",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "SocketAddress": "",
+                    "Position": [
+                        35.531,
+                        139.5315
+                    ],
+                    "Capability": "TOYOTA",
+                    "Credential": "YES",
+                    "SessionKey": "knB6bGZ3A7",
+                    "Description": "Description:PMN3",
+                    "HomeIPv6Address": "192.168.1.1",
+                    "UpdateTime": "2023-10-16 08:36:09",
+                    "Velocity": 50.5,
+                    "Acceleration": 10.1,
+                    "Direction": "North"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "to": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS3"
+                        },
+                        "type": "isConnectedTo"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PSink",
+                            "data-property": "Label",
+                            "value": "PS3"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "type": "aggregates"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:1"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:1"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            },
+            "vmnode": {
+                "property-label": "VMNode",
+                "relation-label": {
+                    "PArea": "PA1:1"
+                },
+                "data-property": {
+                    "Label": "VMN3",
+                    "VNodeID": "13835058055282163715",
+                    "SocketAddress": "192.168.1.1:12003",
+                    "Description": "Description:VMN3"
+                },
+                "object-property": [
+                    {
+                        "from": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN3"
+                        },
+                        "type": "isVirtualizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN3"
+                        },
+                        "to": {
+                            "property-label": "PMNode",
+                            "data-property": "Label",
+                            "value": "PMN3"
+                        },
+                        "type": "isPhysicalizedBy"
+                    },
+                    {
+                        "from": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:1"
+                        },
+                        "to": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN3"
+                        },
+                        "type": "contains"
+                    },
+                    {
+                        "from": {
+                            "property-label": "VMNode",
+                            "data-property": "Label",
+                            "value": "VMN3"
+                        },
+                        "to": {
+                            "property-label": "PArea",
+                            "data-property": "Label",
+                            "value": "PA1:1"
+                        },
+                        "type": "isInstalledIn"
+                    }
+                ]
+            }
+        }
+    ]
+}

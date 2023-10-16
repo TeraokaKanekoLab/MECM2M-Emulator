@@ -72,9 +72,9 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		url = "http://localhost:8080/m2mapi/data/past/node"
 	case "current_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "9223372036854775808",
-			Capability:    []string{"MaxTemp", "MaxHumid"},
-			SocketAddress: "192.168.1.1:11000",
+			VNodeID:       "13835058055282163712",
+			Capability:    []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
+			SocketAddress: "192.168.11.11:13000",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/node"
 	case "condition_node":

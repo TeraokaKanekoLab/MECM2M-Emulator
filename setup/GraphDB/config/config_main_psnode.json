@@ -11,15 +11,15 @@
                     "Label": "PSN0",
                     "PNodeID": "2305843009213693952",
                     "PNodeType": "Temp_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
                         35.5307,
-                        139.5307
+                        139.5306
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "pyYsb9mvuJ",
+                    "SessionKey": "Lh4n9K7mzz",
                     "Description": "Description:PSN0"
                 },
                 "object-property": [
@@ -86,7 +86,7 @@
                     "Label": "VSN0",
                     "VNodeID": "9223372036854775808",
                     "SocketAddress": "192.168.1.1:11000",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN0"
                 },
                 "object-property": [
@@ -156,15 +156,15 @@
                     "Label": "PSN1",
                     "PNodeID": "2305843009213693953",
                     "PNodeType": "Humid_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.531,
-                        139.5303
+                        35.5302,
+                        139.5307
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "aEwHSl4qP9",
+                    "SessionKey": "y9GvLi5ljT",
                     "Description": "Description:PSN1"
                 },
                 "object-property": [
@@ -231,7 +231,7 @@
                     "Label": "VSN1",
                     "VNodeID": "9223372036854775809",
                     "SocketAddress": "192.168.1.1:11001",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN1"
                 },
                 "object-property": [
@@ -301,15 +301,15 @@
                     "Label": "PSN2",
                     "PNodeID": "2305843009213693954",
                     "PNodeType": "Anemometer",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5308,
-                        139.5307
+                        35.5306,
+                        139.5304
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "4O2qPozPeq",
+                    "SessionKey": "LgPCuzu3Df",
                     "Description": "Description:PSN2"
                 },
                 "object-property": [
@@ -376,7 +376,7 @@
                     "Label": "VSN2",
                     "VNodeID": "9223372036854775810",
                     "SocketAddress": "192.168.1.1:11002",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN2"
                 },
                 "object-property": [
@@ -446,15 +446,15 @@
                     "Label": "PSN3",
                     "PNodeID": "2305843009213693955",
                     "PNodeType": "Temp_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5302,
-                        139.5314
+                        35.5304,
+                        139.5318
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "ttqI8DHxfo",
+                    "SessionKey": "rKfp7GEXJi",
                     "Description": "Description:PSN3"
                 },
                 "object-property": [
@@ -521,7 +521,7 @@
                     "Label": "VSN3",
                     "VNodeID": "9223372036854775811",
                     "SocketAddress": "192.168.1.1:11003",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN3"
                 },
                 "object-property": [
@@ -591,15 +591,15 @@
                     "Label": "PSN4",
                     "PNodeID": "2305843009213693956",
                     "PNodeType": "Humid_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
                         35.5302,
-                        139.5314
+                        139.5318
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "iXlfRUVVPv",
+                    "SessionKey": "Jo0n9M8F7y",
                     "Description": "Description:PSN4"
                 },
                 "object-property": [
@@ -666,7 +666,7 @@
                     "Label": "VSN4",
                     "VNodeID": "9223372036854775812",
                     "SocketAddress": "192.168.1.1:11004",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN4"
                 },
                 "object-property": [
@@ -736,15 +736,15 @@
                     "Label": "PSN5",
                     "PNodeID": "2305843009213693957",
                     "PNodeType": "Anemometer",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5306,
-                        139.5319
+                        35.5307,
+                        139.5312
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "1irZJXntMx",
+                    "SessionKey": "SsgfaSmQcH",
                     "Description": "Description:PSN5"
                 },
                 "object-property": [
@@ -811,7 +811,7 @@
                     "Label": "VSN5",
                     "VNodeID": "9223372036854775813",
                     "SocketAddress": "192.168.1.1:11005",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN5"
                 },
                 "object-property": [
@@ -881,15 +881,15 @@
                     "Label": "PSN6",
                     "PNodeID": "2305843009213693958",
                     "PNodeType": "Temp_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5316,
-                        139.5305
+                        35.5317,
+                        139.5301
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "Pg7yUsrh3A",
+                    "SessionKey": "dzNLJGoLik",
                     "Description": "Description:PSN6"
                 },
                 "object-property": [
@@ -956,7 +956,7 @@
                     "Label": "VSN6",
                     "VNodeID": "9223372036854775814",
                     "SocketAddress": "192.168.1.1:11006",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN6"
                 },
                 "object-property": [
@@ -1026,15 +1026,15 @@
                     "Label": "PSN7",
                     "PNodeID": "2305843009213693959",
                     "PNodeType": "Humid_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
                         35.5318,
-                        139.5305
+                        139.5306
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "ZOI5TwwM09",
+                    "SessionKey": "a2A468M2kF",
                     "Description": "Description:PSN7"
                 },
                 "object-property": [
@@ -1101,7 +1101,7 @@
                     "Label": "VSN7",
                     "VNodeID": "9223372036854775815",
                     "SocketAddress": "192.168.1.1:11007",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN7"
                 },
                 "object-property": [
@@ -1171,15 +1171,15 @@
                     "Label": "PSN8",
                     "PNodeID": "2305843009213693960",
                     "PNodeType": "Anemometer",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5318,
-                        139.5308
+                        35.5315,
+                        139.5309
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "MOnOd7YXwy",
+                    "SessionKey": "A5bCTKKcnu",
                     "Description": "Description:PSN8"
                 },
                 "object-property": [
@@ -1246,7 +1246,7 @@
                     "Label": "VSN8",
                     "VNodeID": "9223372036854775816",
                     "SocketAddress": "192.168.1.1:11008",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN8"
                 },
                 "object-property": [
@@ -1316,15 +1316,15 @@
                     "Label": "PSN9",
                     "PNodeID": "2305843009213693961",
                     "PNodeType": "Temp_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5314,
-                        139.5317
+                        35.532,
+                        139.531
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "QCDirsiDqm",
+                    "SessionKey": "KTK9KI24Lc",
                     "Description": "Description:PSN9"
                 },
                 "object-property": [
@@ -1391,7 +1391,7 @@
                     "Label": "VSN9",
                     "VNodeID": "9223372036854775817",
                     "SocketAddress": "192.168.1.1:11009",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN9"
                 },
                 "object-property": [
@@ -1461,15 +1461,15 @@
                     "Label": "PSN10",
                     "PNodeID": "2305843009213693962",
                     "PNodeType": "Humid_Sensor",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5315,
-                        139.5315
+                        35.5312,
+                        139.5318
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "0cDBd2QmH5",
+                    "SessionKey": "vltbDwzJnw",
                     "Description": "Description:PSN10"
                 },
                 "object-property": [
@@ -1536,7 +1536,7 @@
                     "Label": "VSN10",
                     "VNodeID": "9223372036854775818",
                     "SocketAddress": "192.168.1.1:11010",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN10"
                 },
                 "object-property": [
@@ -1606,15 +1606,15 @@
                     "Label": "PSN11",
                     "PNodeID": "2305843009213693963",
                     "PNodeType": "Anemometer",
-                    "VNodeModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5315,
-                        139.5312
+                        35.5317,
+                        139.5313
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "oA4Otm2rPN",
+                    "SessionKey": "xPHMo4Ullo",
                     "Description": "Description:PSN11"
                 },
                 "object-property": [
@@ -1681,7 +1681,7 @@
                     "Label": "VSN11",
                     "VNodeID": "9223372036854775819",
                     "SocketAddress": "192.168.1.1:11011",
-                    "SoftwareModule": "/home/rand/MECM2M-Emulator/MECServer/VSNode/main",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "Description": "Description:VSN11"
                 },
                 "object-property": [

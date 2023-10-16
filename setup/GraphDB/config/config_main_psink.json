@@ -10,11 +10,11 @@
                 "PSinkID": "1152921504606846976",
                 "PSinkType": "Router",
                 "SocketAddress": "",
-                "ServingIPv6Prefix": "c257:92a1:3bf8:4807::/64",
+                "ServingIPv6Prefix": "d9a8:f94e:fa26:fdd1::/64",
                 "MECIPv6Address": "192.168.1.1",
                 "Position": [
-                    35.5304,
-                    139.53
+                    35.5303,
+                    139.5303
                 ],
                 "Description": "Description:PS0"
             },
@@ -57,10 +57,10 @@
                 "PSinkID": "1152921504606846977",
                 "PSinkType": "Router",
                 "SocketAddress": "",
-                "ServingIPv6Prefix": "fc68:2251:affa:3388::/64",
+                "ServingIPv6Prefix": "5fb3:4f33:dd1d:d986::/64",
                 "MECIPv6Address": "192.168.1.1",
                 "Position": [
-                    35.5305,
+                    35.5301,
                     139.5316
                 ],
                 "Description": "Description:PS1"
@@ -104,11 +104,11 @@
                 "PSinkID": "1152921504606846978",
                 "PSinkType": "Router",
                 "SocketAddress": "",
-                "ServingIPv6Prefix": "57df:318d:abf7:7512::/64",
+                "ServingIPv6Prefix": "b363:653a:502c:3581::/64",
                 "MECIPv6Address": "192.168.1.1",
                 "Position": [
-                    35.5319,
-                    139.5305
+                    35.532,
+                    139.5303
                 ],
                 "Description": "Description:PS2"
             },
@@ -151,11 +151,11 @@
                 "PSinkID": "1152921504606846979",
                 "PSinkType": "Router",
                 "SocketAddress": "",
-                "ServingIPv6Prefix": "b40d:a560:1109:bf1d::/64",
+                "ServingIPv6Prefix": "d779:f109:e818:6cb9::/64",
                 "MECIPv6Address": "192.168.1.1",
                 "Position": [
-                    35.5317,
-                    139.5311
+                    35.5316,
+                    139.5319
                 ],
                 "Description": "Description:PS3"
             },

@@ -1,10 +1,8 @@
 import json
 from dotenv import load_dotenv
 import os
-import math
 import random
 import string
-import glob
 
 # PSNode
 # ---------------
@@ -36,6 +34,8 @@ import glob
 ## Object Property
 ## * isVirtualizedBy (PNode->VNode)
 ## * isPhysicalizedBy (VNode->PNode)
+## * contains (PArea->VNode)
+## * isInstalledIn (VNode->PArea)
 
 # session key 生成
 def generate_random_string(length):
@@ -49,11 +49,12 @@ def generate_random_string(length):
 load_dotenv()
 json_file_path = os.getenv("PROJECT_PATH") + "/setup/GraphDB/config/"
 
-# VSNODE_BASE_PORT
+# VSNODE_BASE_PORT, PSNODE_BASE_PORT
 # PSINK_NUM_PER_AREA
 # MIN_LAT, MAX_LAT, MIN_LON, MAX_LON
 # AREA_WIDTH
 # IP_ADDRESS
+PSNODE_BASE_PORT = int(os.getenv("PSNODE_BASE_PORT"))
 VSNODE_BASE_PORT = int(os.getenv("VSNODE_BASE_PORT"))
 PSINK_NUM_PER_AREA = float(os.getenv("PSINK_NUM_PER_AREA"))
 MIN_LAT = float(os.getenv("MIN_LAT"))
@@ -130,9 +131,9 @@ while neLat <= MAX_LAT:
                     psnode_id = str(int(0b0010 << 60) + id_index)
                     vsnode_id = str(int(0b1000 << 60) + id_index)
                     pnode_type = pn_types[j]
-                    vnode_module = os.getenv("PROJECT_PATH") + "/MECServer/VSNode/main"
-                    psnode_port = int(os.getenv("PSNODE_BASE_PORT")) + id_index
-                    vsnode_port = int(os.getenv("VSNODE_BASE_PORT")) + id_index
+                    vnode_module = os.getenv("PROJECT_PATH") + "/VSNode/main"
+                    psnode_port = PSNODE_BASE_PORT + id_index
+                    vsnode_port = VSNODE_BASE_PORT + id_index
                     vnode_socket_address = IP_ADDRESS + ":" + str(vsnode_port)
                     psnode_lat = random.uniform(swLat, neLat)
                     psnode_lon = random.uniform(swLon, neLon)

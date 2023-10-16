@@ -243,10 +243,6 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 
 		// PSNodeからの定期的なセンサデータ登録で受信するセンサデータを読み込み，Conditionと合致する内容であれば，M2M APIへ返送する
 		inputPNodeID := convertID(inputFormat.VNodeID, 63, 61)
-		fmt.Println("2023/10/05: Target PNode: ", inputPNodeID)
-		//buffer_data := bufferSensorData[inputPNodeID]
-		//val_capability := buffer_data.Capability
-		//val_val := buffer_data.Value
 
 		lowerLimit := inputFormat.Condition.Limit.LowerLimit
 		upperLimit := inputFormat.Condition.Limit.UpperLimit
@@ -272,28 +268,16 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "%v\n", string(jsonData))
 				return
 			case receive_string := <-buffer_chan:
-				fmt.Println("2023/10/05: receive string: ", receive_string, inputPNodeID)
 				if receive_string == inputPNodeID {
-					fmt.Println("2023/10/05: Data Buffered!")
 					var val_val float64
 					var val_capability string
 					mu.Lock()
 					val_val = bufferSensorData[inputPNodeID].Value
 					val_capability = bufferSensorData[inputPNodeID].Capability
-					/*
-						if val_val != bufferSensorData[inputPNodeID].Value {
-							// 前回のセンサデータと同じ値でなければバッファデータ更新
-							val_val = bufferSensorData[inputPNodeID].Value
-							val_capability = bufferSensorData[inputPNodeID].Capability
-						}
-					*/
 					mu.Unlock()
 
 					ok := includeCapability(inputFormat.Capability, val_capability)
-					fmt.Println("2023/10/05: Confirm Capability: ", inputFormat.Capability, val_capability)
-					fmt.Println("2023/10/05: Confirm Condition: ", ok, val_val, lowerLimit, upperLimit)
 					if ok && val_val >= lowerLimit && val_val <= upperLimit {
-						fmt.Println("2023/10/05: Meet Condition!")
 						// 条件を満たすので，M2M APIへ結果を転送
 						register_data := bufferSensorData[inputPNodeID]
 						values := []m2mapi.Value{}
