@@ -14,12 +14,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5307,
-                        139.5306
+                        35.5303,
+                        139.5303
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "Lh4n9K7mzz",
+                    "SessionKey": "Ss5IwZucr5",
                     "Description": "Description:PSN0"
                 },
                 "object-property": [
@@ -159,12 +159,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5302,
-                        139.5307
+                        35.5308,
+                        139.5302
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "y9GvLi5ljT",
+                    "SessionKey": "N9QDTixZ0o",
                     "Description": "Description:PSN1"
                 },
                 "object-property": [
@@ -304,12 +304,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5306,
-                        139.5304
+                        35.531,
+                        139.5309
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "LgPCuzu3Df",
+                    "SessionKey": "LEIcNfS2pR",
                     "Description": "Description:PSN2"
                 },
                 "object-property": [
@@ -449,12 +449,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5304,
-                        139.5318
+                        35.5303,
+                        139.5319
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "rKfp7GEXJi",
+                    "SessionKey": "19ZBrHMg4i",
                     "Description": "Description:PSN3"
                 },
                 "object-property": [
@@ -594,12 +594,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5302,
-                        139.5318
+                        35.531,
+                        139.5314
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "Jo0n9M8F7y",
+                    "SessionKey": "2QHBDxK4jj",
                     "Description": "Description:PSN4"
                 },
                 "object-property": [
@@ -739,12 +739,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5307,
-                        139.5312
+                        35.5302,
+                        139.5316
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "SsgfaSmQcH",
+                    "SessionKey": "wqnMncLEhV",
                     "Description": "Description:PSN5"
                 },
                 "object-property": [
@@ -884,12 +884,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5317,
-                        139.5301
+                        35.5315,
+                        139.5303
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "dzNLJGoLik",
+                    "SessionKey": "CiR3s9z58a",
                     "Description": "Description:PSN6"
                 },
                 "object-property": [
@@ -1030,11 +1030,11 @@
                     "SocketAddress": "",
                     "Position": [
                         35.5318,
-                        139.5306
+                        139.5301
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "a2A468M2kF",
+                    "SessionKey": "cF7fVwNPVl",
                     "Description": "Description:PSN7"
                 },
                 "object-property": [
@@ -1174,12 +1174,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5315,
+                        35.5318,
                         139.5309
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "A5bCTKKcnu",
+                    "SessionKey": "z2OFG1Hh2Z",
                     "Description": "Description:PSN8"
                 },
                 "object-property": [
@@ -1319,12 +1319,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.532,
-                        139.531
+                        35.531,
+                        139.5312
                     ],
                     "Capability": "MaxTemp",
                     "Credential": "YES",
-                    "SessionKey": "KTK9KI24Lc",
+                    "SessionKey": "cAQqyVLbZe",
                     "Description": "Description:PSN9"
                 },
                 "object-property": [
@@ -1464,12 +1464,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5312,
-                        139.5318
+                        35.5313,
+                        139.5311
                     ],
                     "Capability": "MaxHumid",
                     "Credential": "YES",
-                    "SessionKey": "vltbDwzJnw",
+                    "SessionKey": "baoBfJjKqO",
                     "Description": "Description:PSN10"
                 },
                 "object-property": [
@@ -1609,12 +1609,12 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VSNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5317,
-                        139.5313
+                        35.5313,
+                        139.532
                     ],
                     "Capability": "MaxWind",
                     "Credential": "YES",
-                    "SessionKey": "xPHMo4Ullo",
+                    "SessionKey": "9ZuEEtnehP",
                     "Description": "Description:PSN11"
                 },
                 "object-property": [

@@ -429,7 +429,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	// 初期環境構築時に作成したVSNodeのポート分だけ必要
-	initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/VSNode/initial_environment.json"
+	initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/VMNode/initial_environment.json"
 	file, err := os.Open(initial_environment_file)
 	if err != nil {
 		fmt.Println("Error opening file: ", err)

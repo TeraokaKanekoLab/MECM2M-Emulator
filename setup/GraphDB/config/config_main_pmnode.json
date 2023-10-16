@@ -14,15 +14,15 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5303,
-                        139.5303
+                        35.53,
+                        139.5307
                     ],
                     "Capability": "TOYOTA",
                     "Credential": "YES",
-                    "SessionKey": "l5iJDa7hcb",
+                    "SessionKey": "m1bE95jdC4",
                     "Description": "Description:PMN0",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 08:36:09",
+                    "UpdateTime": "2023-10-16 10:19:46",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -91,6 +91,8 @@
                     "Label": "VMN0",
                     "VNodeID": "13835058055282163712",
                     "SocketAddress": "192.168.1.1:12000",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "VMNodeRSocketAddress": "192.168.11.11:13000",
                     "Description": "Description:VMN0"
                 },
                 "object-property": [
@@ -163,15 +165,15 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5304,
-                        139.5318
+                        35.5309,
+                        139.5319
                     ],
                     "Capability": "TOYOTA",
                     "Credential": "YES",
-                    "SessionKey": "eMvXzGoENS",
+                    "SessionKey": "4Vz5Mey5jc",
                     "Description": "Description:PMN1",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 08:36:09",
+                    "UpdateTime": "2023-10-16 10:19:46",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -240,6 +242,8 @@
                     "Label": "VMN1",
                     "VNodeID": "13835058055282163713",
                     "SocketAddress": "192.168.1.1:12001",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "VMNodeRSocketAddress": "192.168.11.11:13000",
                     "Description": "Description:VMN1"
                 },
                 "object-property": [
@@ -312,15 +316,15 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5319,
-                        139.5306
+                        35.5316,
+                        139.5303
                     ],
                     "Capability": "TOYOTA",
                     "Credential": "YES",
-                    "SessionKey": "pfeorOAovb",
+                    "SessionKey": "kUbQETuCy7",
                     "Description": "Description:PMN2",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 08:36:09",
+                    "UpdateTime": "2023-10-16 10:19:46",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -389,6 +393,8 @@
                     "Label": "VMN2",
                     "VNodeID": "13835058055282163714",
                     "SocketAddress": "192.168.1.1:12002",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "VMNodeRSocketAddress": "192.168.11.11:13000",
                     "Description": "Description:VMN2"
                 },
                 "object-property": [
@@ -461,15 +467,15 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.531,
-                        139.5315
+                        35.5312,
+                        139.5319
                     ],
                     "Capability": "TOYOTA",
                     "Credential": "YES",
-                    "SessionKey": "knB6bGZ3A7",
+                    "SessionKey": "hRr3ouERaZ",
                     "Description": "Description:PMN3",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 08:36:09",
+                    "UpdateTime": "2023-10-16 10:19:46",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -538,6 +544,8 @@
                     "Label": "VMN3",
                     "VNodeID": "13835058055282163715",
                     "SocketAddress": "192.168.1.1:12003",
+                    "SoftwareModule": "/home/rand/MECM2M-Emulator/VMNode/main",
+                    "VMNodeRSocketAddress": "192.168.11.11:13000",
                     "Description": "Description:VMN3"
                 },
                 "object-property": [
