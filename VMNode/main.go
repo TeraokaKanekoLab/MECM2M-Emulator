@@ -11,6 +11,7 @@ import (
 	"math/big"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/vmnode"
 	"net"
 	"net/http"
@@ -34,7 +35,7 @@ type Format struct {
 }
 
 // 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
-var bufferSensorData = make(map[string]m2mapi.DataForRegist)
+var bufferSensorData = make(map[string]psnode.DataForRegist)
 var mu sync.Mutex
 var buffer_chan = make(chan string)
 
@@ -263,7 +264,7 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					fmt.Fprintf(w, "%v\n", string(jsonData))
-					bufferSensorData[inputPNodeID] = m2mapi.DataForRegist{}
+					bufferSensorData[inputPNodeID] = psnode.DataForRegist{}
 					return
 				} else {
 					continue Loop
@@ -332,7 +333,7 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "dataRegister: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.DataForRegist{}
+		inputFormat := &psnode.DataForRegist{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "dataRegister: Error missmatching packet format", http.StatusInternalServerError)
 		}
@@ -367,20 +368,24 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 		defer stmt.Close()
 
 		_, err = stmt.Exec(inputFormat.PNodeID, inputFormat.Capability, inputFormat.Timestamp, inputFormat.Value, inputFormat.PSinkID, inputFormat.Lat, inputFormat.Lon)
-		//_, err = stmt.Exec(inputFormat.PNodeID, inputFormat.Capability, inputFormat.Timestamp[:30])
 		if err != nil {
 			http.Error(w, "dataRegister: Error exec SensingDB", http.StatusInternalServerError)
 		}
-
-		fmt.Println("Data Inserted Successfully!")
 
 		// バッファにセンサデータ登録
 		mu.Lock()
 		registerPNodeID := inputFormat.PNodeID
 		bufferSensorData[registerPNodeID] = *inputFormat
 		mu.Unlock()
+
 		// チャネルに知らせる
-		buffer_chan <- "buffered"
+		go func(buffer_chan chan string) {
+			transmit_string := registerPNodeID
+			buffer_chan <- transmit_string
+		}(buffer_chan)
+
+		fmt.Println("Data Inserted Successfully!")
+		fmt.Fprintf(w, "%v\n", "Register Success")
 	} else {
 		http.Error(w, "dataRegister: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}

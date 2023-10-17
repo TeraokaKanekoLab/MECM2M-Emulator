@@ -79,33 +79,33 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		url = "http://localhost:8080/m2mapi/data/current/node"
 	case "condition_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "9223372036854775808",
+			VNodeID:       "13835058055282163712",
 			Capability:    []string{"MaxTemp", "MaxSpeed"},
 			Condition:     m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 39}, Timeout: 10 * time.Second},
-			SocketAddress: "192.168.1.1:11000",
+			SocketAddress: "192.168.11.11:13000",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid"},
-			Period:     m2mapp.PeriodInput{Start: "2023-10-05 07:18:00 +0900 JST", End: "2023-10-05 07:20:00 +0900 JST"},
-			NodeType:   "VSNode",
+			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed", "TOYOTA"},
+			Period:     m2mapp.PeriodInput{Start: "2023-10-17 00:00:00 +0900 JST", End: "2023-10-17 05:20:00 +0900 JST"},
+			NodeType:   "VMNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/area"
 	case "current_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid"},
-			NodeType:   "VSNode",
+			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
+			NodeType:   "VMNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/area"
 	case "condition_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid"},
+			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
 			Condition:  m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 40}, Timeout: 10 * time.Second},
-			NodeType:   "VSNode",
+			NodeType:   "VMNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"
 	case "extend_ad":

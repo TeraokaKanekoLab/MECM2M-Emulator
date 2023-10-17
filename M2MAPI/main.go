@@ -841,7 +841,8 @@ func resolveNodeFunction(ad string, cap []string, node_type string) m2mapi.Resol
 					area = "\\\"" + area + "\\\""
 					format_areas = append(format_areas, area)
 				}
-				vmnode_payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vm:VMNode)-[:isPhysicalizedBy]->(pm:PMNode) WHERE a.PAreaID IN [` + strings.Join(format_areas, ", ") + `] and pm.Capability IN [` + strings.Join(format_capability, ", ") + `] return vm.VNodeID, vm.SocketAddress, vm.VMNodeRSocketAddress;"}]}`
+				//vmnode_payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vm:VMNode)-[:isPhysicalizedBy]->(pm:PMNode) WHERE a.PAreaID IN [` + strings.Join(format_areas, ", ") + `] and pm.Capability IN [` + strings.Join(format_capability, ", ") + `] return vm.VNodeID, vm.SocketAddress, vm.VMNodeRSocketAddress;"}]}`
+				vmnode_payload := `{"statements": [{"statement": "MATCH (a:PArea)-[:contains]->(vm:VMNode) WHERE a.PAreaID IN [` + strings.Join(format_areas, ", ") + `] return vm.VNodeID, vm.SocketAddress, vm.VMNodeRSocketAddress;"}]}`
 				graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@" + server_ip + ":" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
 				req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(vmnode_payload)))
 				req.Header.Set("Content-Type", "application/json")
@@ -1347,7 +1348,7 @@ func resolvePastAreaFunction(ad, node_type string, capability []string, period m
 					fmt.Println("Error marhsaling data: ", err)
 					results.AD = "NULL"
 				}
-				transmit_url := "http://" + vmnode_set.VNodeSocketAddress + "/primpai/data/past/node"
+				transmit_url := "http://" + vmnode_set.VNodeSocketAddress + "/primapi/data/past/node"
 				response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 				if err != nil {
 					fmt.Println("Error making request: ", err)
@@ -1377,6 +1378,7 @@ func resolveCurrentAreaFunction(ad, node_type string, capability []string) m2map
 
 	// データ取得対象となるVNode群の検索
 	resolve_node_results := resolveNodeFunction(ad, capability, node_type)
+	fmt.Println("resolve_node_results: ", resolve_node_results)
 
 	// resolveNodeの検索によって得られたすべてのVNodeに対してデータ取得要求
 	if node_type == "All" || node_type == "VSNode" {
@@ -1434,7 +1436,7 @@ func resolveCurrentAreaFunction(ad, node_type string, capability []string) m2map
 					results.AD = "NULL"
 				}
 				// VSNodeへ転送
-				transmit_url := "http://" + vmnode_set.VMNodeRSocketAddress + "/primpai/data/current/node"
+				transmit_url := "http://" + vmnode_set.VMNodeRSocketAddress + "/primapi/data/current/node"
 				response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 				if err != nil {
 					fmt.Println("Error making request: ", err)
@@ -1526,7 +1528,7 @@ func resolveConditionAreaFunction(ad, node_type string, capability []string, con
 					results.AD = "NULL"
 				}
 				// VMNodeRへ転送
-				transmit_url := "http://" + vmnode_set.VMNodeRSocketAddress + "/primpai/data/condition/node"
+				transmit_url := "http://" + vmnode_set.VMNodeRSocketAddress + "/primapi/data/condition/node"
 				response_data, err := http.Post(transmit_url, "application/json", bytes.NewBuffer(transmit_data))
 				if err != nil {
 					fmt.Println("Error making request: ", err)
