@@ -51,8 +51,8 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 	switch command {
 	case "area":
 		data = m2mapp.ResolveAreaInput{
-			NE: m2mapp.SquarePoint{Lat: 35.533, Lon: 139.531},
-			SW: m2mapp.SquarePoint{Lat: 35.532, Lon: 139.530},
+			NE: m2mapp.SquarePoint{Lat: 35.531, Lon: 139.531},
+			SW: m2mapp.SquarePoint{Lat: 35.530, Lon: 139.530},
 		}
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":
@@ -67,7 +67,7 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 			VNodeID:       "13835058055282163712",
 			Capability:    []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
 			Period:        m2mapp.PeriodInput{Start: "2023-10-03 11:00:00 +0900 JST", End: "2023-10-03 12:00:13 +0900 JST"},
-			SocketAddress: "192.168.1.1:12000",
+			SocketAddress: "192.168.2.2:12000",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/node"
 	case "current_node":
@@ -80,8 +80,8 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 	case "condition_node":
 		data = m2mapp.ResolveDataByNodeInput{
 			VNodeID:       "9223372036854775808",
-			Capability:    []string{"MaxTemp"},
-			Condition:     m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 33, UpperLimit: 37}, Timeout: 10 * time.Second},
+			Capability:    []string{"MaxTemp", "MaxSpeed"},
+			Condition:     m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 39}, Timeout: 10 * time.Second},
 			SocketAddress: "192.168.1.1:11000",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
@@ -104,7 +104,7 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
 			Capability: []string{"MaxTemp", "MaxHumid"},
-			Condition:  m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 40}, Timeout: 30 * time.Second},
+			Condition:  m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 40}, Timeout: 10 * time.Second},
 			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"

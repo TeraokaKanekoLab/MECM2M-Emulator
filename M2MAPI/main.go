@@ -77,14 +77,9 @@ func main() {
 	http.HandleFunc("/m2mapi/data/current/area", resolveCurrentArea)
 	http.HandleFunc("/m2mapi/data/condition/area", resolveConditionArea)
 	http.HandleFunc("/m2mapi/actuate", actuate)
-	http.HandleFunc("/hello", hello)
 
 	log.Printf("Connect to http://%s:%s/ for M2M API", ip_address, port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World\n")
 }
 
 func resolveArea(w http.ResponseWriter, r *http.Request) {
@@ -1477,6 +1472,7 @@ func resolveConditionAreaFunction(ad, node_type string, capability []string, con
 			wg.Add(1)
 			go func(vsnode_set m2mapi.VNodeSet) {
 				defer wg.Done()
+
 				request_data := m2mapi.ResolveDataByNode{
 					VNodeID:    vsnode_set.VNodeID,
 					Capability: capability,
@@ -1505,6 +1501,8 @@ func resolveConditionAreaFunction(ad, node_type string, capability []string, con
 				}
 
 				results.Values[vsnode_set.VNodeID] = append(results.Values[vsnode_set.VNodeID], result.Values...)
+				fmt.Println("other process cancel")
+
 			}(vsnode_set)
 		}
 		wg.Wait()

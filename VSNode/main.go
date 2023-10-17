@@ -30,27 +30,27 @@ const (
 	link_process_socket_address_path = "/tmp/mecm2m/link-process"
 )
 
+var (
+	// 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
+	bufferSensorData = make(map[string]psnode.DataForRegist)
+	mu               sync.Mutex
+
+	// センサデータがバッファされたときに通知するチャネル
+	buffer_chan = make(chan string)
+
+	// VSNodeIDをキーとして，それに対応するPNodeIDとCapabilityを保持しておくマッピング
+	vsnode_psnode_mapping = make(map[string]PSNode)
+)
+
 type Format struct {
 	FormType string
 }
-
-// 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
-var bufferSensorData = make(map[string]psnode.DataForRegist)
-var mu sync.Mutex
-
-// センサデータがバッファされたときに通知するチャネル
-var buffer_chan = make(chan string)
-
-// ConditionAreaにおいて，他のgoroutineでセンサデータを検知してM2M APIへ送信したことを知らせるチャネル．
-var sensing_chan = make(chan string)
 
 // VSNode と PSNode のリレーションを保持しておくためのマッピング
 type PSNode struct {
 	PNodeID    string
 	Capability string
 }
-
-var vsnode_psnode_mapping = make(map[string]PSNode)
 
 func init() {
 	// .envファイルの読み込み
@@ -248,8 +248,9 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 		upperLimit := inputFormat.Condition.Limit.UpperLimit
 		timeout := inputFormat.Condition.Timeout
 
-		timeoutContext, cancelFunc := context.WithTimeout(context.Background(), timeout)
-		defer cancelFunc()
+		// Timeout時間を通知するcontext
+		timeoutContext, cancelTimeoutFunc := context.WithTimeout(context.Background(), timeout)
+		defer cancelTimeoutFunc()
 
 		fmt.Println("Wait for Condition Data...")
 	Loop:
@@ -297,7 +298,6 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 						}
 						fmt.Fprintf(w, "%v\n", string(jsonData))
 						bufferSensorData[inputPNodeID] = psnode.DataForRegist{}
-						sensing_chan <- "sensing condition data"
 						return
 					} else {
 						continue Loop
@@ -307,18 +307,6 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 					buffer_chan <- receive_string
 					//continue Loop
 				}
-			case <-sensing_chan:
-				fmt.Println("recieve sensing data in other goroutine")
-				nullData := m2mapi.ResolveDataByNode{
-					VNodeID: "NULL",
-				}
-				jsonData, err := json.Marshal(nullData)
-				if err != nil {
-					http.Error(w, "resolveConditionNode: Error marshaling data", http.StatusInternalServerError)
-					break Loop
-				}
-				fmt.Fprintf(w, "%v\n", string(jsonData))
-				return
 			}
 		}
 
