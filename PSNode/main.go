@@ -10,7 +10,6 @@ import (
 	"io"
 	"log"
 	"math/big"
-	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/vsnode"
@@ -46,9 +45,11 @@ type Ports struct {
 type CurrentTime struct {
 }
 
-var currentTime CurrentTime
-var data_resister_socket string
-var mu sync.Mutex
+var (
+	currentTime          CurrentTime
+	data_resister_socket string
+	mu                   sync.Mutex
+)
 
 func init() {
 	// .envファイルの読み込み
@@ -110,7 +111,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "actuate: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.Actuate{}
+		inputFormat := &vsnode.Actuate{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "actuate: Error missmatching packet format", http.StatusInternalServerError)
 		}
@@ -127,9 +128,9 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 		// fileに書き込むためのWriter
 		writer := bufio.NewWriter(file)
 		mu.Lock()
-		fmt.Fprintf(writer, "Lock")
-		fmt.Fprintf(writer, "VNodeID: %v, Action: %v, Parameter: %v\n", inputFormat.VNodeID, inputFormat.Action, inputFormat.Parameter)
-		fmt.Println(writer, "Unlock")
+		fmt.Fprintf(writer, "Lock\n")
+		fmt.Fprintf(writer, "VNodeID: %v,Capability: %v, Action: %v, Parameter: %v\n", inputFormat.PNodeID, inputFormat.Capability, inputFormat.Action, inputFormat.Parameter)
+		fmt.Fprintf(writer, "Unlock\n")
 		err = writer.Flush()
 		mu.Unlock()
 
@@ -137,7 +138,7 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			status = false
 		}
-		results := m2mapi.Actuate{
+		results := vsnode.Actuate{
 			Status: status,
 		}
 
@@ -303,29 +304,6 @@ func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
 		}
 	}
 	return result
-}
-
-// VSNodeと型同期をするための関数
-func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
-	format := &Format{}
-	if err := decoder.Decode(format); err != nil {
-		if err == io.EOF {
-			typeM := "exit"
-			return typeM
-		} else {
-			message.MyError(err, "syncFormatServer > decoder.Decode")
-		}
-	}
-	typeResult := format.FormType
-
-	var typeM any
-	switch typeResult {
-	case "CurrentNode", "CurrentPoint":
-		typeM = &m2mapi.ResolveDataByNode{}
-	case "Actuate":
-		typeM = &m2mapi.Actuate{}
-	}
-	return typeM
 }
 
 // SensingDBと型同期をするための関数

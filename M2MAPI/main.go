@@ -545,13 +545,17 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "actuate: Error reading request body", http.StatusInternalServerError)
 			return
 		}
-		inputFormat := &m2mapi.Actuate{}
+		inputFormat := &m2mapp.ActuateInput{}
 		if err := json.Unmarshal(body, inputFormat); err != nil {
 			http.Error(w, "actuate: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
 		// VNode もしくは VMNode へリクエスト転送
-		results := actuateFunction(inputFormat.VNodeID, inputFormat.Action, inputFormat.SocketAddress, inputFormat.Parameter)
+		m2mapi_results := actuateFunction(inputFormat.VNodeID, inputFormat.Capability, inputFormat.Action, inputFormat.SocketAddress, inputFormat.Parameter)
+		// m2mapp用に成型
+		results := m2mapp.ActuateOutput{
+			Status: m2mapi_results.Status,
+		}
 
 		fmt.Fprintf(w, "%v\n", results)
 	} else {
@@ -1552,13 +1556,14 @@ func resolveConditionAreaFunction(ad, node_type string, capability []string, con
 	return results
 }
 
-func actuateFunction(vnode_id, action, socket_address string, parameter float64) m2mapi.Actuate {
+func actuateFunction(vnode_id, capability, action, socket_address string, parameter float64) m2mapi.Actuate {
 	null_data := m2mapi.Actuate{VNodeID: "NULL"}
 
 	request_data := m2mapi.Actuate{
-		VNodeID:   vnode_id,
-		Action:    action,
-		Parameter: parameter,
+		VNodeID:    vnode_id,
+		Capability: capability,
+		Action:     action,
+		Parameter:  parameter,
 	}
 	transmit_data, err := json.Marshal(request_data)
 	if err != nil {

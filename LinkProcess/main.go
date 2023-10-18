@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/mserver"
 	"mecm2m-Emulator/pkg/psnode"
@@ -159,9 +158,6 @@ func connectionLink(conn net.Conn, file string) {
 			}
 			message.MyReadMessage(*format)
 
-			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			//pnode_id := searchPNodeID(file)
-
 			// RTT時間を検索して，RTT/2 時間を取得
 			rtt_half := searchRTT(format.PNodeID)
 			fmt.Println("RTT: ", rtt_half)
@@ -204,8 +200,8 @@ func connectionLink(conn net.Conn, file string) {
 				message.MyError(err, "connectionLink > CurrentNode > encoder.Encode")
 			}
 			message.MyWriteMessage(current_node_output)
-		case *m2mapi.Actuate:
-			format := psnodeCommand.(*m2mapi.Actuate)
+		case *vsnode.Actuate:
+			format := psnodeCommand.(*vsnode.Actuate)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
 					message.MyMessage("=== closed by client")
@@ -216,11 +212,8 @@ func connectionLink(conn net.Conn, file string) {
 			}
 			message.MyReadMessage(*format)
 
-			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			pnode_id := searchPNodeID(file)
-
 			// RTT時間を検索して，RTT/2 時間を取得
-			rtt_half := searchRTT(pnode_id)
+			rtt_half := searchRTT(format.PNodeID)
 			fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
@@ -229,13 +222,8 @@ func connectionLink(conn net.Conn, file string) {
 
 			// 宛先ソケットアドレス用の通信経路を確立
 			// 入力のVNodeIDから宛先のPSNodeのPort番号を割り出す
-			psnode_port := trimPSNodePort(format.VNodeID)
-			data := m2mapi.Actuate{
-				VNodeID:   format.VNodeID,
-				Action:    format.Action,
-				Parameter: format.Parameter,
-			}
-			transmit_data, err := json.Marshal(data)
+			psnode_port := trimPSNodePort(format.PNodeID)
+			transmit_data, err := json.Marshal(format)
 			if err != nil {
 				fmt.Println("Error marshalling data: ", err)
 				return
@@ -251,7 +239,7 @@ func connectionLink(conn net.Conn, file string) {
 			if err != nil {
 				panic(err)
 			}
-			var actuate_output m2mapi.Actuate
+			var actuate_output vsnode.Actuate
 			if err = json.Unmarshal(body, &actuate_output); err != nil {
 				fmt.Println("Error Unmarshaling: ", err)
 				return
@@ -291,17 +279,6 @@ func connectionLink(conn net.Conn, file string) {
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
-			/*
-				data := psnode.DataForRegist{
-					PNodeID:    format.PNodeID,
-					Capability: format.Capability,
-					Timestamp:  format.Timestamp,
-					Value:      format.Value,
-					PSinkID:    format.PSinkID,
-					Lat:        format.Lat,
-					Lon:        format.Lon,
-				}
-			*/
 			transmit_data, err := json.Marshal(format)
 			if err != nil {
 				fmt.Println("Error marshalling data: ", err)
@@ -380,10 +357,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &vsnode.ResolveCurrentDataByNode{}
 	case "ConditionNode":
 		typeM = &vsnode.ResolveConditionDataByNode{}
-	case "PastArea", "CurrentArea", "ConditionArea":
-		typeM = &m2mapi.ResolveDataByArea{}
 	case "Actuate":
-		typeM = &m2mapi.Actuate{}
+		typeM = &vsnode.Actuate{}
 	case "RegisterSensingData":
 		typeM = &psnode.DataForRegist{}
 	case "ConnectNew":
@@ -398,6 +373,7 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 		typeM = &server.RequestSessionKey{}
 	case "CurrentPointVNode":
 		typeM = &vpoint.CurrentPointVNode{}
+	default:
 	}
 	return typeM
 }

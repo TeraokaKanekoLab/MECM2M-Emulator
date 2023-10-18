@@ -327,8 +327,16 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "actuate: Error missmatching packet format", http.StatusInternalServerError)
 		}
 
-		// PSNodeへリクエストを送信するためにリンクプロセスを噛ます
+		// vsnode パッケージに成型しなおす
 		pnode_id := convertID(inputFormat.VNodeID, 63, 61)
+		vsnode_request := vsnode.Actuate{
+			PNodeID:    pnode_id,
+			Capability: inputFormat.Capability,
+			Action:     inputFormat.Action,
+			Parameter:  inputFormat.Parameter,
+		}
+
+		// PSNodeへリクエストを送信するためにリンクプロセスを噛ます
 		link_process_socket_address := link_process_socket_address_path + "/access-network_" + pnode_id + ".sock"
 		connLinkProcess, err := net.Dial(protocol, link_process_socket_address)
 		if err != nil {
@@ -339,16 +347,23 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 
 		syncFormatClient("Actuate", decoderLinkProcess, encoderLinkProcess)
 
-		if err := encoderLinkProcess.Encode(inputFormat); err != nil {
+		if err := encoderLinkProcess.Encode(&vsnode_request); err != nil {
 			message.MyError(err, "resolveCurrentNode > encoderLinkProcess.Encode")
 		}
 
 		// PSNodeへ
 
-		// 受信する型は m2mapi.Actuate
-		results := m2mapi.Actuate{}
-		if err := decoderLinkProcess.Decode(&results); err != nil {
+		// 受信する型は vsnode.Actuate
+		vsnode_results := vsnode.Actuate{}
+		if err := decoderLinkProcess.Decode(&vsnode_results); err != nil {
 			message.MyError(err, "actuate > decoderLinkProcess.Decode")
+		}
+
+		// m2mapi.Actuateに戻す
+		vnode_id := convertID(vsnode_request.PNodeID, 63, 61)
+		results := m2mapi.Actuate{
+			VNodeID: vnode_id,
+			Status:  vsnode_results.Status,
 		}
 
 		// 最後にM2M APIへ返送
@@ -513,6 +528,8 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 	switch command {
 	case "CurrentNode":
 		format.FormType = "CurrentNode"
+	case "Actuate":
+		format.FormType = "Actuate"
 	}
 	if err := encoder.Encode(format); err != nil {
 		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
