@@ -14,15 +14,19 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.53,
-                        139.5307
+                        35.5303,
+                        139.531
                     ],
-                    "Capability": "TOYOTA",
+                    "Capability": [
+                        "Accel",
+                        "Brake",
+                        "Handle"
+                    ],
                     "Credential": "YES",
-                    "SessionKey": "m1bE95jdC4",
+                    "SessionKey": "bC6OdsWdaC",
                     "Description": "Description:PMN0",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 10:19:46",
+                    "UpdateTime": "2023-10-19 09:26:12",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -165,15 +169,19 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5309,
-                        139.5319
+                        35.5302,
+                        139.5316
                     ],
-                    "Capability": "TOYOTA",
+                    "Capability": [
+                        "Accel",
+                        "Brake",
+                        "Handle"
+                    ],
                     "Credential": "YES",
-                    "SessionKey": "4Vz5Mey5jc",
+                    "SessionKey": "QrTtrMQKL3",
                     "Description": "Description:PMN1",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 10:19:46",
+                    "UpdateTime": "2023-10-19 09:26:12",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -316,15 +324,19 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5316,
-                        139.5303
+                        35.5314,
+                        139.5307
                     ],
-                    "Capability": "TOYOTA",
+                    "Capability": [
+                        "Accel",
+                        "Brake",
+                        "Handle"
+                    ],
                     "Credential": "YES",
-                    "SessionKey": "kUbQETuCy7",
+                    "SessionKey": "SNQmpfpinv",
                     "Description": "Description:PMN2",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 10:19:46",
+                    "UpdateTime": "2023-10-19 09:26:12",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
@@ -467,15 +479,19 @@
                     "VNodeModule": "/home/rand/MECM2M-Emulator/VMNode/main",
                     "SocketAddress": "",
                     "Position": [
-                        35.5312,
-                        139.5319
+                        35.5314,
+                        139.531
                     ],
-                    "Capability": "TOYOTA",
+                    "Capability": [
+                        "Accel",
+                        "Brake",
+                        "Handle"
+                    ],
                     "Credential": "YES",
-                    "SessionKey": "hRr3ouERaZ",
+                    "SessionKey": "mJCE5SCFBN",
                     "Description": "Description:PMN3",
                     "HomeIPv6Address": "192.168.1.1",
-                    "UpdateTime": "2023-10-16 10:19:46",
+                    "UpdateTime": "2023-10-19 09:26:12",
                     "Velocity": 50.5,
                     "Acceleration": 10.1,
                     "Direction": "North"
