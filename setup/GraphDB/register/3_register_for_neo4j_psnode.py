@@ -3,6 +3,7 @@ from py2neo import Graph, Node, Relationship
 import sys
 from dotenv import load_dotenv
 import os
+import random
 
 load_dotenv()
 
@@ -61,6 +62,29 @@ for property in data["psnodes"]:
         to_node = local_graph.nodes.match(to_node_label, **{to_node_property: to_node_value}).first()
         rel = Relationship(from_node, rel_type, to_node)
         local_graph.create(rel)
+    
+    # PSink - PSNode Object Property
+    config_main_psink_path = os.getenv("PROJECT_PATH") + "/setup/GraphDB/config/config_main_psink.json"
+    with open(config_main_psink_path, 'r') as file:
+        psink_data = json.load(file)
+    psink_array = psink_data["psinks"]
+    length = len(psink_array)
+    random_psink = random.randrange(length)
+    psink_label = "PSink"
+    psink_property = "Label"
+    psink_value = psink_array[random_psink]["data-property"]["Label"]
+    psnode_label = "PSNode"
+    psnode_property = "Label"
+    psnode_value = data_property_psnode["Label"]
+    rel_type_1 = "aggregates"
+    rel_type_2 = "isConnectedTo"
+    psink_node = local_graph.nodes.match(psink_label, **{psink_property: psink_value}).first()
+    psnode_node = local_graph.nodes.match(psnode_label, **{psnode_property: psnode_value}).first()
+    rel_1 = Relationship(psink_node, rel_type_1, psnode_node)
+    rel_2 = Relationship(psnode_node, rel_type_2, psink_node)
+    local_graph.create(rel_1)
+    local_graph.create(rel_2)
+
 
 try:
     local_graph.commit(local_tx)

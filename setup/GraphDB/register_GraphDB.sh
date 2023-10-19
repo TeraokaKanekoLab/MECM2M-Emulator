@@ -24,8 +24,8 @@ printf "\e[1;31m \n3. REGISTER PSNODE AND VSNODE \e[0m"
 # PSNodeとVSNODEを登録
 python3 ${PROJECT_PATH}${DIR}/3_register_for_neo4j_psnode.py
 
-printf "\e[1;31m \n4. REGISTER PMNODE AND VMNODE \e[0m"
+#printf "\e[1;31m \n4. REGISTER PMNODE AND VMNODE \e[0m"
 # PMNodeとVMNODEを登録
-python3 ${PROJECT_PATH}${DIR}/4_register_for_neo4j_pmnode.py
+#python3 ${PROJECT_PATH}${DIR}/4_register_for_neo4j_pmnode.py
 
 printf "\n"

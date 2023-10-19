@@ -30,3 +30,14 @@ type ResolveConditionDataByNode struct {
 
 	// output
 }
+
+type Actuate struct {
+	// input
+	PNodeID    string  `json:"pnode-id"`
+	Capability string  `json:"capability"`
+	Action     string  `json:"action"`
+	Parameter  float64 `json:"parameter"`
+
+	// output
+	Status bool `json:"status"`
+}

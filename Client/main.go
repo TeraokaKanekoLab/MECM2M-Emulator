@@ -108,6 +108,15 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 			NodeType:   "VMNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"
+	case "actuate":
+		data = m2mapp.ActuateInput{
+			VNodeID:       "9223372036854775808",
+			Capability:    "Accel",
+			Action:        "On",
+			Parameter:     10.1,
+			SocketAddress: "192.168.1.1:11000",
+		}
+		url = "http://localhost:8080/m2mapi/actuate"
 	case "extend_ad":
 		data = m2mapi.ExtendAD{
 			AD: "c000121688",
@@ -157,6 +166,8 @@ func formatBody(command string, body []byte) string {
 	case "current_area":
 		return string(body)
 	case "condition_area":
+		return string(body)
+	case "actuate":
 		return string(body)
 	case "time":
 		return string(body)

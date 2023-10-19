@@ -52,7 +52,6 @@ while neLat <= MAX_LAT:
     while neLon <= MAX_LON:
         parea = data["areas"]["parea"]
         parea_label = "PA" + str(label_lat) + ":" + str(label_lon)
-        # parea_id = str(int(swLat*1000)) + "0" + str(int(swLon*1000)) + "0"
         parea_id = str(int(0b0000 << 60) + parea_id_index)
         parea_description = "Description:" + parea_label
 
