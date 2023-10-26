@@ -575,32 +575,36 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	for _, cover_area := range area_mapping_cache {
 		if sw.Lat >= cover_area.MinLat && sw.Lon >= cover_area.MinLon && ne.Lat <= cover_area.MaxLat && ne.Lon <= cover_area.MaxLon {
 			// 入力された矩形範囲はカバーエリアに完全に覆われているため終了
+			target_mec_server = append(target_mec_server, cover_area.ServerIP)
 			ask_cloud_flag = false
+			ne_flag, nw_flag, sw_flag, se_flag = false, false, false, false
 			break
-		} else if sw.Lat > cover_area.MaxLat || sw.Lon > cover_area.MaxLon || ne.Lat < cover_area.MinLat || ne.Lon < cover_area.MinLon {
+		} else if sw.Lat >= cover_area.MaxLat || sw.Lon >= cover_area.MaxLon || ne.Lat <= cover_area.MinLat || ne.Lon <= cover_area.MinLon {
 			// 入力された矩形範囲はカバーエリアから完全に外れている
 			ask_cloud_flag = true
 			// 以下はそれ以外で，一部でもカバーエリアから外れている
 			// 四角のうちどの部分が外れているかを調べる
 		} else {
-			if ne.Lat >= cover_area.MinLat && ne.Lon >= cover_area.MinLon {
+			if ne.Lat > cover_area.MinLat && ne.Lon > cover_area.MinLon {
 				// 右上は外れていない
 				ne_flag = false
 			}
-			if sw.Lat <= cover_area.MaxLat && ne.Lon >= cover_area.MinLon {
+			if sw.Lat < cover_area.MaxLat && ne.Lon > cover_area.MinLon {
 				// 左上は外れていない
 				nw_flag = false
 			}
-			if sw.Lat <= cover_area.MaxLat && sw.Lon <= cover_area.MaxLon {
+			if sw.Lat < cover_area.MaxLat && sw.Lon < cover_area.MaxLon {
 				// 左下は外れていない
 				sw_flag = false
 			}
-			if ne.Lat >= cover_area.MinLat && sw.Lon <= cover_area.MaxLon {
+			if ne.Lat > cover_area.MinLat && sw.Lon < cover_area.MaxLon {
 				// 右下は外れていない
 				se_flag = false
 			}
 		}
 	}
+
+	fmt.Println(ask_cloud_flag, ne_flag, nw_flag, sw_flag, se_flag)
 
 	// 2. area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
 	if ask_cloud_flag || ne_flag || nw_flag || sw_flag || se_flag {
