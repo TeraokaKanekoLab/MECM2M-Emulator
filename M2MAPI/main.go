@@ -568,24 +568,43 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 	ask_cloud_flag := false
 	var target_mec_server []string
 
-	// 1. area_mapping_cache の情報と入力の矩形範囲を比べて，矩形範囲が area_mapping_cache の範囲と被っているか確認．被っている area_mapping がなければ，Cloud Serverに聞きに行く
-	if len(area_mapping_cache) == 0 {
-		ask_cloud_flag = true
-	}
+	// 四角がカバーエリアから外れているかのフラグ．外れていればtrue
+	ne_flag, nw_flag, sw_flag, se_flag := true, true, true, true
+
+	// 1. area_mapping_cache の情報と入力の矩形範囲を比べて，矩形範囲が area_mapping_cache の範囲と被っているか確認．保持しているエリアマッピングが矩形範囲を完全にカバーしていなければ，Cloud Serverに聞きに行く
 	for _, cover_area := range area_mapping_cache {
-		if (ne.Lat <= cover_area.MinLat || ne.Lon <= cover_area.MinLon) || (sw.Lat >= cover_area.MaxLat || sw.Lon >= cover_area.MaxLon) {
-			// 対象領域でない
-			// 1つでもキャッシュされてない情報がある場合，Cloud Serverへ聞きに行く
+		if sw.Lat >= cover_area.MinLat && sw.Lon >= cover_area.MinLon && ne.Lat <= cover_area.MaxLat && ne.Lon <= cover_area.MaxLon {
+			// 入力された矩形範囲はカバーエリアに完全に覆われているため終了
+			ask_cloud_flag = false
+			break
+		} else if sw.Lat > cover_area.MaxLat || sw.Lon > cover_area.MaxLon || ne.Lat < cover_area.MinLat || ne.Lon < cover_area.MinLon {
+			// 入力された矩形範囲はカバーエリアから完全に外れている
 			ask_cloud_flag = true
+			// 以下はそれ以外で，一部でもカバーエリアから外れている
+			// 四角のうちどの部分が外れているかを調べる
 		} else {
-			// 対象領域である
-			target_mec_server = append(target_mec_server, cover_area.ServerIP)
+			if ne.Lat >= cover_area.MinLat && ne.Lon >= cover_area.MinLon {
+				// 右上は外れていない
+				ne_flag = false
+			}
+			if sw.Lat <= cover_area.MaxLat && ne.Lon >= cover_area.MinLon {
+				// 左上は外れていない
+				nw_flag = false
+			}
+			if sw.Lat <= cover_area.MaxLat && sw.Lon <= cover_area.MaxLon {
+				// 左下は外れていない
+				sw_flag = false
+			}
+			if ne.Lat >= cover_area.MinLat && sw.Lon <= cover_area.MaxLon {
+				// 右下は外れていない
+				se_flag = false
+			}
 		}
 	}
 
-	// 2. area_mapping_cache に情報がない，もしくは area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
-	if ask_cloud_flag {
-		fmt.Println("Ask other MEC Server")
+	// 2. area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
+	if ask_cloud_flag || ne_flag || nw_flag || sw_flag || se_flag {
+		fmt.Println("Ask Cloud Server")
 		area_mapping_data_request := m2mapi.AreaMapping{
 			SW: m2mapi.SquarePoint{Lat: sw.Lat, Lon: sw.Lon},
 			NE: m2mapi.SquarePoint{Lat: ne.Lat, Lon: ne.Lon},
@@ -610,8 +629,8 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 
 		// area_mapping_cache にマッピング情報をキャッシュ
 		for _, area_mapping := range area_mapping_output {
-			area_mapping_cache = append(area_mapping_cache, area_mapping.MECCoverArea)
-			target_mec_server = addIfNotExists(target_mec_server, area_mapping.MECCoverArea.ServerIP)
+			area_mapping_cache = addIfNotExistsCoverArea(area_mapping_cache, area_mapping.MECCoverArea)
+			target_mec_server = append(target_mec_server, area_mapping.MECCoverArea.ServerIP)
 		}
 	}
 
@@ -1617,6 +1636,15 @@ func bodyGraphDB(byteArray []byte) []interface{} {
 }
 
 func addIfNotExists(slice []string, item string) []string {
+	for _, v := range slice {
+		if v == item {
+			return slice
+		}
+	}
+	return append(slice, item)
+}
+
+func addIfNotExistsCoverArea(slice []m2mapi.MECCoverArea, item m2mapi.MECCoverArea) []m2mapi.MECCoverArea {
 	for _, v := range slice {
 		if v == item {
 			return slice

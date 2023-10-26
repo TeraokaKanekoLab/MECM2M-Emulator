@@ -30,6 +30,10 @@ func main() {
 		fmt.Println("Error marshalling data: ", err)
 		return
 	}
+
+	// 実行時間の計測
+	start := time.Now()
+
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
 	if err != nil {
 		fmt.Println("Error making request:", err)
@@ -45,6 +49,9 @@ func main() {
 	results := formatBody(args[1], body)
 
 	fmt.Println("Server Response:", results)
+
+	elapsedTime := time.Since(start)
+	fmt.Println("execution time: ", elapsedTime)
 }
 
 func switchM2MAPI(command, ad string) (data any, url string) {
@@ -58,54 +65,54 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 	case "node":
 		data = m2mapp.ResolveNodeInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid", "MaxWind", "TOYOTA"},
-			NodeType:   "VMNode",
+			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
+			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/node"
 	case "past_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "13835058055282163712",
-			Capability:    []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
-			Period:        m2mapp.PeriodInput{Start: "2023-10-03 11:00:00 +0900 JST", End: "2023-10-03 12:00:13 +0900 JST"},
-			SocketAddress: "192.168.2.2:12000",
+			VNodeID:       "9223372036854775808",
+			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
+			Period:        m2mapp.PeriodInput{Start: "2023-10-21 01:00:00 +0900 JST", End: "2023-10-21 01:30:00 +0900 JST"},
+			SocketAddress: "192.168.1.1:11000",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/node"
 	case "current_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "13835058055282163712",
-			Capability:    []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
-			SocketAddress: "192.168.11.11:13000",
+			VNodeID:       "9223372036854775808",
+			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
+			SocketAddress: "192.168.1.1:11000",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/node"
 	case "condition_node":
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "13835058055282163712",
-			Capability:    []string{"MaxTemp", "MaxSpeed"},
+			VNodeID:       "9223372036854775808",
+			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
 			Condition:     m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 39}, Timeout: 10 * time.Second},
-			SocketAddress: "192.168.11.11:13000",
+			SocketAddress: "192.168.1.1:11000",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed", "TOYOTA"},
-			Period:     m2mapp.PeriodInput{Start: "2023-10-17 00:00:00 +0900 JST", End: "2023-10-17 05:20:00 +0900 JST"},
-			NodeType:   "VMNode",
+			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
+			Period:     m2mapp.PeriodInput{Start: "2023-10-21 01:00:00 +0900 JST", End: "2023-10-21 01:30:00 +0900 JST"},
+			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/past/area"
 	case "current_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
-			NodeType:   "VMNode",
+			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
+			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/current/area"
 	case "condition_area":
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
-			Capability: []string{"MaxTemp", "MaxHumid", "MaxSpeed"},
+			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
 			Condition:  m2mapp.ConditionInput{Limit: m2mapp.Range{LowerLimit: 30, UpperLimit: 40}, Timeout: 10 * time.Second},
-			NodeType:   "VMNode",
+			NodeType:   "VSNode",
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"
 	case "actuate":
@@ -127,7 +134,7 @@ func switchM2MAPI(command, ad string) (data any, url string) {
 			PNodeID:     "2305843009213693952",
 			CurrentTime: time.Now(),
 		}
-		url = "http://localhost:14000/time"
+		url = "http://localhost:21000/time"
 	default:
 		fmt.Println("There is no args")
 		log.Fatal()

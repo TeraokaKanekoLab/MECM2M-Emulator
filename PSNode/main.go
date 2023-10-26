@@ -285,7 +285,7 @@ func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
 	for _, v := range psnodes {
 		psnode_format := v.(map[string]interface{})
 		psnode := psnode_format["psnode"].(map[string]interface{})
-		psnode_relation_label := psnode["relation-label"].(map[string]interface{})
+		//psnode_relation_label := psnode["relation-label"].(map[string]interface{})
 		psnode_data_property := psnode["data-property"].(map[string]interface{})
 		pnode_id := psnode_data_property["PNodeID"].(string)
 		if pnode_id == inputFormat.PNodeID {
@@ -297,7 +297,8 @@ func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
 			//max := 40.0
 			value_value := min + randomFloat
 			result.Value = value_value
-			result.PSinkID = psnode_relation_label["PSink"].(string)
+			//result.PSinkID = psnode_relation_label["PSink"].(string)
+			result.PSinkID = "PSink"
 			position := psnode_data_property["Position"].([]interface{})
 			result.Lat = position[0].(float64)
 			result.Lon = position[1].(float64)

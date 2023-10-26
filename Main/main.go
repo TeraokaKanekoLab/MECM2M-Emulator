@@ -45,21 +45,13 @@ func main() {
 		fmt.Println("There is no ~/.env file")
 	}
 
-	// 1. 初期環境の登録．GraphDBにデータ登録
-	script_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/register_GraphDB.sh"
-	cmd := exec.Command("bash", script_path)
-	errCmd := cmd.Start()
-	if errCmd != nil {
-		message.MyError(errCmd, "exec.Command > Register GraphDB")
-	} else {
-		fmt.Println("Graph Data is Registered")
-	}
-
-	// 2. 各プロセスファイルの実行
+	// 1. 各プロセスファイルの実行
 	// 各プロセスのPIDを格納
+
 	processIds := []int{}
 	/*
-		// 2-1. M2M API の実行
+
+		// 1-1. M2M API の実行
 		fmt.Println("----------")
 		m2m_api_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/M2MAPI/main"
 		cmdM2MAPI := exec.Command(m2m_api_path)
@@ -71,13 +63,13 @@ func main() {
 		}
 		processIds = append(processIds, cmdM2MAPI.Process.Pid)
 
-		// 2-2. Local Manager の実行
+		// 1-2. Local Manager の実行
 
-		// 2-3. Local AAA の実行
+		// 1-3. Local AAA の実行
 
-		// 2-4. Local Repository の実行
+		// 1-4. Local Repository の実行
 
-		// 2-5. VSNode の実行
+		// 1-5. VSNode の実行
 		fmt.Println("----------")
 		vsnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/VSNode/main"
 		cmdVSNode := exec.Command(vsnode_path)
@@ -89,9 +81,21 @@ func main() {
 		}
 		processIds = append(processIds, cmdVSNode.Process.Pid)
 
-		// 2-6. VMNode の実行
+		// 1-6. VMNode の実行
 
-		// 2-7. PSNode の実行
+			fmt.Println("----------")
+			vmnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/VMNode/main"
+			cmdVMNode := exec.Command(vmnode_path)
+			errCmdVMNode := cmdVMNode.Start()
+			if errCmdVMNode != nil {
+				message.MyError(errCmdVSNode, "exec.Command > VMNode > Start")
+			} else {
+				fmt.Println("VMNode is running")
+			}
+			processIds = append(processIds, cmdVMNode.Process.Pid)
+
+
+		// 1-7. PSNode の実行
 		fmt.Println("----------")
 		psnode_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/PSNode/main"
 		cmdPSNode := exec.Command(psnode_path)
@@ -103,7 +107,8 @@ func main() {
 		}
 		processIds = append(processIds, cmdPSNode.Process.Pid)
 
-		// 3. 物理デバイス - 仮想モジュール間の通信リンクプロセスの実行
+		// 2. 物理デバイス - 仮想モジュール間の通信リンクプロセスの実行
+		fmt.Println("----------")
 		access_network_link_process_exec_file := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/main"
 		access_network_link_process_dir := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess"
 		err := filepath.Walk(access_network_link_process_dir, func(path string, info os.FileInfo, err error) error {
@@ -118,7 +123,7 @@ func main() {
 				if errCmdAccessNetwork != nil {
 					message.MyError(errCmdAccessNetwork, "exec.Command > AccessNetwork > Start")
 				} else {
-					fmt.Println(path, " is running")
+					fmt.Println("Link Process is running")
 				}
 				processIds = append(processIds, cmdAccessNetwork.Process.Pid)
 			}
@@ -129,12 +134,12 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-
 		fmt.Println("Process pid: ", processIds)
 	*/
-	// 4. Global/Local SensingDB のsensordataテーブルを作成する
-	create_sensing_db_table_index := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/create_db_table_index.py"
-	cmdSensingDB := exec.Command("python3", create_sensing_db_table_index)
+
+	// 3. SensingDB のsensordataテーブルを作成する
+	create_sensing_db := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/create_sensing_db.sh"
+	cmdSensingDB := exec.Command("bash", create_sensing_db)
 	errCmdSensingDB := cmdSensingDB.Run()
 	if errCmdSensingDB != nil {
 		message.MyError(errCmdSensingDB, "start > cmdSensingDB.Run")
@@ -229,8 +234,6 @@ func ticker(inputChan chan string, psnode_ports []int) {
 	<-inputChan
 	// 時間間隔指定
 	// センサデータ登録の時間間隔を一定の閾値を設けてランダムに設定．PSNodeごとに違う時間間隔を設けたい（未完成）
-	//rand.Seed(time.Now().UnixNano())
-	//data_send_interval := rand.Intn(10) + 1
 	t := time.NewTicker(time.Duration(data_send_interval) * time.Second)
 	defer t.Stop()
 
@@ -268,6 +271,7 @@ func ticker(inputChan chan string, psnode_ports []int) {
 					defer response.Body.Close()
 				}(port)
 			}
+			wg.Wait()
 		// シグナルを受信した場合
 		case s := <-sig:
 			switch s {
@@ -404,7 +408,7 @@ func commandExecutionBeforeEmulator(command string, processIds []int, inputChan 
 		return flag
 	// シミュレーションの終了
 	case "exit":
-		// 1. 各プロセスの削除
+		// 各プロセスの削除
 
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
@@ -418,29 +422,6 @@ func commandExecutionBeforeEmulator(command string, processIds []int, inputChan 
 			} else {
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
-		}
-
-		// 2-0. パスを入手
-		err := godotenv.Load(os.Getenv("HOME") + "/.env")
-		if err != nil {
-			message.MyError(err, "commandExecutionBeforeEmulator > exit > godotenv.Load")
-		}
-
-		// 2. GraphDB, SensingDBのレコード削除
-		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-		errCmdGraphDB := cmdGraphDB.Run()
-		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandExecutionBeforeEmulator > exit > cmdGraphDB.Run")
-		}
-
-		// SensingDB
-		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-		errCmdSensingDB := cmdSensingDB.Run()
-		if errCmdSensingDB != nil {
-			message.MyError(errCmdSensingDB, "commandExecutionBeforeEmulator > exit > cmdSensingDB.Run")
 		}
 
 		message.MyMessage("Bye")
@@ -480,7 +461,7 @@ func commandExecutionAfterEmulator(command string, processIds []int) {
 	switch command {
 	// シミュレーションの終了
 	case "exit":
-		// 1. 各プロセスの削除
+		// 各プロセスの削除
 		for _, pid := range processIds {
 			process, err := os.FindProcess(pid)
 			if err != nil {
@@ -494,28 +475,7 @@ func commandExecutionAfterEmulator(command string, processIds []int) {
 				fmt.Printf("process (%d) is killed\n", pid)
 			}
 		}
-		// 2-0. パスを入手
-		err := godotenv.Load(os.Getenv("HOME") + "/.env")
-		if err != nil {
-			message.MyError(err, "commandExecutionAfterEmulator > exit > godotenv.Load")
-		}
 
-		// 2. GraphDB, SensingDBのレコード削除
-		// GraphDB
-		clear_graphdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/clear_GraphDB.py"
-		cmdGraphDB := exec.Command("python3", clear_graphdb_path)
-		errCmdGraphDB := cmdGraphDB.Run()
-		if errCmdGraphDB != nil {
-			message.MyError(errCmdGraphDB, "commandExecutionAfterEmulator > exit > cmdGraphDB.Run")
-		}
-
-		// SensingDB
-		clear_sensingdb_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/SensingDB/clear_SensingDB.py"
-		cmdSensingDB := exec.Command("python3", clear_sensingdb_path)
-		errCmdSensingDB := cmdSensingDB.Run()
-		if errCmdSensingDB != nil {
-			message.MyError(errCmdSensingDB, "commandExecutionAfterEmulator > exit > cmdSensingDB.Run")
-		}
 		message.MyMessage("Bye")
 		os.Exit(0)
 	// デバイスの登録
@@ -610,7 +570,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[4]
 		past_node_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VNodeID,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			Period:        m2mapi.PeriodInput{Start: Start, End: End},
 			SocketAddress: SocketAddress,
 		}
@@ -634,7 +594,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[4]
 		past_point_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VPointID_n,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			Period:        m2mapi.PeriodInput{Start: Start, End: End},
 			SocketAddress: SocketAddress,
 		}
@@ -656,7 +616,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[2]
 		current_node_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VNodeID,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(current_node_input); err != nil {
@@ -677,7 +637,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[2]
 		current_point_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VPointID_n,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			SocketAddress: SocketAddress,
 		}
 		if err := encoder.Encode(current_point_input); err != nil {
@@ -703,7 +663,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[5]
 		condition_node_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VNodeID_n,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			Condition:     m2mapi.ConditionInput{Limit: m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit}, Timeout: Timeout},
 			SocketAddress: SocketAddress,
 		}
@@ -730,7 +690,7 @@ func commandAPIExecution(command string, decoder *gob.Decoder, encoder *gob.Enco
 		SocketAddress = options[5]
 		condition_point_input := &m2mapi.ResolveDataByNode{
 			VNodeID:       VPointID_n,
-			Capability:    Capability,
+			Capability:    []string{Capability},
 			Condition:     m2mapi.ConditionInput{Limit: m2mapi.Range{LowerLimit: LowerLimit, UpperLimit: UpperLimit}, Timeout: Timeout},
 			SocketAddress: SocketAddress,
 		}

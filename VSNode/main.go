@@ -248,6 +248,11 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 		upperLimit := inputFormat.Condition.Limit.UpperLimit
 		timeout := inputFormat.Condition.Timeout
 
+		// bufferSensorDataにすでにセンサデータが格納されている場合，白紙にする
+		if _, ok := bufferSensorData[inputPNodeID]; ok {
+			bufferSensorData[inputPNodeID] = psnode.DataForRegist{}
+		}
+
 		// Timeout時間を通知するcontext
 		timeoutContext, cancelTimeoutFunc := context.WithTimeout(context.Background(), timeout)
 		defer cancelTimeoutFunc()
@@ -484,7 +489,6 @@ func main() {
 		// 受信したシグナルを表示
 		fmt.Printf("Received signal: %v\n", sig)
 	*/
-
 	// VSNode-PSNode マッピングの作成
 	vsnode_psnode_mapping = createNodeMapping()
 

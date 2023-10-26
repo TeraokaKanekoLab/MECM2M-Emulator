@@ -2,30 +2,59 @@ package main
 
 import (
 	"bytes"
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
-	"math/big"
 	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/psnode"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	loadEnv()
+	start_time := time.Now()
 
-	n, err := rand.Int(rand.Reader, big.NewInt(1000))
-	if err != nil {
-		panic(err)
+	for k := 0; k < 1; k++ {
+		var wg sync.WaitGroup
+		for block := 0; block < 24; block++ {
+			start := 21000 + (block * 150)
+			end := start + 150
+			for i := start; i < end; i++ {
+				wg.Add(1)
+				go func(port int) {
+					defer wg.Done()
+					port_str := strconv.Itoa(port)
+					pnode_id := trimPNodeID(port)
+					send_data := psnode.TimeSync{
+						PNodeID:     pnode_id,
+						CurrentTime: time.Now(),
+					}
+					url := "http://localhost:" + port_str + "/time"
+					client_data, err := json.Marshal(send_data)
+					if err != nil {
+						fmt.Println("Error marshaling data: ", err)
+						return
+					}
+					response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+					if err != nil {
+						fmt.Println("Error making request: ", err)
+						return
+					}
+					defer response.Body.Close()
+				}(i)
+			}
+			wg.Wait()
+		}
 	}
-	floatValue := new(big.Float).SetInt(n)
-	float64Value, _ := floatValue.Float64()
-	f := float64Value / 100
-	fmt.Println(n, f)
+	elapsedTime := time.Since(start_time)
+	fmt.Println("execution time: ", elapsedTime)
 }
 
 func loadEnv() {
@@ -36,6 +65,14 @@ func loadEnv() {
 	mes := os.Getenv("SAMPLE_MESSAGE")
 	// fmt.Printf("\x1b[32m%v\x1b[0m\n", message)
 	message.MyMessage(mes)
+}
+
+func trimPNodeID(port int) string {
+	base_port, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
+	id_index := port - base_port
+	pnode_id_int := int(0b0010<<60) + id_index
+	pnode_id := strconv.Itoa(pnode_id_int)
+	return pnode_id
 }
 
 // MEC/Cloud Server へGraph DBの解決要求
