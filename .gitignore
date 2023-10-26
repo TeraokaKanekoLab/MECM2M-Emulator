@@ -1,3 +1,10 @@
 /Test/
 /setup/GraphDB/config/
 /Client/
+/PSNode/initial_environment.json
+/VMNode/initial_environment.json
+/VSNode/initial_environment.json
+/setup/GraphDB/config/config_main_area.json
+/setup/GraphDB/config/config_main_pmnode.json
+/setup/GraphDB/config/config_main_psink.json
+/setup/GraphDB/config/config_main_psnode.json
