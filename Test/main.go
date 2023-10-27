@@ -21,38 +21,70 @@ func main() {
 	loadEnv()
 	start_time := time.Now()
 
-	for k := 0; k < 1; k++ {
-		var wg sync.WaitGroup
-		for block := 0; block < 24; block++ {
-			start := 21000 + (block * 150)
-			end := start + 150
-			for i := start; i < end; i++ {
-				wg.Add(1)
-				go func(port int) {
-					defer wg.Done()
-					port_str := strconv.Itoa(port)
-					pnode_id := trimPNodeID(port)
-					send_data := psnode.TimeSync{
-						PNodeID:     pnode_id,
-						CurrentTime: time.Now(),
-					}
-					url := "http://localhost:" + port_str + "/time"
-					client_data, err := json.Marshal(send_data)
-					if err != nil {
-						fmt.Println("Error marshaling data: ", err)
-						return
-					}
-					response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-					if err != nil {
-						fmt.Println("Error making request: ", err)
-						return
-					}
-					defer response.Body.Close()
-				}(i)
+	/*
+		for k := 0; k < 1; k++ {
+			var wg sync.WaitGroup
+			for block := 0; block < 24; block++ {
+				start := 21000 + (block * 150)
+				end := start + 150
+				for i := start; i < end; i++ {
+					wg.Add(1)
+					go func(port int) {
+						defer wg.Done()
+						port_str := strconv.Itoa(port)
+						pnode_id := trimPNodeID(port)
+						send_data := psnode.TimeSync{
+							PNodeID:     pnode_id,
+							CurrentTime: time.Now(),
+						}
+						url := "http://localhost:" + port_str + "/time"
+						client_data, err := json.Marshal(send_data)
+						if err != nil {
+							fmt.Println("Error marshaling data: ", err)
+							return
+						}
+						response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+						if err != nil {
+							fmt.Println("Error making request: ", err)
+							return
+						}
+						defer response.Body.Close()
+					}(i)
+				}
 			}
 			wg.Wait()
 		}
+	*/
+
+	for k := 0; k < 10; k++ {
+		var wg sync.WaitGroup
+		for i := 21000; i < 21010; i++ {
+			wg.Add(1)
+			go func(port int) {
+				defer wg.Done()
+				port_str := strconv.Itoa(port)
+				pnode_id := trimPNodeID(port)
+				send_data := psnode.TimeSync{
+					PNodeID:     pnode_id,
+					CurrentTime: time.Now(),
+				}
+				url := "http://localhost:" + port_str + "/time"
+				client_data, err := json.Marshal(send_data)
+				if err != nil {
+					fmt.Println("Error marshaling data: ", err)
+					return
+				}
+				response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+				if err != nil {
+					fmt.Println("Error making request: ", err)
+					return
+				}
+				defer response.Body.Close()
+			}(i)
+		}
+		wg.Wait()
 	}
+
 	elapsedTime := time.Since(start_time)
 	fmt.Println("execution time: ", elapsedTime)
 }

@@ -243,10 +243,10 @@ func ticker(inputChan chan string, psnode_ports []int) {
 	defer signal.Stop(sig)
 
 	for {
-		var wg sync.WaitGroup
 		select {
 		case now := <-t.C:
 			// 現在時刻(now)の送信
+			var wg sync.WaitGroup
 			for _, port := range psnode_ports {
 				wg.Add(1)
 				go func(port int) {

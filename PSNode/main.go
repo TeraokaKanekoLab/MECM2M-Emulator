@@ -185,13 +185,16 @@ func timeSync(w http.ResponseWriter, r *http.Request) {
 		if err := encoderLinkProcess.Encode(&sensordata); err != nil {
 			http.Error(w, "timeSync: encoderLinkProcess.Encode Error", http.StatusInternalServerError)
 		}
+		fmt.Println("Send Sensordata: ", pnode_id)
 
-		// データ登録完了の旨を受信
-		var response_data string
-		if err = decoderLinkProcess.Decode(&response_data); err != nil {
-			fmt.Println("Error decoding: ", err)
-		}
-		fmt.Fprintf(w, "%v\n", response_data)
+		/*
+			// データ登録完了の旨を受信
+			var response_data string
+			if err = decoderLinkProcess.Decode(&response_data); err != nil {
+				fmt.Println("Error decoding: ", err)
+			}
+			fmt.Fprintf(w, "%v\n", response_data)
+		*/
 	} else {
 		http.Error(w, "timeSync: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}

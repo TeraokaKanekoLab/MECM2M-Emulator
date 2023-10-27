@@ -123,7 +123,7 @@ func initialize(file string, wg *sync.WaitGroup) {
 	if err != nil {
 		message.MyError(err, "initialize > net.Listen")
 	}
-	message.MyMessage("> [Initialize] Socket file launched: " + file)
+	// message.MyMessage("> [Initialize] Socket file launched: " + file)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -141,7 +141,7 @@ func connectionLink(conn net.Conn, file string) {
 	decoder := gob.NewDecoder(conn)
 	encoder := gob.NewEncoder(conn)
 
-	message.MyMessage("[MESSAGE] Call Link Process thread")
+	// message.MyMessage("[MESSAGE] Call Link Process thread")
 
 	for {
 		// 型同期をして，型の種類に応じてスイッチ
@@ -150,7 +150,7 @@ func connectionLink(conn net.Conn, file string) {
 			format := psnodeCommand.(*vsnode.ResolveCurrentDataByNode)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
-					message.MyMessage("=== closed by client")
+					// message.MyMessage("=== closed by client")
 					break
 				}
 				message.MyError(err, "connectionLink > CurrentNode > decoder.Decode")
@@ -160,10 +160,9 @@ func connectionLink(conn net.Conn, file string) {
 
 			// RTT時間を検索して，RTT/2 時間を取得
 			rtt_half := searchRTT(format.PNodeID)
-			fmt.Println("RTT: ", rtt_half)
+			// fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
-			fmt.Println("sleep RTT/2 (upstream)")
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
@@ -192,7 +191,6 @@ func connectionLink(conn net.Conn, file string) {
 			}
 
 			// RTT/2 時間待機
-			fmt.Println("sleep RTT/2 (downstream)")
 			delayRTTHalf(rtt_half)
 
 			// 送信元に結果を転送
@@ -204,7 +202,7 @@ func connectionLink(conn net.Conn, file string) {
 			format := psnodeCommand.(*vsnode.Actuate)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
-					message.MyMessage("=== closed by client")
+					// message.MyMessage("=== closed by client")
 					break
 				}
 				message.MyError(err, "connectionLink > Actuate > decoder.Decode")
@@ -214,10 +212,9 @@ func connectionLink(conn net.Conn, file string) {
 
 			// RTT時間を検索して，RTT/2 時間を取得
 			rtt_half := searchRTT(format.PNodeID)
-			fmt.Println("RTT: ", rtt_half)
+			// fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
-			fmt.Println("sleep RTT/2 (upstream)")
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立
@@ -246,7 +243,6 @@ func connectionLink(conn net.Conn, file string) {
 			}
 
 			// RTT/2 時間待機
-			fmt.Println("sleep RTT/2 (downstream)")
 			delayRTTHalf(rtt_half)
 
 			// 送信元に結果を転送
@@ -258,7 +254,7 @@ func connectionLink(conn net.Conn, file string) {
 			format := psnodeCommand.(*psnode.DataForRegist)
 			if err := decoder.Decode(format); err != nil {
 				if err == io.EOF {
-					message.MyMessage("=== closed by client")
+					// message.MyMessage("=== closed by client")
 					break
 				}
 				message.MyError(err, "connectionLink > DataForRegist > decoder.Decode")
@@ -272,10 +268,9 @@ func connectionLink(conn net.Conn, file string) {
 
 			// RTT時間を検索して，RTT/2 時間を取得
 			rtt_half := searchRTT(pnode_id)
-			fmt.Println("RTT: ", rtt_half)
+			// fmt.Println("RTT: ", rtt_half)
 
 			// RTT/2 時間待機
-			fmt.Println("sleep RTT/2 (upstream)")
 			delayRTTHalf(rtt_half)
 
 			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
@@ -285,16 +280,18 @@ func connectionLink(conn net.Conn, file string) {
 				return
 			}
 			vsnode_port := trimVSNodePort(format.PNodeID)
-			response_data, err := http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
+			_, err = http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
 			if err != nil {
 				fmt.Println("Error making request:", err)
 				return
 			}
-			response_byte, err := io.ReadAll(response_data.Body)
-			if err = encoder.Encode(string(response_byte)); err != nil {
-				fmt.Println("Error encoding data: ", err)
-				return
-			}
+			/*
+				response_byte, err := io.ReadAll(response_data.Body)
+				if err = encoder.Encode(string(response_byte)); err != nil {
+					fmt.Println("Error encoding data: ", err)
+					return
+				}
+			*/
 		}
 	}
 }

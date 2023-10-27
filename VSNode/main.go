@@ -442,8 +442,8 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 			buffer_chan <- transmit_string
 		}(buffer_chan)
 
-		fmt.Println("Data Inserted Successfully!")
-		fmt.Fprintf(w, "%v\n", "Register Success")
+		fmt.Println(inputFormat.PNodeID, ": Data Inserted Successfully!")
+		// fmt.Fprintf(w, "%v\n", "Register Success")
 	} else {
 		http.Error(w, "dataRegister: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
