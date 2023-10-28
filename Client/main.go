@@ -2,28 +2,40 @@ package main
 
 import (
 	"bytes"
+	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"mecm2m-Emulator/pkg/m2mapi"
 	"mecm2m-Emulator/pkg/m2mapp"
 	"mecm2m-Emulator/pkg/psnode"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
+)
+
+var (
+	command  *string
+	area_num *int
+	target   *string
 )
 
 func main() {
 	var ad string
 	var data any
 	var url string
-	args := os.Args
 
-	if len(args) > 2 {
-		ad = args[2]
-	}
-	data, url = switchM2MAPI(args[1], ad)
+	command = flag.String("command", "no", "M2M APIを選択")
+	area_num = flag.Int("area_num", 1, "指定するエリア範囲を選択")
+	target = flag.String("target", "own", "自MEC or 他MEC")
+
+	flag.Parse()
+
+	data, url = switchM2MAPI(*command, ad)
 
 	client_data, err := json.Marshal(data)
 	if err != nil {
@@ -41,25 +53,56 @@ func main() {
 	}
 	defer response.Body.Close()
 
-	body, err := io.ReadAll(response.Body)
+	_, err1 := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		panic(err1)
 	}
 
-	results := formatBody(args[1], body)
+	// results := formatBody(args[1], body)
 
-	fmt.Println("Server Response:", results)
+	// fmt.Println("Server Response:", results)
 
 	elapsedTime := time.Since(start)
-	fmt.Println("execution time: ", elapsedTime)
+	durationInNanoseconds := float64(elapsedTime.Nanoseconds())
+	durationInMilliSeconds := durationInNanoseconds / 1e6
+	fmt.Printf("%.3f", durationInMilliSeconds)
 }
 
 func switchM2MAPI(command, ad string) (data any, url string) {
 	switch command {
 	case "area":
+		var nelat, nelon, swlat, swlon float64
+		var file_name string
+		if *target == "own" {
+			if *area_num == 1 {
+				file_name = "area/area_1_1_own.csv"
+			} else if *area_num == 5 {
+				file_name = "area/area_5_5_own.csv"
+			} else if *area_num == 10 {
+				file_name = "area/area_10_10_own.csv"
+			}
+		} else if *target == "other" {
+			if *area_num == 1 {
+				file_name = "area/area_1_1_other.csv"
+			} else if *area_num == 5 {
+				file_name = "area/area_5_5_other.csv"
+			} else if *area_num == 10 {
+				file_name = "area/area_10_10_other.csv"
+			}
+		}
+		file, _ := os.Open(file_name)
+		defer file.Close()
+
+		reader := csv.NewReader(file)
+		rows, _ := reader.ReadAll()
+		randomIndex := rand.Intn(len(rows))
+		nelat, _ = strconv.ParseFloat(rows[randomIndex][0], 64)
+		nelon, _ = strconv.ParseFloat(rows[randomIndex][1], 64)
+		swlat, _ = strconv.ParseFloat(rows[randomIndex][2], 64)
+		swlon, _ = strconv.ParseFloat(rows[randomIndex][3], 64)
 		data = m2mapp.ResolveAreaInput{
-			NE: m2mapp.SquarePoint{Lat: 35.531, Lon: 139.531},
-			SW: m2mapp.SquarePoint{Lat: 35.530, Lon: 139.530},
+			NE: m2mapp.SquarePoint{Lat: nelat, Lon: nelon},
+			SW: m2mapp.SquarePoint{Lat: swlat, Lon: swlon},
 		}
 		url = "http://localhost:8080/m2mapi/area"
 	case "node":

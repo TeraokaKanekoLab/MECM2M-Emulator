@@ -79,12 +79,14 @@ func main() {
 	*/
 	var socketFiles []string
 	// コマンドライン引数にソケットファイル群をまとめたファイルを指定して，初めにそのファイルを読み込む
-	if len(os.Args) != 2 {
-		fmt.Println("There is no socket files")
-		os.Exit(1)
-	}
+	/*
+		if len(os.Args) != 2 {
+			fmt.Println("There is no socket files")
+			os.Exit(1)
+		}
+	*/
 
-	config_link_process := os.Args[1]
+	config_link_process := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/access_network_link_process.json"
 	file, err := os.ReadFile(config_link_process)
 	if err != nil {
 		message.MyError(err, "Failed to read config file for link process")
@@ -99,7 +101,7 @@ func main() {
 	cleanup(socketFiles...)
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, syscall.SIGALRM)
+	signal.Notify(quit, os.Interrupt, syscall.SIGALRM, syscall.SIGTERM)
 	go func() {
 		<-quit
 		fmt.Println("ctrl-c pressed!")
