@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"io"
 	"mecm2m-Emulator/pkg/message"
-	"mecm2m-Emulator/pkg/psnode"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -56,34 +54,41 @@ func main() {
 		}
 	*/
 
-	for k := 0; k < 10; k++ {
-		var wg sync.WaitGroup
-		for i := 21000; i < 21010; i++ {
-			wg.Add(1)
-			go func(port int) {
-				defer wg.Done()
-				port_str := strconv.Itoa(port)
-				pnode_id := trimPNodeID(port)
-				send_data := psnode.TimeSync{
-					PNodeID:     pnode_id,
-					CurrentTime: time.Now(),
-				}
-				url := "http://localhost:" + port_str + "/time"
-				client_data, err := json.Marshal(send_data)
-				if err != nil {
-					fmt.Println("Error marshaling data: ", err)
-					return
-				}
-				response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-				if err != nil {
-					fmt.Println("Error making request: ", err)
-					return
-				}
-				defer response.Body.Close()
-			}(i)
+	/*
+		for k := 0; k < 10; k++ {
+			var wg sync.WaitGroup
+			for i := 21000; i < 21010; i++ {
+				wg.Add(1)
+				go func(port int) {
+					defer wg.Done()
+					port_str := strconv.Itoa(port)
+					pnode_id := trimPNodeID(port)
+					send_data := psnode.TimeSync{
+						PNodeID:     pnode_id,
+						CurrentTime: time.Now(),
+					}
+					url := "http://localhost:" + port_str + "/time"
+					client_data, err := json.Marshal(send_data)
+					if err != nil {
+						fmt.Println("Error marshaling data: ", err)
+						return
+					}
+					response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+					if err != nil {
+						fmt.Println("Error making request: ", err)
+						return
+					}
+					defer response.Body.Close()
+				}(i)
+			}
+			wg.Wait()
 		}
-		wg.Wait()
-	}
+	*/
+
+	second := fmt.Sprintf("%0*d", 2, 123%60)
+	minute := fmt.Sprintf("%0*d", 2, 123/60)
+	end := "2023-10-31 10:" + minute + ":" + second + " +0900 JST"
+	fmt.Println(end)
 
 	elapsedTime := time.Since(start_time)
 	fmt.Println("execution time: ", elapsedTime)

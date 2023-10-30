@@ -25,7 +25,9 @@ var (
 	area_num   *int
 	target     *string
 	vnode_type *string
+	period     *int
 	ad         string
+	start      string = "2023-10-31 10:00:00 +0900 JST"
 )
 
 func main() {
@@ -42,6 +44,8 @@ func main() {
 	target = flag.String("target", "own", "自MEC or 他MEC")
 
 	vnode_type = flag.String("vnode_type", "VSNode", "VNodeの種類")
+
+	period = flag.Int("period", 1, "時間指定")
 
 	flag.Parse()
 
@@ -70,33 +74,41 @@ func main() {
 
 	switch *command {
 	case "area":
+		// ad.txt の初期化
+		path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/Client/ad.txt"
+		file, _ := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+		defer file.Close()
+
 		results := &m2mapp.ResolveAreaOutput{}
 		if err = json.Unmarshal(body, results); err != nil {
 			fmt.Println("Error unmarshaling: ", err)
 		}
-		path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/Client/ad.txt"
-		file, _ := os.Create(path)
-		defer file.Close()
 
 		fmt.Fprintf(file, "%s", results.AD)
 
 		//byte_data, _ := json.Marshal(results.AD)
 		//file.Write(byte_data)
 	case "node":
+		// node,csv の初期化
+		path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/Client/node.csv"
+		file, _ := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+		defer file.Close()
+
 		results := &m2mapp.ResolveNodeOutput{}
 		if err = json.Unmarshal(body, results); err != nil {
 			fmt.Println("Error unmarshaling: ", err)
 		}
-		path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/Client/node.csv"
-		file, _ := os.Create(path)
-		defer file.Close()
 
 		for _, i := range results.VNode {
 			fmt.Fprintf(file, "%v,%v,%v\n", i.VNodeID, i.VNodeSocketAddress, i.VMNodeRSocketAddress)
 		}
+	case "current_area":
+		results := &m2mapp.ResolveDataByAreaOutput{}
+		if err = json.Unmarshal(body, results); err != nil {
+			fmt.Println("Error unmarshaling: ", err)
+		}
+		fmt.Println("Server Response:", results)
 	}
-
-	// fmt.Println("Server Response:", results)
 
 	elapsedTime := time.Since(start)
 	durationInNanoseconds := float64(elapsedTime.Nanoseconds())
@@ -147,7 +159,6 @@ func switchM2MAPI(command string) (data any, url string) {
 
 		dat, _ := io.ReadAll(file)
 		ad = string(dat)
-		fmt.Println(ad)
 		data = m2mapp.ResolveNodeInput{
 			AD:         ad,
 			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
@@ -155,11 +166,23 @@ func switchM2MAPI(command string) (data any, url string) {
 		}
 		url = "http://localhost:8080/m2mapi/node"
 	case "past_node":
+		file, _ := os.Open("node.csv")
+		defer file.Close()
+
+		reader := csv.NewReader(file)
+		rows, _ := reader.ReadAll()
+
+		randomIndex := rand.Intn(len(rows))
+		vnode_id := rows[randomIndex][0]
+		socket_address := rows[randomIndex][1]
+		second := fmt.Sprintf("%0*d", 2, *period%60)
+		minute := fmt.Sprintf("%0*d", 2, *period/60)
+		end := "2023-10-31 10:" + minute + ":" + second + " +0900 JST"
 		data = m2mapp.ResolveDataByNodeInput{
-			VNodeID:       "9223372036854775808",
+			VNodeID:       vnode_id,
 			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
-			Period:        m2mapp.PeriodInput{Start: "2023-10-21 01:00:00 +0900 JST", End: "2023-10-21 01:30:00 +0900 JST"},
-			SocketAddress: "192.168.1.1:11000",
+			Period:        m2mapp.PeriodInput{Start: start, End: end},
+			SocketAddress: socket_address,
 		}
 		url = "http://localhost:8080/m2mapi/data/past/node"
 	case "current_node":
@@ -187,18 +210,32 @@ func switchM2MAPI(command string) (data any, url string) {
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/node"
 	case "past_area":
+		file, _ := os.Open("ad.txt")
+		defer file.Close()
+
+		dat, _ := io.ReadAll(file)
+		ad = string(dat)
+
+		second := fmt.Sprintf("%0*d", 2, *period%60)
+		minute := fmt.Sprintf("%0*d", 2, *period/60)
+		end := "2023-10-31 10:" + minute + ":" + second + " +0900 JST"
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
 			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
-			Period:     m2mapp.PeriodInput{Start: "2023-10-21 01:00:00 +0900 JST", End: "2023-10-21 01:30:00 +0900 JST"},
-			NodeType:   "VSNode",
+			Period:     m2mapp.PeriodInput{Start: start, End: end},
+			NodeType:   *vnode_type,
 		}
 		url = "http://localhost:8080/m2mapi/data/past/area"
 	case "current_area":
+		file, _ := os.Open("ad.txt")
+		defer file.Close()
+
+		dat, _ := io.ReadAll(file)
+		ad = string(dat)
 		data = m2mapp.ResolveDataByAreaInput{
 			AD:         ad,
 			Capability: []string{"Temperature", "Humidity", "WindSpeed"},
-			NodeType:   "VSNode",
+			NodeType:   *vnode_type,
 		}
 		url = "http://localhost:8080/m2mapi/data/current/area"
 	case "condition_area":
@@ -210,12 +247,21 @@ func switchM2MAPI(command string) (data any, url string) {
 		}
 		url = "http://localhost:8080/m2mapi/data/condition/area"
 	case "actuate":
+		file, _ := os.Open("node.csv")
+		defer file.Close()
+
+		reader := csv.NewReader(file)
+		rows, _ := reader.ReadAll()
+
+		randomIndex := rand.Intn(len(rows))
+		vnode_id := rows[randomIndex][0]
+		socket_address := rows[randomIndex][1]
 		data = m2mapp.ActuateInput{
-			VNodeID:       "9223372036854775808",
+			VNodeID:       vnode_id,
 			Capability:    "Accel",
 			Action:        "On",
 			Parameter:     10.1,
-			SocketAddress: "192.168.1.1:11000",
+			SocketAddress: socket_address,
 		}
 		url = "http://localhost:8080/m2mapi/actuate"
 	case "extend_ad":
