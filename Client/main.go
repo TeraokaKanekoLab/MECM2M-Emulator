@@ -102,12 +102,6 @@ func main() {
 		for _, i := range results.VNode {
 			fmt.Fprintf(file, "%v,%v,%v\n", i.VNodeID, i.VNodeSocketAddress, i.VMNodeRSocketAddress)
 		}
-	case "current_area":
-		results := &m2mapp.ResolveDataByAreaOutput{}
-		if err = json.Unmarshal(body, results); err != nil {
-			fmt.Println("Error unmarshaling: ", err)
-		}
-		fmt.Println("Server Response:", results)
 	}
 
 	elapsedTime := time.Since(start)

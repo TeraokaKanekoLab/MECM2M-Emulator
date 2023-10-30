@@ -30,6 +30,7 @@ import (
 const (
 	protocol                 = "unix"
 	link_socket_address_root = "/tmp/mecm2m/link-process/"
+	concurrency              = 3600
 )
 
 var (
@@ -111,16 +112,23 @@ func main() {
 	}()
 
 	var wg sync.WaitGroup
+
+	sem := make(chan struct{}, concurrency)
+
 	for _, file := range socketFiles {
+		sem <- struct{}{}
+
 		wg.Add(1)
-		go initialize(file, &wg)
+		go initialize(file, &wg, sem)
 	}
 
+	defer close(sem)
 	wg.Wait()
 }
 
-func initialize(file string, wg *sync.WaitGroup) {
+func initialize(file string, wg *sync.WaitGroup, sem chan struct{}) {
 	defer wg.Done()
+	defer func() { <-sem }()
 	listener, err := net.Listen(protocol, file)
 	if err != nil {
 		message.MyError(err, "initialize > net.Listen")

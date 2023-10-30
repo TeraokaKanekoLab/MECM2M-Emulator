@@ -32,6 +32,7 @@ const (
 	dataResisterSock                 = "/tmp/mecm2m/data_resister.sock"
 	socket_address_root              = "/tmp/mecm2m/"
 	link_process_socket_address_path = "/tmp/mecm2m/link-process"
+	concurrency                      = 3600
 )
 
 type Format struct {
@@ -258,14 +259,20 @@ func main() {
 		return
 	}
 
+	sem := make(chan struct{}, concurrency)
+
 	for _, port := range ports.Port {
+		sem <- struct{}{}
+
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
+			defer func() { <-sem }()
 			startServer(port)
 		}(port)
 	}
 
+	defer close(sem)
 	wg.Wait()
 }
 

@@ -28,6 +28,7 @@ import (
 const (
 	protocol                         = "unix"
 	link_process_socket_address_path = "/tmp/mecm2m/link-process"
+	concurrency                      = 3600
 )
 
 var (
@@ -40,6 +41,8 @@ var (
 
 	// VSNodeIDをキーとして，それに対応するPNodeIDとCapabilityを保持しておくマッピング
 	vsnode_psnode_mapping = make(map[string]PSNode)
+
+	// 最大同時並列実行を実現するチャネル
 )
 
 type Format struct {
@@ -516,14 +519,22 @@ func main() {
 		return
 	}
 
+	sem := make(chan struct{}, concurrency)
+
 	for _, port := range ports.Port {
+		sem <- struct{}{}
+
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
+			defer func() { <-sem }()
 			startServer(port)
 		}(port)
 	}
 
+	// 別の goroutine で上のすべての goroutine が終わるまで待機
+	// 終了したら，チャネルをclose
+	defer close(sem)
 	wg.Wait()
 }
 
