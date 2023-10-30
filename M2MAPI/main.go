@@ -241,7 +241,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 		var trans_ad_detail_value m2mapi.AreaDescriptorDetail
 		for key, value := range inputFormat {
 			if key == "transmit-flag" && value.(bool) {
-				fmt.Println("finad transmit flag")
+				fmt.Println("find transmit flag")
 				transmit_flag = true
 			} else if key == "pmnode-flag" && value.(bool) {
 				fmt.Println("find pmnode flag")

@@ -234,7 +234,8 @@ label_lat = 0
 label_lon = 0
 
 # ID用のindex
-id_index = (int(((MAX_LAT - MIN_LAT) * forint) * ((MAX_LON - MIN_LON) * forint))) * (MEC_SERVER_NUM - 1)
+# id_index = (int(((MAX_LAT - MIN_LAT) * forint) * ((MAX_LON - MIN_LON) * forint))) * (MEC_SERVER_NUM - 1)
+id_index = 0
 
 # areaの数を数える
 area_num = 0
