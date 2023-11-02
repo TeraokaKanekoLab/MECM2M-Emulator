@@ -9,3 +9,5 @@
 /setup/GraphDB/config/config_main_pmnode.json
 /setup/GraphDB/config/config_main_psink.json
 /setup/GraphDB/config/config_main_psnode.json
+.vscode/
+/LinkProcess/access_network_link_process.json
