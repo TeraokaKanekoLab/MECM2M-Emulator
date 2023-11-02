@@ -85,9 +85,6 @@ func main() {
 		}
 
 		fmt.Fprintf(file, "%s", results.AD)
-
-		//byte_data, _ := json.Marshal(results.AD)
-		//file.Write(byte_data)
 	case "node":
 		// node,csv の初期化
 		path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/Client/node.csv"
@@ -103,6 +100,8 @@ func main() {
 			fmt.Fprintf(file, "%v,%v,%v\n", i.VNodeID, i.VNodeSocketAddress, i.VMNodeRSocketAddress)
 		}
 	}
+
+	//fmt.Println(string(body))
 
 	elapsedTime := time.Since(start)
 	durationInNanoseconds := float64(elapsedTime.Nanoseconds())
@@ -274,45 +273,4 @@ func switchM2MAPI(command string) (data any, url string) {
 		log.Fatal()
 	}
 	return data, url
-}
-
-func formatBody(command string, body []byte) string {
-	var results string
-	switch command {
-	case "area":
-		/*
-			format := m2mapp.ResolveAreaOutput{}
-			if err := json.Unmarshal(body, &format); err != nil {
-				fmt.Println("Error unmarshaling: ", err)
-				return results
-			}
-			format.Descriptor = m2mapi.AreaDescriptor{}
-			results_byte, err := json.Marshal(format)
-			if err != nil {
-				fmt.Println("Error marshaling: ", err)
-				return results
-			}
-		*/
-		return string(body)
-	case "node":
-		return string(body)
-	case "past_node":
-		return string(body)
-	case "current_node":
-		return string(body)
-	case "condition_node":
-		return string(body)
-	case "past_area":
-		return string(body)
-	case "current_area":
-		return string(body)
-	case "condition_area":
-		return string(body)
-	case "actuate":
-		return string(body)
-	case "time":
-		return string(body)
-	default:
-		return results
-	}
 }

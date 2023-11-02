@@ -4,16 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/rand"
-	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"math/big"
 	"mecm2m-Emulator/pkg/message"
-	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/vsnode"
-	"net"
 	"net/http"
 	"os"
 	"runtime"
@@ -155,60 +152,13 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// mainプロセスからの時刻配布を受信・所定の一定時間間隔でSensingDBにセンサデータ登録
-func timeSync(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "timeSync: Error reading request body", http.StatusInternalServerError)
-			return
-		}
-		inputFormat := &psnode.TimeSync{}
-		if err := json.Unmarshal(body, inputFormat); err != nil {
-			http.Error(w, "timeSync: Error missmatching packet format", http.StatusInternalServerError)
-		}
-
-		// VSNode へセンサデータを送信するために，リンクプロセスを噛ます
-		pnode_id := trimVSNodePort(r.Host)
-
-		link_process_socket_address := link_process_socket_address_path + "/access-network_" + pnode_id + ".sock"
-		connLinkProcess, err := net.Dial(protocol, link_process_socket_address)
-		if err != nil {
-			http.Error(w, "timeSync: net.Dial Error", http.StatusInternalServerError)
-		}
-		decoderLinkProcess := gob.NewDecoder(connLinkProcess)
-		encoderLinkProcess := gob.NewEncoder(connLinkProcess)
-
-		syncFormatClient("RegisterSensingData", decoderLinkProcess, encoderLinkProcess)
-
-		// ランダムなセンサデータを生成する関数
-		sensordata := generateSensordata(inputFormat)
-		if err := encoderLinkProcess.Encode(&sensordata); err != nil {
-			http.Error(w, "timeSync: encoderLinkProcess.Encode Error", http.StatusInternalServerError)
-		}
-		fmt.Println("Send Sensordata: ", pnode_id)
-
-		/*
-			// データ登録完了の旨を受信
-			var response_data string
-			if err = decoderLinkProcess.Decode(&response_data); err != nil {
-				fmt.Println("Error decoding: ", err)
-			}
-			fmt.Fprintf(w, "%v\n", response_data)
-		*/
-	} else {
-		http.Error(w, "timeSync: Method not supported: Only POST request", http.StatusMethodNotAllowed)
-	}
-}
-
 func startServer(port int) {
 	mux := http.NewServeMux() // 新しいServeMuxインスタンスを作成
 	mux.HandleFunc("/devapi/data/current/node", resolveCurrentNode)
 	mux.HandleFunc("/devapi/actuate", actuate)
-	mux.HandleFunc("/time", timeSync)
 
 	address := fmt.Sprintf(":%d", port)
-	log.Printf("Starting server on %s", address)
+	// log.Printf("Starting server on %s", address)
 
 	server := &http.Server{
 		Addr:    address,
@@ -261,6 +211,8 @@ func main() {
 
 	sem := make(chan struct{}, concurrency)
 
+	fmt.Println("Starting Server")
+
 	for _, port := range ports.Port {
 		sem <- struct{}{}
 
@@ -274,58 +226,6 @@ func main() {
 
 	defer close(sem)
 	wg.Wait()
-}
-
-// センサデータの登録
-func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
-	var result psnode.DataForRegist
-	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
-	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
-	psnodeJsonFile, err := os.Open(psnode_json_file_path)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer psnodeJsonFile.Close()
-	psnodeByteValue, _ := io.ReadAll(psnodeJsonFile)
-
-	var psnodeResult map[string][]interface{}
-	json.Unmarshal(psnodeByteValue, &psnodeResult)
-
-	psnodes := psnodeResult["psnodes"]
-	for _, v := range psnodes {
-		psnode_format := v.(map[string]interface{})
-		psnode := psnode_format["psnode"].(map[string]interface{})
-		//psnode_relation_label := psnode["relation-label"].(map[string]interface{})
-		psnode_data_property := psnode["data-property"].(map[string]interface{})
-		pnode_id := psnode_data_property["PNodeID"].(string)
-		if pnode_id == inputFormat.PNodeID {
-			result.PNodeID = pnode_id
-			result.Capability = psnode_data_property["Capability"].(string)
-			result.Timestamp = inputFormat.CurrentTime.Format(layout)
-			randomFloat := randomFloat64()
-			min := 30.0
-			//max := 40.0
-			value_value := min + randomFloat
-			result.Value = value_value
-			//result.PSinkID = psnode_relation_label["PSink"].(string)
-			result.PSinkID = "PSink"
-			position := psnode_data_property["Position"].([]interface{})
-			result.Lat = position[0].(float64)
-			result.Lon = position[1].(float64)
-		}
-	}
-	return result
-}
-
-// SensingDBと型同期をするための関数
-func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
-	switch command {
-	case "RegisterSensingData":
-		format := &Format{FormType: "RegisterSensingData"}
-		if err := encoder.Encode(format); err != nil {
-			message.MyError(err, "syncFormatClient > RegisterSensingData > encoder.Encode")
-		}
-	}
 }
 
 func convertID(id string, pos int) string {

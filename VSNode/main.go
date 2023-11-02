@@ -461,7 +461,7 @@ func startServer(port int) {
 	mux.HandleFunc("/data/register", dataRegister)
 
 	address := fmt.Sprintf(":%d", port)
-	log.Printf("Starting server on %s", address)
+	// log.Printf("Starting server on %s", address)
 
 	server := &http.Server{
 		Addr:    address,
@@ -520,6 +520,7 @@ func main() {
 	}
 
 	sem := make(chan struct{}, concurrency)
+	fmt.Println("Starting Server")
 
 	for _, port := range ports.Port {
 		sem <- struct{}{}

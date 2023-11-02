@@ -10,7 +10,6 @@ import (
 	"log"
 	"mecm2m-Emulator/pkg/message"
 	"mecm2m-Emulator/pkg/mserver"
-	"mecm2m-Emulator/pkg/psnode"
 	"mecm2m-Emulator/pkg/server"
 	"mecm2m-Emulator/pkg/vpoint"
 	"mecm2m-Emulator/pkg/vsnode"
@@ -79,13 +78,6 @@ func main() {
 		fmt.Printf("Received signal: %v\n", sig)
 	*/
 	var socketFiles []string
-	// コマンドライン引数にソケットファイル群をまとめたファイルを指定して，初めにそのファイルを読み込む
-	/*
-		if len(os.Args) != 2 {
-			fmt.Println("There is no socket files")
-			os.Exit(1)
-		}
-	*/
 
 	config_link_process := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/LinkProcess/access_network_link_process.json"
 	file, err := os.ReadFile(config_link_process)
@@ -115,6 +107,8 @@ func main() {
 
 	sem := make(chan struct{}, concurrency)
 
+	fmt.Println("Starting Server")
+
 	for _, file := range socketFiles {
 		sem <- struct{}{}
 
@@ -133,16 +127,43 @@ func initialize(file string, wg *sync.WaitGroup, sem chan struct{}) {
 	if err != nil {
 		message.MyError(err, "initialize > net.Listen")
 	}
-	// message.MyMessage("> [Initialize] Socket file launched: " + file)
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			message.MyError(err, "initialize > listener.Accept")
-			break
-		}
+	defer listener.Close()
 
-		go connectionLink(conn, file)
-	}
+	controlChannel := make(chan os.Signal, 1)
+	signal.Notify(controlChannel, syscall.SIGCONT)
+
+	var wg1 sync.WaitGroup
+	wg1.Add(2)
+
+	go func() {
+		defer wg1.Done()
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				message.MyError(err, "initialize > listener.Accept")
+				break
+			}
+
+			go connectionLink(conn, file)
+		}
+	}()
+
+	go func() {
+		defer wg1.Done()
+		for {
+			select {
+			case <-controlChannel:
+				listener.Close()
+				listener, err = net.Listen(protocol, file)
+				if err != nil {
+					message.MyError(err, "initialize > net.Listen")
+				}
+				defer listener.Close()
+
+			}
+		}
+	}()
+	wg.Wait()
 }
 
 func connectionLink(conn net.Conn, file string) {
@@ -260,48 +281,6 @@ func connectionLink(conn net.Conn, file string) {
 				message.MyError(err, "connectionLink > Actuate > encoder.Encode")
 			}
 			message.MyWriteMessage(actuate_output)
-		case *psnode.DataForRegist:
-			format := psnodeCommand.(*psnode.DataForRegist)
-			if err := decoder.Decode(format); err != nil {
-				if err == io.EOF {
-					// message.MyMessage("=== closed by client")
-					break
-				}
-				message.MyError(err, "connectionLink > DataForRegist > decoder.Decode")
-				break
-			}
-			message.MyReadMessage(*format)
-
-			// VSNode へセンサデータ転送
-			// 開いているソケットファイル名からsrc, dstのモジュールを割り出す
-			pnode_id := searchPNodeID(file)
-
-			// RTT時間を検索して，RTT/2 時間を取得
-			rtt_half := searchRTT(pnode_id)
-			// fmt.Println("RTT: ", rtt_half)
-
-			// RTT/2 時間待機
-			delayRTTHalf(rtt_half)
-
-			// 宛先ソケットアドレス用の通信経路を確立 (クライアント側)．PSNodeはIP:Port
-			transmit_data, err := json.Marshal(format)
-			if err != nil {
-				fmt.Println("Error marshalling data: ", err)
-				return
-			}
-			vsnode_port := trimVSNodePort(format.PNodeID)
-			_, err = http.Post("http://localhost:"+vsnode_port+"/data/register", "application/json", bytes.NewBuffer(transmit_data))
-			if err != nil {
-				fmt.Println("Error making request:", err)
-				return
-			}
-			/*
-				response_byte, err := io.ReadAll(response_data.Body)
-				if err = encoder.Encode(string(response_byte)); err != nil {
-					fmt.Println("Error encoding data: ", err)
-					return
-				}
-			*/
 		}
 	}
 }
@@ -362,12 +341,8 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	switch typeResult {
 	case "CurrentNode":
 		typeM = &vsnode.ResolveCurrentDataByNode{}
-	case "ConditionNode":
-		typeM = &vsnode.ResolveConditionDataByNode{}
 	case "Actuate":
 		typeM = &vsnode.Actuate{}
-	case "RegisterSensingData":
-		typeM = &psnode.DataForRegist{}
 	case "ConnectNew":
 		typeM = &mserver.ConnectNew{}
 	case "ConnectForModule":
@@ -385,58 +360,11 @@ func syncFormatServer(decoder *gob.Decoder, encoder *gob.Encoder) any {
 	return typeM
 }
 
-// 型同期をするための関数
-func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder) {
-	format := &Format{}
-	switch command {
-	case "Point":
-		format.FormType = "Point"
-	case "Node":
-		format.FormType = "Node"
-	case "PastNode":
-		format.FormType = "PastNode"
-	case "PastPoint":
-		format.FormType = "PastPoint"
-	case "CurrentNode":
-		format.FormType = "CurrentNode"
-	case "CurrentPoint":
-		format.FormType = "CurrentPoint"
-	case "ConditionNode":
-		format.FormType = "ConditionNode"
-	case "ConditionPoint":
-		format.FormType = "ConditionPoint"
-	case "Actuate":
-		format.FormType = "Actuate"
-	case "RegisterSensingData":
-		format.FormType = "RegisterSensingData"
-	case "ConnectNew":
-		format.FormType = "ConnectNew"
-	case "ConnectForModule":
-		format.FormType = "ConnectForModule"
-	case "AAA":
-		format.FormType = "AAA"
-	case "Disconn":
-		format.FormType = "Disconn"
-	}
-	if err := encoder.Encode(format); err != nil {
-		message.MyError(err, "syncFormatClient > "+command+" > encoder.Encode")
-	}
-}
-
 func trimPSNodePort(vnodeid string) string {
 	vnodeid_int, _ := strconv.ParseUint(vnodeid, 10, 64)
 	base_port_int, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
 	mask := uint64(1<<60 - 1)
 	id_index := vnodeid_int & mask
-	port := strconv.Itoa(base_port_int + int(id_index))
-	return port
-}
-
-func trimVSNodePort(pnode_id string) string {
-	pnodeid_int, _ := strconv.ParseUint(pnode_id, 10, 64)
-	base_port_int, _ := strconv.Atoi(os.Getenv("VSNODE_BASE_PORT"))
-	mask := uint64(1<<60 - 1)
-	id_index := pnodeid_int & mask
 	port := strconv.Itoa(base_port_int + int(id_index))
 	return port
 }

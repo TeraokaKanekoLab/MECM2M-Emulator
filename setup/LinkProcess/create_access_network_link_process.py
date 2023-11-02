@@ -35,7 +35,8 @@ with open(psnode_config_file) as file:
             json.dump(socket_file_data, f, indent=4)
 
         # rttファイルに書き込み
-        random_number = random.randint(1, 10)
+        # random_number = random.randint(1, 10)
+        random_number = 10
         with open(rtt_path, 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([pnode_id, random_number])

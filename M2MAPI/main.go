@@ -360,7 +360,12 @@ func resolvePastNode(w http.ResponseWriter, r *http.Request) {
 			results.Values = append(results.Values, v)
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolvePastNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -393,7 +398,12 @@ func resolveCurrentNode(w http.ResponseWriter, r *http.Request) {
 			results.Values = append(results.Values, v)
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveCurrentNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -426,7 +436,12 @@ func resolveConditionNode(w http.ResponseWriter, r *http.Request) {
 			results.Values = append(results.Values, v)
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveConditionNode: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -461,7 +476,12 @@ func resolvePastArea(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolvePastArea: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -496,7 +516,12 @@ func resolveCurrentArea(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveCurrentArea: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -531,7 +556,12 @@ func resolveConditionArea(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolveCurrentArea: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -557,7 +587,12 @@ func actuate(w http.ResponseWriter, r *http.Request) {
 			Status: m2mapi_results.Status,
 		}
 
-		fmt.Fprintf(w, "%v\n", results)
+		results_str, err := json.Marshal(results)
+		if err != nil {
+			fmt.Println("Error marshaling data: ", err)
+			return
+		}
+		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "actuate: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
@@ -603,8 +638,6 @@ func resolveAreaFunction(sw, ne m2mapp.SquarePoint) m2mapi.ResolveArea {
 			}
 		}
 	}
-
-	fmt.Println(ask_cloud_flag, ne_flag, nw_flag, sw_flag, se_flag)
 
 	// 2. area_mapping_cache に対象の情報がない場合，Cloud Serverに対象サーバを聞きに行く
 	if ask_cloud_flag || ne_flag || nw_flag || sw_flag || se_flag {

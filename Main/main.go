@@ -3,11 +3,13 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"crypto/rand"
 	"encoding/csv"
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/big"
 	"net"
 	"net/http"
 	"os"
@@ -30,6 +32,7 @@ const (
 	protocol           = "unix"
 	timeSock           = "/tmp/mecm2m/time.sock"
 	data_send_interval = 10
+	layout             = "2006-01-02 15:04:05 +0900 JST"
 )
 
 type Format struct {
@@ -148,8 +151,8 @@ func main() {
 	// main()を走らす前に，startコマンドを入力することで，各プロセスにシグナルを送信する
 
 	inputChan := make(chan string)
-	psnode_initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/PSNode/initial_environment.json"
-	file, err := os.Open(psnode_initial_environment_file)
+	vsnode_initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/VSNode/initial_environment.json"
+	file, err := os.Open(vsnode_initial_environment_file)
 	if err != nil {
 		fmt.Println("Error opening file: ", err)
 		return
@@ -162,14 +165,27 @@ func main() {
 		return
 	}
 
-	var psnode_ports Ports
-	err = json.Unmarshal(data, &psnode_ports)
+	var vsnode_ports Ports
+	err = json.Unmarshal(data, &vsnode_ports)
 	if err != nil {
 		fmt.Println("Error decoding JSON: ", err)
 		return
 	}
 	// 物理デバイスが定期的にセンサデータ登録するための時刻配布
-	go ticker(inputChan, psnode_ports.Port)
+	sliceLength := len(vsnode_ports.Port)
+	numSlices := 900
+	subSliceLength := sliceLength / numSlices
+	subSlices := make([][]int, numSlices)
+	for i := 0; i < numSlices; i++ {
+		start := i * subSliceLength
+		end := (i + 1) * subSliceLength
+		if i == numSlices-1 {
+			end = sliceLength
+		}
+		subSlices[i] = vsnode_ports.Port[start:end]
+	}
+
+	go ticker(inputChan, subSlices)
 
 	// シミュレータ開始前
 	reader := bufio.NewReader(os.Stdin)
@@ -230,7 +246,7 @@ func main() {
 	}
 }
 
-func ticker(inputChan chan string, psnode_ports []int) {
+func ticker(inputChan chan string, subSlices [][]int) {
 	<-inputChan
 	// 時間間隔指定
 	// センサデータ登録の時間間隔を一定の閾値を設けてランダムに設定．PSNodeごとに違う時間間隔を設けたい（未完成）
@@ -242,45 +258,81 @@ func ticker(inputChan chan string, psnode_ports []int) {
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer signal.Stop(sig)
 
-	for {
-		select {
-		case now := <-t.C:
-			// 現在時刻(now)の送信
-			var wg sync.WaitGroup
-			for _, port := range psnode_ports {
-				wg.Add(1)
-				go func(port int) {
-					defer wg.Done()
-					port_str := strconv.Itoa(port)
-					pnode_id := trimPNodeID(port)
-					send_data := psnode.TimeSync{
-						PNodeID:     pnode_id,
-						CurrentTime: now,
+	/*
+		for {
+			select {
+			case now := <-t.C:
+				// 現在時刻(now)の送信
+				var wg sync.WaitGroup
+				for _, slices := range subSlices {
+					for _, port := range slices {
+						wg.Add(1)
+						go func(port int) {
+							defer wg.Done()
+							port_str := strconv.Itoa(port)
+							pnode_id := trimPNodeID(port)
+							send_data := psnode.TimeSync{
+								PNodeID:     pnode_id,
+								CurrentTime: now,
+							}
+							sensordata := generateSensordata(&send_data)
+							url := "http://localhost:" + port_str + "/data/register"
+							client_data, err := json.Marshal(sensordata)
+							if err != nil {
+								fmt.Println("Error marshaling data: ", err)
+								return
+							}
+							response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+							if err != nil {
+								fmt.Println("Error making request: ", err)
+								return
+							}
+							defer response.Body.Close()
+						}(port)
 					}
-					url := "http://localhost:" + port_str + "/time"
-					client_data, err := json.Marshal(send_data)
-					if err != nil {
-						fmt.Println("Error marshaling data: ", err)
-						return
-					}
-					response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-					if err != nil {
-						fmt.Println("Error making request: ", err)
-						return
-					}
-					defer response.Body.Close()
-				}(port)
-			}
-			wg.Wait()
-		// シグナルを受信した場合
-		case s := <-sig:
-			switch s {
-			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
-				fmt.Println("Stop!")
-				return
+					time.Sleep(1 * time.Second)
+				}
+				wg.Wait()
+			// シグナルを受信した場合
+			case s := <-sig:
+				switch s {
+				case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
+					fmt.Println("Stop ticker!")
+					return
+				}
 			}
 		}
+	*/
+	var wg sync.WaitGroup
+	for _, slices := range subSlices {
+		for _, port := range slices {
+			wg.Add(1)
+			go func(port int) {
+				defer wg.Done()
+				port_str := strconv.Itoa(port)
+				pnode_id := trimPNodeID(port)
+				send_data := psnode.TimeSync{
+					PNodeID:     pnode_id,
+					CurrentTime: time.Now(),
+				}
+				sensordata := generateSensordata(&send_data)
+				url := "http://localhost:" + port_str + "/data/register"
+				client_data, err := json.Marshal(sensordata)
+				if err != nil {
+					fmt.Println("Error marshaling data: ", err)
+					return
+				}
+				response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+				if err != nil {
+					fmt.Println("Error making request: ", err)
+					return
+				}
+				defer response.Body.Close()
+			}(port)
+		}
+		time.Sleep(1 * time.Second)
 	}
+	wg.Wait()
 }
 
 // 入力したコマンドに対応するAPIの入力内容を取得
@@ -379,11 +431,63 @@ func syncFormatClient(command string, decoder *gob.Decoder, encoder *gob.Encoder
 }
 
 func trimPNodeID(port int) string {
-	base_port, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
+	base_port, _ := strconv.Atoi(os.Getenv("VSNODE_BASE_PORT"))
 	id_index := port - base_port
 	pnode_id_int := int(0b0010<<60) + id_index
 	pnode_id := strconv.Itoa(pnode_id_int)
 	return pnode_id
+}
+
+// センサデータの登録
+func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
+	var result psnode.DataForRegist
+	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
+	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
+	psnodeJsonFile, err := os.Open(psnode_json_file_path)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer psnodeJsonFile.Close()
+	psnodeByteValue, _ := io.ReadAll(psnodeJsonFile)
+
+	var psnodeResult map[string][]interface{}
+	json.Unmarshal(psnodeByteValue, &psnodeResult)
+
+	psnodes := psnodeResult["psnodes"]
+	for _, v := range psnodes {
+		psnode_format := v.(map[string]interface{})
+		psnode := psnode_format["psnode"].(map[string]interface{})
+		//psnode_relation_label := psnode["relation-label"].(map[string]interface{})
+		psnode_data_property := psnode["data-property"].(map[string]interface{})
+		pnode_id := psnode_data_property["PNodeID"].(string)
+		if pnode_id == inputFormat.PNodeID {
+			result.PNodeID = pnode_id
+			result.Capability = psnode_data_property["Capability"].(string)
+			result.Timestamp = inputFormat.CurrentTime.Format(layout)
+			randomFloat := randomFloat64()
+			min := 30.0
+			//max := 40.0
+			value_value := min + randomFloat
+			result.Value = value_value
+			//result.PSinkID = psnode_relation_label["PSink"].(string)
+			result.PSinkID = "PSink"
+			position := psnode_data_property["Position"].([]interface{})
+			result.Lat = position[0].(float64)
+			result.Lon = position[1].(float64)
+		}
+	}
+	return result
+}
+
+func randomFloat64() float64 {
+	n, err := rand.Int(rand.Reader, big.NewInt(1000))
+	if err != nil {
+		panic(err)
+	}
+	floatValue := new(big.Float).SetInt(n)
+	float64Value, _ := floatValue.Float64()
+	f := float64Value / 100
+	return f
 }
 
 // APIを叩く以外のコマンドの実行 (シミュレーション実行，exit, デバイスの登録)

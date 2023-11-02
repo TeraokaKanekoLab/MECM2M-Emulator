@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/big"
 	"mecm2m-Emulator/pkg/message"
+	"mecm2m-Emulator/pkg/psnode"
 	"net/http"
 	"os"
 	"strconv"
@@ -15,83 +18,62 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const layout = "2006-01-02 15:04:05 +0900 JST"
+
+type Ports struct {
+	Port []int `json:"ports"`
+}
+
 func main() {
 	loadEnv()
-	start_time := time.Now()
 
-	/*
-		for k := 0; k < 1; k++ {
-			var wg sync.WaitGroup
-			for block := 0; block < 24; block++ {
-				start := 21000 + (block * 150)
-				end := start + 150
-				for i := start; i < end; i++ {
-					wg.Add(1)
-					go func(port int) {
-						defer wg.Done()
-						port_str := strconv.Itoa(port)
-						pnode_id := trimPNodeID(port)
-						send_data := psnode.TimeSync{
-							PNodeID:     pnode_id,
-							CurrentTime: time.Now(),
-						}
-						url := "http://localhost:" + port_str + "/time"
-						client_data, err := json.Marshal(send_data)
-						if err != nil {
-							fmt.Println("Error marshaling data: ", err)
-							return
-						}
-						response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-						if err != nil {
-							fmt.Println("Error making request: ", err)
-							return
-						}
-						defer response.Body.Close()
-					}(i)
-				}
+	vsnode_initial_environment_file := os.Getenv("HOME") + os.Getenv("PROJECT_PATH") + "/VSNode/initial_environment.json"
+	file, err := os.Open(vsnode_initial_environment_file)
+	if err != nil {
+		fmt.Println("Error opening file: ", err)
+		return
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading file: ", err)
+		return
+	}
+
+	var vsnode_ports Ports
+	err = json.Unmarshal(data, &vsnode_ports)
+	if err != nil {
+		fmt.Println("Error decoding JSON: ", err)
+		return
+	}
+
+	vsnode_ports.Port = []int{11000}
+	for {
+		for _, port := range vsnode_ports.Port {
+			port_str := strconv.Itoa(port)
+			pnode_id := trimPNodeID(port)
+			send_data := psnode.TimeSync{
+				PNodeID:     pnode_id,
+				CurrentTime: time.Now(),
 			}
-			wg.Wait()
-		}
-	*/
-
-	/*
-		for k := 0; k < 10; k++ {
-			var wg sync.WaitGroup
-			for i := 21000; i < 21010; i++ {
-				wg.Add(1)
-				go func(port int) {
-					defer wg.Done()
-					port_str := strconv.Itoa(port)
-					pnode_id := trimPNodeID(port)
-					send_data := psnode.TimeSync{
-						PNodeID:     pnode_id,
-						CurrentTime: time.Now(),
-					}
-					url := "http://localhost:" + port_str + "/time"
-					client_data, err := json.Marshal(send_data)
-					if err != nil {
-						fmt.Println("Error marshaling data: ", err)
-						return
-					}
-					response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
-					if err != nil {
-						fmt.Println("Error making request: ", err)
-						return
-					}
-					defer response.Body.Close()
-				}(i)
+			sensordata := generateSensordata(&send_data)
+			url := "http://localhost:" + port_str + "/data/register"
+			client_data, err := json.Marshal(sensordata)
+			if err != nil {
+				fmt.Println("Error marshaling data: ", err)
+				return
 			}
-			wg.Wait()
+			response, err := http.Post(url, "application/json", bytes.NewBuffer(client_data))
+			if err != nil {
+				fmt.Println("Error making request: ", err)
+				return
+			}
+			defer response.Body.Close()
+			time.Sleep(1 * time.Second)
 		}
-	*/
+	}
 
-	second := fmt.Sprintf("%0*d", 2, 123%60)
-	minute := fmt.Sprintf("%0*d", 2, 123/60)
-	end := "2023-10-31 10:" + minute + ":" + second + " +0900 JST"
-	fmt.Println(end)
-
-	elapsedTime := time.Since(start_time)
-	fmt.Println("execution time: ", elapsedTime)
 }
 
 func loadEnv() {
@@ -105,11 +87,63 @@ func loadEnv() {
 }
 
 func trimPNodeID(port int) string {
-	base_port, _ := strconv.Atoi(os.Getenv("PSNODE_BASE_PORT"))
+	base_port, _ := strconv.Atoi(os.Getenv("VSNODE_BASE_PORT"))
 	id_index := port - base_port
 	pnode_id_int := int(0b0010<<60) + id_index
 	pnode_id := strconv.Itoa(pnode_id_int)
 	return pnode_id
+}
+
+// センサデータの登録
+func generateSensordata(inputFormat *psnode.TimeSync) psnode.DataForRegist {
+	var result psnode.DataForRegist
+	// PSNodeのconfigファイルを検索し，ソケットファイルと一致する情報を取得する
+	psnode_json_file_path := os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/setup/GraphDB/config/config_main_psnode.json"
+	psnodeJsonFile, err := os.Open(psnode_json_file_path)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer psnodeJsonFile.Close()
+	psnodeByteValue, _ := io.ReadAll(psnodeJsonFile)
+
+	var psnodeResult map[string][]interface{}
+	json.Unmarshal(psnodeByteValue, &psnodeResult)
+
+	psnodes := psnodeResult["psnodes"]
+	for _, v := range psnodes {
+		psnode_format := v.(map[string]interface{})
+		psnode := psnode_format["psnode"].(map[string]interface{})
+		//psnode_relation_label := psnode["relation-label"].(map[string]interface{})
+		psnode_data_property := psnode["data-property"].(map[string]interface{})
+		pnode_id := psnode_data_property["PNodeID"].(string)
+		if pnode_id == inputFormat.PNodeID {
+			result.PNodeID = pnode_id
+			result.Capability = psnode_data_property["Capability"].(string)
+			result.Timestamp = inputFormat.CurrentTime.Format(layout)
+			randomFloat := randomFloat64()
+			min := 30.0
+			//max := 40.0
+			value_value := min + randomFloat
+			result.Value = value_value
+			//result.PSinkID = psnode_relation_label["PSink"].(string)
+			result.PSinkID = "PSink"
+			position := psnode_data_property["Position"].([]interface{})
+			result.Lat = position[0].(float64)
+			result.Lon = position[1].(float64)
+		}
+	}
+	return result
+}
+
+func randomFloat64() float64 {
+	n, err := rand.Int(rand.Reader, big.NewInt(1000))
+	if err != nil {
+		panic(err)
+	}
+	floatValue := new(big.Float).SetInt(n)
+	float64Value, _ := floatValue.Float64()
+	f := float64Value / 100
+	return f
 }
 
 // MEC/Cloud Server へGraph DBの解決要求
