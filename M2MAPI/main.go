@@ -260,6 +260,7 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 					trans_node_type = value.(string)
 				case "area-descriptor-detail":
 					ad_detail := value.(map[string]interface{})
+					fmt.Println("ad_detal: ", ad_detail)
 					for k2, v2 := range ad_detail {
 						vv2 := v2.(map[string]interface{})
 						//trans_ad_detail[k2] = v2.(m2mapi.AreaDescriptorDetail)
@@ -283,8 +284,8 @@ func resolveNode(w http.ResponseWriter, r *http.Request) {
 										case "vmnoder-socket-address":
 											vnode_set.VMNodeRSocketAddress = v5.(string)
 										}
-										trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 									}
+									trans_ad_detail_value.VNode = append(trans_ad_detail_value.VNode, vnode_set)
 								}
 							}
 						}
