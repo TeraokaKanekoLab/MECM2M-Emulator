@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/gob"
@@ -28,16 +29,21 @@ import (
 const (
 	protocol                         = "unix"
 	link_process_socket_address_path = "/tmp/mecm2m/link-process"
+	concurrency                      = 3600
 )
 
 type Format struct {
 	FormType string
 }
 
-// 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
-var bufferSensorData = make(map[string]psnode.DataForRegist)
-var mu sync.Mutex
-var buffer_chan = make(chan string)
+var (
+	// 充足条件データ取得用のセンサデータのバッファ．(key, value) = (PNodeID, DataForRegist)
+	bufferSensorData = make(map[string]psnode.DataForRegist)
+	mu               sync.Mutex
+
+	// センサデータがバッファされたときに通知するチャネル
+	buffer_chan = make(chan string)
+)
 
 func init() {
 	// .envファイルの読み込み
@@ -391,6 +397,74 @@ func dataRegister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func mobility(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "mobility: Error reading request body", http.StatusInternalServerError)
+			return
+		}
+		inputFormat := &psnode.Mobility{}
+		if err := json.Unmarshal(body, inputFormat); err != nil {
+			http.Error(w, "mobility: Error missmatching packet format", http.StatusInternalServerError)
+		}
+		pnode_id := "\\\"" + inputFormat.PNodeID + "\\\""
+
+		payload := `{"statements": [{"statement": "MATCH (pmn:PMNode {PNodeID: ` + pnode_id + `}) return pmn.Position;"}]}`
+		graphdb_url := "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+		req, _ := http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(payload)))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "*/*")
+
+		client := new(http.Client)
+		resp, err := client.Do(req)
+		if err != nil {
+			message.MyError(err, "resolvePointFunction > client.Do()")
+		}
+		defer resp.Body.Close()
+
+		byteArray, _ := io.ReadAll(resp.Body)
+		values := bodyGraphDB(byteArray)
+
+		var row_data interface{}
+		var position [2]float64
+		for _, v1 := range values {
+			for k2, v2 := range v1.(map[string]interface{}) {
+				if k2 == "data" {
+					for _, v3 := range v2.([]interface{}) {
+						for k4, v4 := range v3.(map[string]interface{}) {
+							if k4 == "row" {
+								row_data = v4
+								dataArray := row_data.([]interface{})
+								a := dataArray[0].([]interface{})
+								position[0] = a[0].(float64)
+								position[1] = a[1].(float64)
+							}
+						}
+					}
+				}
+			}
+		}
+		position[0] += 0.001
+
+		// 自MEC ServerのLocal GraphDBへの検索
+		payload = `{"statements": [{"statement": "MATCH (pmn:PMNode {PNodeID: ` + pnode_id + `}) SET pmn.Position = [` + strconv.FormatFloat(position[0], 'f', 4, 64) + `, ` + strconv.FormatFloat(position[1], 'f', 4, 64) + `] return pmn.Position;"}]}`
+		graphdb_url = "http://" + os.Getenv("NEO4J_USERNAME") + ":" + os.Getenv("NEO4J_LOCAL_PASSWORD") + "@localhost:" + os.Getenv("NEO4J_LOCAL_PORT_GOLANG") + "/db/data/transaction/commit"
+		req, _ = http.NewRequest("POST", graphdb_url, bytes.NewBuffer([]byte(payload)))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "*/*")
+
+		client = new(http.Client)
+		resp, err = client.Do(req)
+		if err != nil {
+			message.MyError(err, "resolvePointFunction > client.Do()")
+		}
+		defer resp.Body.Close()
+	} else {
+		http.Error(w, "dataRegister: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+	}
+}
+
 func startServer(port int) {
 	mux := http.NewServeMux() // 新しいServeMuxインスタンスを作成
 	mux.HandleFunc("/primapi/data/past/node", resolvePastNode)
@@ -398,6 +472,7 @@ func startServer(port int) {
 	mux.HandleFunc("/primapi/data/condition/node", resolveConditionNode)
 	mux.HandleFunc("/primapi/actuate", actuate)
 	mux.HandleFunc("/data/register", dataRegister)
+	mux.HandleFunc("/mobility", mobility)
 
 	address := fmt.Sprintf(":%d", port)
 	log.Printf("Starting server on %s", address)
@@ -455,14 +530,23 @@ func main() {
 		return
 	}
 
+	sem := make(chan struct{}, concurrency)
+	fmt.Println("Starting Server")
+
 	for _, port := range ports.Port {
+		sem <- struct{}{}
+
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
+			defer func() { <-sem }()
 			startServer(port)
 		}(port)
 	}
 
+	// 別の goroutine で上のすべての goroutine が終わるまで待機
+	// 終了したら，チャネルをclose
+	defer close(sem)
 	wg.Wait()
 }
 
@@ -490,4 +574,32 @@ func convertID(id string, pos ...int) string {
 		id_int.Xor(id_int, mask)
 	}
 	return id_int.String()
+}
+
+func bodyGraphDB(byteArray []byte) []interface{} {
+	var jsonBody map[string]interface{}
+	if err := json.Unmarshal(byteArray, &jsonBody); err != nil {
+		message.MyError(err, "bodyGraphDB > json.Unmarshal")
+		return nil
+	}
+	var values []interface{}
+	for _, v1 := range jsonBody {
+		switch v1.(type) {
+		case []interface{}:
+			for range v1.([]interface{}) {
+				values = v1.([]interface{})
+			}
+		case map[string]interface{}:
+			for _, v2 := range v1.(map[string]interface{}) {
+				switch v2.(type) {
+				case []interface{}:
+					values = v2.([]interface{})
+				default:
+				}
+			}
+		default:
+			fmt.Println("Format Assertion False")
+		}
+	}
+	return values
 }

@@ -243,9 +243,6 @@ area_num = 0
 # PNTypeをあらかじめ用意
 pn_types = ["Temp_Sensor", "Humid_Sensor", "Anemometer"]
 capabilities = {"Temp_Sensor":"Temperature", "Humid_Sensor":"Humidity", "Anemometer":"WindSpeed"}
-vsnode_psnode_relation = {}
-for i in range(len(pn_types)):
-    vsnode_psnode_relation[pn_types[i]] = []
 
 # PSNode/initial_environment.json の初期化
 psnode_dir_path = os.getenv("PROJECT_PATH") + "/PSNode/"
@@ -308,6 +305,7 @@ elif AREA_PER_PSNODE_NUM > 0:
                 data["psnodes"][-1]["vsnode"] = vsnode_dict
 
                 id_index += 1
+            area_num += 1
             label_lon += 1
             swLon = ((swLon*forint) + (lineStep*forint)) / forint
             neLon = ((neLon*forint) + (lineStep*forint)) / forint

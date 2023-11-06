@@ -41,8 +41,6 @@ var (
 
 	// VSNodeIDをキーとして，それに対応するPNodeIDとCapabilityを保持しておくマッピング
 	vsnode_psnode_mapping = make(map[string]PSNode)
-
-	// 最大同時並列実行を実現するチャネル
 )
 
 type Format struct {

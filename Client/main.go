@@ -168,12 +168,20 @@ func switchM2MAPI(command string) (data any, url string) {
 		randomIndex := rand.Intn(len(rows))
 		vnode_id := rows[randomIndex][0]
 		socket_address := rows[randomIndex][1]
+		var capabilities []string
+		if *vnode_type == "VSNode" {
+			capabilities = []string{"Temperature", "Humidity", "WindSpeed"}
+		} else if *vnode_type == "VMNode" {
+			vnode_id = "13835058055282163712"
+			capabilities = []string{"Temperature"}
+			socket_address = "192.168.1.1:31000"
+		}
 		second := fmt.Sprintf("%0*d", 2, *period%60)
 		minute := fmt.Sprintf("%0*d", 2, *period/60)
 		end := "2023-10-31 10:" + minute + ":" + second + " +0900 JST"
 		data = m2mapp.ResolveDataByNodeInput{
 			VNodeID:       vnode_id,
-			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
+			Capability:    capabilities,
 			Period:        m2mapp.PeriodInput{Start: start, End: end},
 			SocketAddress: socket_address,
 		}
@@ -187,10 +195,19 @@ func switchM2MAPI(command string) (data any, url string) {
 
 		randomIndex := rand.Intn(len(rows))
 		vnode_id := rows[randomIndex][0]
-		socket_address := rows[randomIndex][1]
+		var capabilities []string
+		var socket_address string
+		if *vnode_type == "VSNode" {
+			capabilities = []string{"Temperature", "Humidity", "WindSpeed"}
+			socket_address = rows[randomIndex][1]
+		} else if *vnode_type == "VMNode" {
+			capabilities = []string{"Temperature"}
+			socket_address = rows[randomIndex][2]
+		}
+		//socket_address := rows[randomIndex][1]
 		data = m2mapp.ResolveDataByNodeInput{
 			VNodeID:       vnode_id,
-			Capability:    []string{"Temperature", "Humidity", "WindSpeed"},
+			Capability:    capabilities,
 			SocketAddress: socket_address,
 		}
 		url = "http://localhost:8080/m2mapi/data/current/node"

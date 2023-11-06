@@ -1352,6 +1352,7 @@ func resolvePastAreaFunction(ad, node_type string, capability []string, period m
 
 	// データ取得対象となるVNode群の検索
 	resolve_node_results := resolveNodeFunction(ad, capability, node_type)
+	fmt.Println("resolve node results: ", resolve_node_results)
 
 	// resolveNodeの検索によって得られたすべてのVNodeに対してデータ取得要求
 	if node_type == "All" || node_type == "VSNode" {
