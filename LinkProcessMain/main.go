@@ -49,11 +49,14 @@ func main() {
 
 	threshold := 80.0
 
+	os.Remove("cpu_usage")
+	file, _ := os.Create("cpu_usage.csv")
+
 	for {
 		cpuPercent, _ := cpu.Percent(time.Second, true)
-		for i, usage := range cpuPercent {
-			fmt.Printf("CPU%d Usage: %.2f%%\n", i, usage)
-
+		fmt.Fprintf(file, "%f,%f,%f,%f\n", cpuPercent[0], cpuPercent[1], cpuPercent[2], cpuPercent[3])
+		for _, usage := range cpuPercent {
+			//fmt.Printf("CPU%d Usage: %.2f%%\n", i, usage)
 			if usage > threshold {
 				fmt.Println("CPU Usage is larger than Threshold")
 				process, err := os.FindProcess(processIds)
@@ -66,7 +69,7 @@ func main() {
 				}
 			}
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
 
 }
